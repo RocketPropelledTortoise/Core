@@ -9,22 +9,20 @@
     ],
     "require": {
         "php": ">=5.4.0",
-		"illuminate/support": "4.*"
+		"illuminate/support": "~4.1.0"
     },
     "replace": {
-        "rocket/translation": "self.version",
+        "rocket/translation": "self.version"
     },
     "require-dev": {
-        "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "3.*"
+        "mockery/mockery": ">=0.9.0",
+        "phpunit/phpunit": "~3.7.0"
     },
     "autoload": {
         "files": [
             "src/Translation/functions.php"
         ],
-        "psr-4": {
-            "Rocket": "src/"
-        }
+        "psr-4": {"Rocket": "src/"}
     },
     "extra": {
         "branch-alias": {
