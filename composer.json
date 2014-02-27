@@ -22,7 +22,7 @@
         "files": [
             "src/Translation/functions.php"
         ],
-        "psr-4": {"Rocket": "src/"}
+        "psr-4": {"Rocket\\": "src/"}
     },
     "extra": {
         "branch-alias": {
