@@ -371,7 +371,7 @@ class I18N
     protected function translateInsertString($context, $text)
     {
         $string = new String();
-        $string->date_create = mysql_datetime();
+        $string->date_creation = mysql_datetime();
         $string->context = $context;
         $string->string = $text;
         $string->save();

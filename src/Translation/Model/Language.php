@@ -6,7 +6,7 @@
  * Time: 15:28
  */
 
-namespace Rocket\Lang\Model;
+namespace Rocket\Translation\Model;
 
 use Eloquent;
 
