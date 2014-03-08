@@ -9,7 +9,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-		"illuminate/support": "~4.1.0"
+        "illuminate/support": "~4.1.0"
     },
     "replace": {
         "rocket/translation": "self.version"
@@ -19,10 +19,16 @@
         "phpunit/phpunit": "~3.7.0"
     },
     "autoload": {
+        "classmap": [
+            "src/Taxonomy/migrations",
+            "src/Translation/migrations"
+        ],
         "files": [
             "src/Translation/functions.php"
         ],
-        "psr-4": {"Rocket\\": "src/"}
+        "psr-4": {
+            "Rocket\\": "src/"
+        }
     },
     "extra": {
         "branch-alias": {
@@ -30,5 +36,5 @@
         }
     },
     "minimum-stability": "dev",
-	"prefer-stable": true
+    "prefer-stable": true
 }

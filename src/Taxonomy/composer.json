@@ -1,5 +1,5 @@
 {
-    "name": "rocket/translation",
+    "name": "rocket/taxonomy",
     "description": "",
     "authors": [
         {
@@ -12,9 +12,8 @@
 		"illuminate/support": "4.1.*"
     },
     "autoload": {
-        "files": [ "functions.php" ],
         "classmap": [ "migrations" ],
-        "psr-4": { "Rocket\\Lang\\": "" }
+        "psr-4": { "Rocket\\Taxnomy\\": "" }
     },
     "extra": {
         "branch-alias": {
