@@ -1,6 +1,7 @@
 {
     "name": "rocket/core",
     "description": "Rocket Propelled Tortoise CMS - Core",
+    "licence": "MIT",
     "authors": [
         {
             "name": "Stéphane Goetz",
@@ -12,11 +13,13 @@
         "illuminate/support": "~4.1.0"
     },
     "replace": {
-        "rocket/translation": "self.version"
+        "rocket/translation": "self.version",
+        "rocket/taxonomy": "self.version",
+        "rocket/utilities": "self.version"
     },
     "require-dev": {
         "mockery/mockery": ">=0.9.0",
-        "phpunit/phpunit": "~3.7.0"
+        "phpunit/phpunit": ">=4.0.0"
     },
     "autoload": {
         "classmap": [
