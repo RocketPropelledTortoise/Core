@@ -59,15 +59,17 @@ class ParentChildTree
             $this->finder[$this->config['default_root_id']] = & $this->tree[$this->config['default_root_id']];
         }
 
-        $iterations = 0;
+        $parent_key = $this->config['parent'];
+        $default_root_id = $this->config['default_root_id'];
+
         while (count($tree_data)) {
-            $iterations++;
             $beginning_with = count($tree_data);
 
-            foreach ($tree_data as $nid => $node) {
+            foreach ($tree_data as $node_id => $node) {
                 $node[$this->config['childs']] = array();
-                if ($this->tree_add($node[$this->config['parent']], $node[$this->config['id']], $node)) {
-                    unset($tree_data[$nid]);
+                $parent = (array_key_exists($parent_key, $node))? $node[$parent_key] : $default_root_id;
+                if ($this->add($parent, $node[$this->config['id']], $node)) {
+                    unset($tree_data[$node_id]);
                 }
             }
 
@@ -78,22 +80,13 @@ class ParentChildTree
     }
 
     /**
-     * Get the data
-     * @return array
-     */
-    public function get_tree()
-    {
-        return $this->tree;
-    }
-
-    /**
      * Add a leaf
      * @param  string $parent_id
      * @param  string $node_id
      * @param  array $node
      * @return boolean
      */
-    public function tree_add($parent_id, $node_id, $node)
+    public function add($parent_id, $node_id, $node)
     {
         //is it a root ?
         if (in_array($parent_id, $this->config['default_parent'])) {
@@ -121,11 +114,20 @@ class ParentChildTree
     }
 
     /**
+     * Get the data
+     * @return array
+     */
+    public function getTree()
+    {
+        return $this->tree;
+    }
+
+    /**
      * Get all node's childs
      * @param  string $id
      * @return array
      */
-    public function get_childs($id)
+    public function getChilds($id)
     {
         $result = array();
         if (array_key_exists($id, $this->finder)) {
