@@ -1,6 +1,7 @@
 {
     "name": "rocket/translation",
-    "description": "",
+    "description": "Translation foundation",
+    "licence": "MIT",
     "authors": [
         {
             "name": "Stéphane Goetz",

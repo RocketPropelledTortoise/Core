@@ -1,4 +1,4 @@
-# Language Helpers
+# Translation Component
 
 __This is a subtree split of RocketPropelledTortoise CMS - Core. Don't send pull requests here__
 
@@ -19,5 +19,5 @@ It extends the base `Translation` Service Provider and stores the language in da
 - Document
 - Test
 
-A second package `lang_ui` is also in the pipes to provide an administration interface for all the strings
+A second package `translation-ui` is also in the pipes to provide an administration interface for all the strings
 
