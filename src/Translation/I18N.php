@@ -360,8 +360,6 @@ class I18N
             ->first();
 
         if ($row !== null) {
-            $this->strings[$language][$context][$string_id] = $row->text;
-
             return $row->text;
         }
 
@@ -424,6 +422,7 @@ class I18N
 
         $text = $this->translateGetString($context, $language, $db_string->id);
         if ($text) {
+            $this->strings[$language][$context][$string] = $text;
             return $text;
         }
 
