@@ -10,7 +10,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "~4.1.0"
+        "illuminate/support": "~4.1.0",
+        "centraldesktop/graph": "dev-master"
     },
     "replace": {
         "rocket/translation": "self.version",
