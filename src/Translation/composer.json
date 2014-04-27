@@ -15,7 +15,7 @@
     "autoload": {
         "files": [ "functions.php" ],
         "classmap": [ "migrations" ],
-        "psr-4": { "Rocket\\Lang\\": "" }
+        "psr-4": { "Rocket\\Translation\\": "" }
     },
     "extra": {
         "branch-alias": {
