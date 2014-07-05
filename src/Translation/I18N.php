@@ -453,21 +453,36 @@ class I18N
 
         $context = '';
 
-        //Directory
-        if (CI()->router->directory) {
-            $context .= CI()->router->directory;
+        if (function_exists('CI')) {
+            //Directory
+            if (CI()->router->directory) {
+                $context .= CI()->router->directory;
+            }
+
+            //Class
+            $context .= strtolower(
+                substr(CI()->router->class, 0, strlen(CI()->router->class) - strlen(CI()->router->suffix()))
+            );
+
+            //Method
+            $context .= '/' . CI()->router->method;
+
+            $this->pageContext = $context;
+
+            return $context;
         }
 
-        //Class
-        $context .= strtolower(
-            substr(CI()->router->class, 0, strlen(CI()->router->class) - strlen(CI()->router->suffix()))
-        );
+        $current = \Route::getCurrentRoute();
 
-        //Method
-        $context .= '/' . CI()->router->method;
+        if ($current->getName()) {
+            return $this->pageContext = $current->getName();
+        }
 
-        $this->pageContext = $context;
+        $action = $current->getAction();
+        if (array_key_exists('controller', $action)) {
+            return $this->pageContext = $action['controller'];
+        }
 
-        return $context;
+        return $this->pageContext = implode('/', array_map(['Str', 'slug'], explode('/', $current->getUri())));
     }
 }
