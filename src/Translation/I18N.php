@@ -442,7 +442,6 @@ class I18N
     /**
      * Get the page's context
      *
-     * @todo Convert ContextGetter to Laravel
      * @return string
      */
     public function getContext()
@@ -453,7 +452,7 @@ class I18N
 
         $context = '';
 
-        if (function_exists('CI')) {
+        if (method_exists('Controller', 'get_instance')) {
             //Directory
             if (CI()->router->directory) {
                 $context .= CI()->router->directory;
@@ -484,5 +483,29 @@ class I18N
         }
 
         return $this->pageContext = implode('/', array_map(['Str', 'slug'], explode('/', $current->getUri())));
+    }
+
+    public function generate()
+    {
+        $filePath = app('path.storage') . '/languages/';
+
+        if (!is_dir($filePath)) {
+            mkdir($filePath, 0755, true);
+            chmod($filePath, 0755);
+        }
+
+        foreach ($this->languages() as $lang => $d) {
+            $strings = String::select('string', 'text', 'context')
+                ->where('language_id', $d['id'])
+                ->join((new Translation)->getTable(), 'strings.id', '=', 'string_id', 'left')
+                ->get();
+
+            $final_strings = array();
+            foreach ($strings as $s) {
+                $final_strings[$s->context][$s->string] = $s->text;
+            }
+
+            file_put_contents("{$filePath}{$lang}.php", '<?php return ' . var_export($final_strings, true) . ';');
+        }
     }
 }

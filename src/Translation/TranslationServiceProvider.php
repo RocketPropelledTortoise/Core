@@ -2,17 +2,43 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use Rocket\Translation\Commands\GenerateFiles;
 
 class TranslationServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application events.
-     *
-     * @return void
-     */
-    public function boot()
+    protected function registerManager()
     {
-        //$this->package('rocket/lang');
+        $this->app['i18n'] = $this->app->share(
+            function (Application $app) {
+                return $app->make('Rocket\Translation\I18N');
+            }
+        );
+    }
+
+    protected function registerLanguageChangeRoute()
+    {
+        $this->app['router']->get(
+            'lang/{lang}',
+            function ($lang) {
+                if (!$this->app['i18n']->setCurrentLanguage($lang)) {
+                    $this->app['session']->flash('error', t('Cette langue n\'est pas disponible'));
+                }
+
+                return $this->app['redirect']->back();
+            }
+        );
+    }
+
+    protected function registerCommand()
+    {
+        $this->app->bindShared(
+            'command.rocket_language_generate',
+            function ($app) {
+                return new GenerateFiles;
+            }
+        );
+
+        $this->commands('command.rocket_language_generate');
     }
 
     /**
@@ -22,25 +48,11 @@ class TranslationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //Translation manager
-        $this->app['i18n'] = $this->app->share(
-            function (Application $app) {
-                return $app->make('Rocket\Translation\I18N');
-            }
-        );
+        $this->registerManager();
 
-        //Change language
-        $app = $this->app;
-        $this->app['router']->get(
-            'lang/{lang}',
-            function ($lang) use ($app) {
-                if (!$app['i18n']->setCurrentLanguage($lang)) {
-                    $app['session']->flash('error', t('Cette langue n\'est pas disponible'));
-                }
+        $this->registerLanguageChangeRoute();
 
-                return $app['redirect']->back();
-            }
-        );
+        $this->registerCommand();
     }
 
     /**
@@ -50,6 +62,6 @@ class TranslationServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array('i18n');
+        return array('i18n', 'command.rocket_language_generate');
     }
 }

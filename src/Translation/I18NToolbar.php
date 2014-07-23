@@ -36,9 +36,9 @@ class I18NToolbar extends I18N
     protected function translateInsertString($context, $text)
     {
         $translation = parent::translateInsertString($context, $text);
+        $language = $this->languagesIso[app('config')['app.locale']]['id'];
 
-        $this->stringsRaw[$context][$translation->string_id]
-        [$this->languagesIso[app('config')['app.locale']]['id']] = array(
+        $this->stringsRaw[$context][$translation->string_id][$language] = array(
             'id' => $translation->id,
             'string_id' => $translation->string_id,
             'text' => $text,
