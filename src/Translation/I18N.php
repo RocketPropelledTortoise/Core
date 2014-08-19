@@ -450,28 +450,11 @@ class I18N
             return $this->pageContext;
         }
 
-        $context = '';
-
-        if (method_exists('Controller', 'get_instance')) {
-            //Directory
-            if (CI()->router->directory) {
-                $context .= CI()->router->directory;
-            }
-
-            //Class
-            $context .= strtolower(
-                substr(CI()->router->class, 0, strlen(CI()->router->class) - strlen(CI()->router->suffix()))
-            );
-
-            //Method
-            $context .= '/' . CI()->router->method;
-
-            $this->pageContext = $context;
-
-            return $context;
-        }
-
         $current = \Route::getCurrentRoute();
+
+        if (!$current) {
+            return 'default';
+        }
 
         if ($current->getName()) {
             return $this->pageContext = $current->getName();
