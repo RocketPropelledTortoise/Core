@@ -1,5 +1,12 @@
 # Rocket Propelled Tortoise CMS - Core
 
+[![Latest Version](https://img.shields.io/github/release/RocketPropelledTortoise/Core.svg?style=flat-square)](https://github.com/RocketPropelledTortoise/Core/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/RocketPropelledTortoise/Core/blob/master/LICENSE.md)
+[![Build Status](https://img.shields.io/travis/RocketPropelledTortoise/Core/master.svg?style=flat-square)](https://travis-ci.org/RocketPropelledTortoise/Core)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/RocketPropelledTortoise/Core.svg?style=flat-square)](https://scrutinizer-ci.com/g/RocketPropelledTortoise/Core/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/RocketPropelledTortoise/Core.svg?style=flat-square)](https://scrutinizer-ci.com/g/RocketPropelledTortoise/Core)
+[![Total Downloads](https://img.shields.io/packagist/dt/rocket/core.svg?style=flat-square)](https://packagist.org/packages/rocket/core)
+
 Core Components for Rocket Propelled Tortoise CMS
 
 ## What is it ?
@@ -27,3 +34,21 @@ Rocket is not a "social" CMS, it is more a "presentation" CMS.
 
 By default, Rocket doesn't come with facilities to connect users, interact with them. But you can certainly build it by yourself if you want to.
 
+## Testing
+
+``` bash
+$ phpunit
+```
+
+## Contributing
+
+Please see [CONTRIBUTING](https://github.com/RocketPropelledTortoise/Core/blob/master/CONTRIBUTING.md) for details.
+
+## Credits
+
+- [Stéphane Goetz](https://github.com/onigoetz)
+- [All Contributors](https://github.com/RocketPropelledTortoise/Core/contributors)
+
+## License
+
+The MIT License (MIT). Please see [License File](https://github.com/RocketPropelledTortoise/Core/blob/master/LICENCE.md) for more information.
