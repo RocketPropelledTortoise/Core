@@ -11,16 +11,19 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": ">=5.0.0",
+        "illuminate/database": ">=5.0.0",
         "centraldesktop/graph": "dev-master"
     },
     "replace": {
+        "rocket/entities": "self.version",
         "rocket/translation": "self.version",
         "rocket/taxonomy": "self.version",
         "rocket/utilities": "self.version"
     },
     "require-dev": {
         "mockery/mockery": ">=0.9.0",
-        "phpunit/phpunit": ">=4.0.0"
+        "phpunit/phpunit": ">=4.0.0",
+        "orchestra/testbench": "3.*"
     },
     "autoload": {
         "classmap": [
