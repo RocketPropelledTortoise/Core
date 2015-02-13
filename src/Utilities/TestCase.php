@@ -3,11 +3,22 @@
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    public function setUp()
+    {
+        if (! $this->app) {
+            $this->refreshApplication();
+        }
+
+        $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
+        $artisan->call('vendor:publish');
+
+        //refresh configuration values
+        $this->refreshApplication();
+    }
+
     public function packagesToTest(array $items)
     {
         $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
-
-        $artisan->call('vendor:publish');
 
         if (in_array('translations', $items)) {
             $artisan->call('migrate', ['--database' => 'testbench', '--path' => "Translation/migrations"]);
