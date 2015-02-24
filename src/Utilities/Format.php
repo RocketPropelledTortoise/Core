@@ -17,30 +17,11 @@ class Format {
      * @param string $retstring
      * @return string
      */
-    public static function getReadableSize($size, $retstring = null)
+    public static function getReadableSize($bytes)
     {
-        // adapted from code at http://aidanlister.com/repos/v/function.size_readable.php
-        $sizes = array('bytes', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-
-        if ($retstring === null) {
-            $retstring = '%01.2f %s';
-        }
-
-        $lastsizestring = end($sizes);
-
-        foreach ($sizes as $sizestring) {
-            if ($size < 1024) {
-                break;
-            }
-            if ($sizestring != $lastsizestring) {
-                $size /= 1024;
-            }
-        }
-        if ($sizestring == $sizes[0]) {
-            $retstring = '%01d %s';
-        } // Bytes aren't normally fractional
-
-        return sprintf($retstring, $size, $sizestring);
+        $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        $exp = floor(log($bytes, 1024)) | 0;
+        return round($bytes / (pow(1024, $exp)), 2) . " $unit[$exp]";
     }
 
     /**
@@ -51,21 +32,16 @@ class Format {
      */
     public static function getReadableTime($time)
     {
-        $ret = $time;
-        $formatter = 0;
-        $formats = array('ms', 's', 'm');
-        if ($time >= 1000 && $time < 60000) {
-            $formatter = 1;
-            $ret = ($time / 1000);
+        if ($time < 1000) {
+            return "{$time}ms";
         }
+
+        $prefix = '';
         if ($time >= 60000) {
-            $formatter = 2;
-            $ret = ($time / 1000) / 60;
+            $prefix = floor($time / 60000) . "m ";
+            $time = $time % 60000;
         }
-        $ret = number_format((float) $ret, 3, '.', '') . ' ' . $formats[$formatter];
 
-        return $ret;
+        return $prefix . number_format((float)($time / 1000), 3, '.', '') . "s";
     }
-
-
 }
