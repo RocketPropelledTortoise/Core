@@ -3,15 +3,16 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLanguages extends Migration {
+class CreateLanguages extends Migration
+{
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
         Schema::create(
             'languages',
             function (Blueprint $table) {
@@ -20,17 +21,16 @@ class CreateLanguages extends Migration {
                 $table->string('iso');
             }
         );
-	}
+    }
 
-	/**
-	 * Reverse the migrations.
-	 *
+    /**
+     * Reverse the migrations.
+     *
      * @codeCoverageIgnore
-	 * @return void
-	 */
-	public function down()
-	{
+     * @return void
+     */
+    public function down()
+    {
         Schema::drop('languages');
-	}
-
+    }
 }

@@ -8,8 +8,8 @@
 
 namespace Rocket\Utilities;
 
-
-class Format {
+class Format
+{
     /**
      * Get file size with correct extension
      *

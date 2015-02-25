@@ -15,7 +15,7 @@ class Revision extends Model
         foreach ($fields as $field => $settings) {
             $type = $settings['type'];
 
-            if(!array_key_exists($type, $types)) {
+            if (!array_key_exists($type, $types)) {
                 throw new Exception("Unkown type '$type'");
             }
 

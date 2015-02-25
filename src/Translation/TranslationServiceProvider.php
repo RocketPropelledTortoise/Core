@@ -33,7 +33,7 @@ class TranslationServiceProvider extends ServiceProvider
     {
         $this->app->bindShared(
             'command.rocket_language_generate',
-            function ($app) {
+            function () {
                 return new GenerateFiles;
             }
         );

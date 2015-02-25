@@ -2,6 +2,7 @@
 
 use Rocket\Entities\Field;
 
-class Text extends Field {
+class Text extends Field
+{
     public $table = 'field_text';
 }

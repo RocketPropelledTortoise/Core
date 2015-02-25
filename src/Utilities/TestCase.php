@@ -1,6 +1,5 @@
 <?php namespace Rocket\Utilities;
 
-
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     public function setUp()

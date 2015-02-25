@@ -2,6 +2,7 @@
 
 use Rocket\Entities\Field;
 
-class Datetime extends Field {
+class Datetime extends Field
+{
     public $table = 'field_datetime';
 }
