@@ -1,8 +1,8 @@
 <?php namespace Rocket\Entities;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
-use Exception;
 
 /**
  * A revision is the status of a content at a certain moment in time
@@ -34,6 +34,9 @@ class Revision extends Model
         return array_key_exists($field, $this->data);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setAttribute($key, $value)
     {
         if (!$this->hasField($key)) {
@@ -49,6 +52,9 @@ class Revision extends Model
         $this->data->$key = $value;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAttribute($key)
     {
         if (!$this->hasField($key)) {

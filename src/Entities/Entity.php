@@ -1,9 +1,8 @@
 <?php namespace Rocket\Entities;
 
+use ErrorException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use ErrorException;
-use Rocket\UI\Forms\Fields\Date;
 
 /**
  * Represents a content of any form
@@ -28,7 +27,7 @@ class Entity extends Model
 
     /**
      * These fields will not be loaded eagerly
-     * @var
+     * @var array
      */
     protected $lazy = [];
 
@@ -107,23 +106,41 @@ class Entity extends Model
     /**
      * Get the database friendly content type
      *
-     * @return mixed
+     * @return string
      */
     public function getContentType()
     {
         return str_replace('\\', '', snake_case(class_basename($this)));
     }
 
+    /**
+     * Check if the field exists on the entity
+     *
+     * @param string $field
+     * @return bool
+     */
     protected function hasField($field)
     {
         return array_key_exists($field, $this->fields);
     }
 
+    /**
+     * Check if the field is related to the content
+     *
+     * @param string $field
+     * @return bool
+     */
     protected function isContentField($field)
     {
         return in_array($field, ['id', 'created_at', 'updated_at']);
     }
 
+    /**
+     * Check if the field is related to the revision
+     *
+     * @param string $field
+     * @return bool
+     */
     protected function isRevisionField($field)
     {
         return in_array($field, ['language_id']);
