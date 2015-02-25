@@ -1,20 +1,11 @@
-<?php
-/**
- * Created by IntelliJ IDEA.
- * User: onigoetz
- * Date: 20.03.14
- * Time: 21:53
- */
-
-namespace Rocket\Utilities;
+<?php namespace Rocket\Utilities;
 
 class Format
 {
     /**
      * Get file size with correct extension
      *
-     * @param int $size
-     * @param string $retstring
+     * @param int $bytes
      * @return string
      */
     public static function getReadableSize($bytes)

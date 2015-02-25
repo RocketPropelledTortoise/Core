@@ -1,17 +1,11 @@
-<?php
-/**
- * Created by IntelliJ IDEA.
- * User: onigoetz
- * Date: 16.02.15
- * Time: 23:12
- */
+<?php namespace Rocket\Taxonomy;
 
-use Rocket\Translation\Model\Language;
+use Cache;
 use Rocket\Taxonomy\Facade as T;
 use Rocket\Taxonomy\Model\Vocabulary;
 use Rocket\Taxonomy\Term;
-
 use Rocket\Translation\I18NFacade as I18N;
+use Rocket\Translation\Model\Language;
 
 class TermRepositoryTest extends \Rocket\Utilities\TestCase
 {

@@ -1,6 +1,4 @@
-<?php
-
-namespace Rocket\Entities;
+<?php namespace Rocket\Entities;
 
 use Rocket\Translation\Model\Language;
 

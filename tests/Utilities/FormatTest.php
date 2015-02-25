@@ -1,10 +1,4 @@
-<?php
-/**
- * Created by IntelliJ IDEA.
- * User: onigoetz
- * Date: 19.02.15
- * Time: 22:15
- */
+<?php namespace Rocket\Utilities;
 
 class FormatTest extends \PHPUnit_Framework_TestCase {
 
@@ -25,7 +19,7 @@ class FormatTest extends \PHPUnit_Framework_TestCase {
         // the str_replace is here because
         // depending on the system this is run
         // on the separator is a comma or a dot
-        $this->assertEquals($expected, str_replace(',', '.', \Rocket\Utilities\Format::getReadableSize($number)));
+        $this->assertEquals($expected, str_replace(',', '.', Format::getReadableSize($number)));
     }
 
     public function timeProvider()
@@ -42,6 +36,6 @@ class FormatTest extends \PHPUnit_Framework_TestCase {
      */
     public function testFormatTime($number, $expected)
     {
-        $this->assertEquals($expected, \Rocket\Utilities\Format::getReadableTime($number));
+        $this->assertEquals($expected, Format::getReadableTime($number));
     }
 }

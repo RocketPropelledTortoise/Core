@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\DB;
 use ErrorException;
 use Rocket\UI\Forms\Fields\Date;
 
+/**
+ * Represents a content of any form
+ *
+ * @property integer $id the entity's ID
+ */
 class Entity extends Model
 {
     /**
@@ -86,15 +91,15 @@ class Entity extends Model
      * @param $language
      * @return Entity
      */
-    public function revision($language)
+    public function revision($language_id)
     {
-        if ($language == $this->language) {
+        if ($language_id == $this->currentRevision->language_id) {
             return clone $this;
         }
 
-        $revision = new static();
-        $revision->language = $this->language;
-        $revision->content_id = $this->language;
+        $revision = new static([]);
+        $revision->language_id = $language_id;
+        $revision->content_id = $this->id;
 
         return $revision;
     }

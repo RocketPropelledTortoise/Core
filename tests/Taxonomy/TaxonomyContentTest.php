@@ -1,18 +1,14 @@
-<?php
-/**
- * Created by IntelliJ IDEA.
- * User: onigoetz
- * Date: 23.02.15
- * Time: 21:59
- */
+<?php namespace Rocket\Taxonomy;
 
-use Rocket\Translation\Model\Language;
-use Rocket\Taxonomy\Facade as T;
-use Rocket\Taxonomy\Model\Vocabulary;
+use Cache;
 use Illuminate\Database\Eloquent\Model;
-use Rocket\Taxonomy\TaxonomyTrait;
 use Illuminate\Database\Schema\Blueprint;
+use Rocket\Taxonomy\Facade as T;
 use Rocket\Taxonomy\Model\TermContent;
+use Rocket\Taxonomy\Model\Vocabulary;
+use Rocket\Taxonomy\TaxonomyTrait;
+use Rocket\Translation\Model\Language;
+use Schema;
 
 class Post extends Model {
     use TaxonomyTrait;
@@ -268,7 +264,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
 
         $postWithPHP = Post::getAllByTermId(T::getTermId('PHP', 'tag'))->get();
         $this->assertEquals($post->id, $postWithPHP[0]->id);
-        $this->assertInstanceOf('Post', $postWithPHP[0]);
+        $this->assertInstanceOf(get_class($post), $postWithPHP[0]);
 
         $post2->setTerms($ids);
 

@@ -37,8 +37,7 @@ function __($string, array $args = [], $context = 'default', $language = 'defaul
                 // Escaped and placeholder.
                 $args[$key] = '<em>' . $value . '</em>';
                 break;
-            case '!':
-                // Pass-through.
+
         }
     }
 
