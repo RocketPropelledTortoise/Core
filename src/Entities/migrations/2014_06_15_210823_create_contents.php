@@ -37,8 +37,8 @@ class CreateContents extends Migration
             'revisions',
             function (Blueprint $table) {
                 $table->increments('id');
-                $table->integer('language_id');
-                $table->integer('content_id');
+                $table->unsignedInteger('language_id');
+                $table->unsignedInteger('content_id');
                 $table->timestamps();
 
                 $table->foreign('language_id')->references('id')->on('languages');
@@ -82,7 +82,7 @@ class CreateContents extends Migration
             'field_entity',
             function (Blueprint $table) {
                 $this->fieldTableFields($table);
-                $table->integer('value');
+                $table->unsignedInteger('value');
                 $table->foreign('value')->references('id')->on('contents');
             }
         );
