@@ -14,7 +14,7 @@ class CreateContents extends Migration
 
         $table->timestamps();
 
-        $table->integer('revision_id');
+        $table->unsignedInteger('revision_id');
         $table->foreign('revision_id')->references('id')->on('languages');
     }
 

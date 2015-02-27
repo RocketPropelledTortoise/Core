@@ -35,8 +35,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $migrations = [
             'translations' => "Translation/migrations",
-            'entities' => "Entities/migrations",
-            'taxonomy' => "Taxonomy/migrations"
+            'entities' => "Entities/migrations", //depends on translations
+            'taxonomy' => "Taxonomy/migrations", //depends on translations
         ];
 
         foreach ($migrations as $key => $path) {
