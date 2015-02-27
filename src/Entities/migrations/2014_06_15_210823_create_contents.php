@@ -15,7 +15,7 @@ class CreateContents extends Migration
         $table->timestamps();
 
         $table->unsignedInteger('revision_id');
-        $table->foreign('revision_id')->references('id')->on('languages');
+        $table->foreign('revision_id')->references('id')->on('revisions');
     }
 
     /**
@@ -95,6 +95,7 @@ class CreateContents extends Migration
      */
     public function down()
     {
+        Schema::drop('field_string');
         Schema::drop('field_text');
         Schema::drop('field_date');
         Schema::drop('field_datetime');

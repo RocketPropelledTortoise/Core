@@ -59,6 +59,13 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         Cache::flush();
     }
 
+    public function tearDown()
+    {
+        Schema::dropIfExists('media');
+        Schema::dropIfExists('posts');
+        parent::tearDown();
+    }
+
     protected function getPackageProviders($app)
     {
         return [

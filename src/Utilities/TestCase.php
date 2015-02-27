@@ -67,6 +67,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
                     'database' => ':memory:',
                     'prefix' => '',
                 ],
+                // create database travis_test;
+                // grant usage on *.* to travis@localhost;
+                // grant all privileges on travis_test.* to travis@localhost;
                 'travis-mysql' => [
                     'driver'    => 'mysql',
                     'host'      => 'localhost',
