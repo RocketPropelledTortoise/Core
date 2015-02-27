@@ -2,6 +2,8 @@
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    protected $migratedDatabases = false;
+
     public function setUp()
     {
         if (! $this->app) {
@@ -15,21 +17,35 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $this->refreshApplication();
     }
 
+    public function tearDown()
+    {
+        // if we're using mysql or postgresql,
+        // we need to remove the used data
+        if ($this->migratedDatabases) {
+            $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
+            $artisan->call('migrate:reset');
+        }
+
+        parent::tearDown();
+    }
+
     public function packagesToTest(array $items)
     {
         $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
 
-        if (in_array('translations', $items)) {
-            $artisan->call('migrate', ['--database' => 'testbench', '--path' => "Translation/migrations"]);
+        $migrations = [
+            'translations' => "Translation/migrations",
+            'entities' => "Entities/migrations",
+            'taxonomy' => "Taxonomy/migrations"
+        ];
+
+        foreach ($migrations as $key => $path) {
+            if (in_array($key, $items)) {
+                $artisan->call('migrate', ['--path' => $path]);
+            }
         }
 
-        if (in_array('entities', $items)) {
-            $artisan->call('migrate', ['--database' => 'testbench', '--path' => "Entities/migrations"]);
-        }
-
-        if (in_array('taxonomy', $items)) {
-            $artisan->call('migrate', ['--database' => 'testbench', '--path' => "Taxonomy/migrations"]);
-        }
+        $this->migratedDatabases = true;
     }
 
     /**
@@ -40,19 +56,50 @@ class TestCase extends \Orchestra\Testbench\TestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-
         // reset base path to point to our package's src directory
         $app['path.base'] = realpath(__DIR__ . '/..');
 
-        $app['config']->set('database.default', 'testbench');
         $app['config']->set(
-            'database.connections.testbench',
-            array(
-                'driver' => 'sqlite',
-                'database' => ':memory:',
-                'prefix' => '',
-            )
+            'database.connections',
+            [
+                'default' => [
+                    'driver' => 'sqlite',
+                    'database' => ':memory:',
+                    'prefix' => '',
+                ],
+                'travis-mysql' => [
+                    'driver'    => 'mysql',
+                    'host'      => 'localhost',
+                    'database'  => 'travis_test',
+                    'username'  => 'travis',
+                    'password'  => '',
+                    'charset'   => 'utf8',
+                    'collation' => 'utf8_unicode_ci',
+                    'prefix'    => '',
+                ],
+                'travis-pgsql' => [
+                    'driver'   => 'pgsql',
+                    'host'     => 'localhost',
+                    'database' => 'travis_test',
+                    'username' => 'postgres',
+                    'password' => '',
+                    'charset'  => 'utf8',
+                    'prefix'   => '',
+                    'schema'   => 'public',
+                ]
+            ]
         );
+
+        $app['config']->set('database.default', 'default');
+        if($db = getenv('DB')) {
+            if ($db == 'pgsql') {
+                $app['config']->set('database.default', 'travis-pgsql');
+            }
+
+            if ($db == 'mysql') {
+                $app['config']->set('database.default', 'travis-mysql');
+            }
+        }
     }
 
     /**
