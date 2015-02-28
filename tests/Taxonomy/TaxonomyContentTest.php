@@ -195,8 +195,9 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $post->save();
 
         //add initial terms
-        $ids = T::getTermIds(['tag' => ['TDD', 'PHP', 'Add some tags']]);
-        $post->setTerms($ids);
+        $tag_ids = T::getTermIds(['tag' => ['TDD', 'PHP', 'Add some tags']]);
+        $artist_ids = T::getTermIds(['artist' => ['Mika', 'Elton John']]); //these should not be in the final list
+        $post->setTerms(array_merge($artist_ids, $tag_ids));
 
         //add new terms
         $idsNew = T::getTermIds(['artist' => ['Muse', 'Blood Red Shoes', 'Ratatat']]);
@@ -205,7 +206,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $all = TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id');
 
         $this->assertCount(6, $all);
-        $this->assertEquals(array_merge($ids, $idsNew), $all);
+        $this->assertEquals(array_merge($tag_ids, $idsNew), $all);
     }
 
     /**
