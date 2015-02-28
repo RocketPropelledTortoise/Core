@@ -149,4 +149,74 @@ class TermTest extends \Rocket\Utilities\TestCase
         $this->assertFalse($term->translated('de'));
         $this->assertFalse($term->translated('cn'), 'non existing entries should return false');
     }
+
+    public function testTranslatedOnRealTerm()
+    {
+        I18N::setLanguage('en');
+        Vocabulary::insert(['name' => 'Test', 'machine_name' => 'test', 'hierarchy' => 0, 'translatable' => true]);
+
+        $original_title = 'Test term original content';
+
+        $id = T::getTermId($original_title, 'test');
+        $term = T::getTerm($id);
+
+        $this->assertEquals($original_title, $term->title());
+        $this->assertEquals('', $term->description());
+        $this->assertTrue($term->translated());
+
+        $this->assertEquals($original_title, $term->title('fr'));
+        $this->assertEquals('', $term->description('fr'));
+        $this->assertFalse($term->translated('fr'));
+    }
+
+    public function testEdit()
+    {
+        I18N::setLanguage('en');
+        Vocabulary::insert(['name' => 'Test', 'machine_name' => 'test', 'hierarchy' => 0, 'translatable' => true]);
+
+        $original_title = 'Test term original content';
+        $new_title = 'Test term new content';
+        $new_description = 'A description';
+        $new_title_fr = 'Terme de test, nouveau contenu';
+        $new_description_fr = 'Une description';
+
+        $id = T::getTermId($original_title, 'test');
+        $term = T::getTerm($id);
+
+        $this->assertEquals($original_title, $term->title());
+        $this->assertEquals('', $term->description());
+        $this->assertTrue($term->translated());
+
+        $this->assertEquals($original_title, $term->title('fr'));
+        $this->assertEquals('', $term->description('fr'));
+        $this->assertFalse($term->translated('fr'));
+
+        $en = $term->editLanguage('en');
+        $en->title = $new_title;
+        $en->description = $new_description;
+        $en->save();
+
+        $fr = $term->editLanguage('fr');
+        $fr->title = $new_title_fr;
+        $fr->description = $new_description_fr;
+        $fr->save();
+
+        $this->assertEquals($new_title, $term->title());
+        $this->assertEquals($new_description, $term->description());
+        $this->assertTrue($term->translated());
+
+        $this->assertEquals($new_title_fr, $term->title('fr'));
+        $this->assertEquals($new_description_fr, $term->description('fr'));
+        $this->assertTrue($term->translated('fr'));
+
+        $term_retrieved = T::getTerm($id);
+
+        $this->assertEquals($new_title, $term_retrieved->title());
+        $this->assertEquals($new_description, $term_retrieved->description());
+        $this->assertTrue($term_retrieved->translated());
+
+        $this->assertEquals($new_title_fr, $term_retrieved->title('fr'));
+        $this->assertEquals($new_description_fr, $term_retrieved->description('fr'));
+        $this->assertTrue($term_retrieved->translated('fr'));
+    }
 }
