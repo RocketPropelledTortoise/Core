@@ -94,7 +94,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         );
 
         $app['config']->set('database.default', 'default');
-        if($db = getenv('DB')) {
+        if ($db = getenv('DB')) {
             if ($db == 'pgsql') {
                 $app['config']->set('database.default', 'travis-pgsql');
             }
