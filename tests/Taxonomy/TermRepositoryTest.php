@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Cache;
 use Rocket\Taxonomy\Facade as T;
 use Rocket\Taxonomy\Model\Vocabulary;
-use Rocket\Taxonomy\Term;
 use Rocket\Translation\I18NFacade as I18N;
 use Rocket\Translation\Model\Language;
 

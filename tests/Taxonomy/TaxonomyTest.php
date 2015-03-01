@@ -2,8 +2,6 @@
 
 use Rocket\Taxonomy\Facade as T;
 use Rocket\Taxonomy\Model\Vocabulary;
-use Rocket\Taxonomy\Model\TermData;
-use Rocket\Taxonomy\Model\TermContainer;
 use Rocket\Translation\I18NFacade as I18N;
 use Rocket\Translation\Model\Language;
 use Illuminate\Support\Facades\Cache;
