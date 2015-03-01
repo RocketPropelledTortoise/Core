@@ -219,4 +219,16 @@ class TermTest extends \Rocket\Utilities\TestCase
         $this->assertEquals($new_description_fr, $term_retrieved->description('fr'));
         $this->assertTrue($term_retrieved->translated('fr'));
     }
+
+    /**
+     * @expectedException \Rocket\Taxonomy\Exception\UndefinedLanguageException
+     */
+    public function testUndefinedLanguage()
+    {
+        I18N::setLanguage('fr');
+
+        $term = new Term($this->exampleData());
+
+        $term->editLanguage('cn');
+    }
 }
