@@ -1,5 +1,10 @@
 <?php namespace Rocket\Utilities;
 
+/**
+ * Class TestCase
+ * @package Rocket\Utilities
+ * @codeCoverageIgnore
+ */
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected $migratedDatabases = false;

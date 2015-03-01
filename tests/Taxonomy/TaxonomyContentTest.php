@@ -1,6 +1,6 @@
 <?php namespace Rocket\Taxonomy;
 
-use Cache;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Rocket\Taxonomy\Facade as T;
@@ -8,7 +8,7 @@ use Rocket\Taxonomy\Model\TermContent;
 use Rocket\Taxonomy\Model\Vocabulary;
 use Rocket\Taxonomy\TaxonomyTrait;
 use Rocket\Translation\Model\Language;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class Post extends Model {
     use TaxonomyTrait;

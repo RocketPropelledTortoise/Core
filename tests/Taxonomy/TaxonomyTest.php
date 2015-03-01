@@ -6,7 +6,7 @@ use Rocket\Taxonomy\Model\TermData;
 use Rocket\Taxonomy\Model\TermContainer;
 use Rocket\Translation\I18NFacade as I18N;
 use Rocket\Translation\Model\Language;
-use Cache;
+use Illuminate\Support\Facades\Cache;
 
 class TaxonomyTest extends \Rocket\Utilities\TestCase
 {
