@@ -131,6 +131,10 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
      */
     public function testDescentCommonTableExpressionQuery($origin, $result)
     {
+		if (\DB::connection()->getDriverName() == 'sqlite' && \SQLite3::version()['versionNumber'] < 3008003) {
+			$this->markTestSkipped('Sqlite 3.8.3 is require to run these tests');
+		}
+		
         $retriever = new CommonTableExpressionQuery();
 
         $family = $this->generateTestTree();
@@ -179,6 +183,10 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
      */
     public function testAncestryCommonTableExpressionQuery($origin, $result)
     {
+		if (\DB::connection()->getDriverName() == 'sqlite' && \SQLite3::version()['versionNumber'] < 3008003) {
+			$this->markTestSkipped('Sqlite 3.8.3 is require to run these tests');
+		}
+		
         $retriever = new CommonTableExpressionQuery();
 
         $family = $this->generateTestTree();
