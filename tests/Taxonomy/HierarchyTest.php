@@ -7,6 +7,13 @@ use Rocket\Taxonomy\Model\Vocabulary;
 use Rocket\Taxonomy\Facade as T;
 use \Rocket\Taxonomy\Model\Hierarchy;
 
+class TermParent {
+    public function __construct($term, $parent) {
+        $this->term_id = $term;
+        $this->parent_id = $parent;
+    }
+}
+
 class HierarchyTest extends \Rocket\Utilities\TestCase
 {
     public function setUp()
@@ -115,5 +122,123 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         $this->assertEquals([null, null], T::getDescentGraph($id));
     }
 
-    //TODO :: test hierarchy types
+    public function testComplexPaths()
+    {
+        I18N::setLanguage('en');
+        Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 2, 'translatable' => true]);
+        $vid = T::vocabulary('family');
+
+        $family = [
+            'grandpa' => T::getTermId('Grandpa', $vid),
+            'mom' => T::getTermId('Mom', $vid),
+            'dad' => T::getTermId('Dad', $vid),
+            'aunt' => T::getTermId('Aunt', $vid),
+            'uncle' => T::getTermId('Uncle', $vid),
+            'me' => T::getTermId('Me', $vid),
+        ];
+
+        $me = T::getTerm($family['me']);
+        $me->addParents([$family['dad'], $family['mom']]);
+
+        $mom = T::getTerm($family['mom']);
+        $mom->addParent($family['grandpa']);
+
+        // these should not appear ...
+        T::getTerm($family['uncle'])->addParent($family['grandpa']);
+        T::getTerm($family['aunt'])->addParent($family['grandpa']);
+
+        $this->assertEquals(
+            [
+                [$family['grandpa'], $family['mom'], $family['me']],
+                [$family['dad'], $family['me']],
+            ],
+            T::getAncestryPaths($family['me'])
+        );
+
+        $this->assertEquals(
+            [
+                [$family['me'], $family['dad']]
+            ],
+            T::getDescentPaths($family['dad'])
+        );
+
+        $this->assertEquals(
+            [
+                [$family['me'], $family['mom'], $family['grandpa']],
+                [$family['uncle'], $family['grandpa']],
+                [$family['aunt'], $family['grandpa']],
+
+            ],
+            T::getDescentPaths($family['grandpa'])
+        );
+    }
+
+    public function testDetectLoopPathResolver()
+    {
+        $family = [
+            'me' => "1",
+            'dad' => "2",
+        ];
+
+        // Fake a cache entry so we wont touch the database
+        Cache::put(
+            "Rocket::Taxonomy::TermHierarchy::descent::$family[dad]",
+            [
+                new TermParent($family['me'], $family['dad']),
+                new TermParent($family['dad'], $family['me']),
+            ],
+            60
+        );
+
+        $this->assertEquals([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
+
+
+        // Fake a cache entry so we wont touch the database
+        Cache::put(
+            "Rocket::Taxonomy::TermHierarchy::ancestry::$family[me]",
+            [
+                new TermParent($family['me'], $family['dad']),
+                new TermParent($family['dad'], $family['me']),
+            ],
+            60
+        );
+        $this->assertEquals([[$family['dad'], $family['me']]], T::getAncestryPaths($family['me']));
+    }
+
+    public function testDetectLoop()
+    {
+        $this->markTestSkipped('This goes to infinite loop, try to find a way to fix this (test when adding a parent?)');
+
+        I18N::setLanguage('en');
+        Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 2, 'translatable' => true]);
+        $vid = T::vocabulary('family');
+
+        $family = [
+            'mom' => T::getTermId('Mom', $vid),
+            'dad' => T::getTermId('Dad', $vid),
+            'me' => T::getTermId('Me', $vid),
+        ];
+
+        $me = T::getTerm($family['me']);
+        $me->addParent($family['dad']);
+
+        // Declare a circular reference, should not fail in code
+        $me = T::getTerm($family['dad']);
+        $me->addParent($family['me']);
+
+        $this->assertEquals([[$family['dad'], $family['me']]], T::getAncestryPaths($family['me']));
+        $this->assertEquals([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
+    }
+
+    public function testCannotAddParentBecauseVocabularyType()
+    {
+        //TODO :: test hierarchy types
+        $this->markTestIncomplete("test needs to be written");
+    }
+
+    public function testCannotAddMultipleParentBecauseVocabularyType()
+    {
+        //TODO :: test hierarchy types
+        $this->markTestIncomplete("test needs to be written");
+    }
 }
