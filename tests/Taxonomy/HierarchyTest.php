@@ -35,6 +35,29 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         ];
     }
 
+    /**
+     * Comparing objects is not possible, we need a readble format and in a precise order.
+     *
+     * @param $results
+     * @return array|bool
+     */
+    protected function toComparable($results)
+    {
+        $final = [];
+        foreach ($results as $result) {
+            $final[] = implode(",", $result);
+        }
+
+        $final = natsort($final);
+
+        return $final;
+    }
+
+    protected function assertSamePaths($expected, $actual)
+    {
+        $this->assertEquals($this->toComparable($expected), $this->toComparable($actual)) ;
+    }
+
     public function testAddParent()
     {
         I18N::setLanguage('en');
@@ -49,8 +72,8 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         $me = T::getTerm($family['me']);
         $me->addParent($family['dad']);
 
-        $this->assertEquals([[$family['dad'], $family['me']]], T::getAncestryPaths($family['me']));
-        $this->assertEquals([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
+        $this->assertSamePaths([[$family['dad'], $family['me']]], T::getAncestryPaths($family['me']));
+        $this->assertSamePaths([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
     }
 
     public function testSetParent()
@@ -147,7 +170,7 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         T::getTerm($family['uncle'])->addParent($family['grandpa']);
         T::getTerm($family['aunt'])->addParent($family['grandpa']);
 
-        $this->assertEquals(
+        $this->assertSamePaths(
             [
                 [$family['grandpa'], $family['mom'], $family['me']],
                 [$family['dad'], $family['me']],
@@ -155,14 +178,14 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
             T::getAncestryPaths($family['me'])
         );
 
-        $this->assertEquals(
+        $this->assertSamePaths(
             [
                 [$family['me'], $family['dad']]
             ],
             T::getDescentPaths($family['dad'])
         );
 
-        $this->assertEquals(
+        $this->assertSamePaths(
             [
                 [$family['me'], $family['mom'], $family['grandpa']],
                 [$family['uncle'], $family['grandpa']],
@@ -190,7 +213,7 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
             60
         );
 
-        $this->assertEquals([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
+        $this->assertSamePaths([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
 
 
         // Fake a cache entry so we wont touch the database
@@ -202,7 +225,7 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
             ],
             60
         );
-        $this->assertEquals([[$family['dad'], $family['me']]], T::getAncestryPaths($family['me']));
+        $this->assertSamePaths([[$family['dad'], $family['me']]], T::getAncestryPaths($family['me']));
     }
 
     public function testDetectLoop()
@@ -226,8 +249,8 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         $me = T::getTerm($family['dad']);
         $me->addParent($family['me']);
 
-        $this->assertEquals([[$family['dad'], $family['me']]], T::getAncestryPaths($family['me']));
-        $this->assertEquals([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
+        $this->assertSamePaths([[$family['dad'], $family['me']]], T::getAncestryPaths($family['me']));
+        $this->assertSamePaths([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
     }
 
     public function testCannotAddParentBecauseVocabularyType()
