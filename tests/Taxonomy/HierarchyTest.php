@@ -253,15 +253,30 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         $this->assertSamePaths([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
     }
 
+    /**
+     * @expectedException \RuntimeException
+     */
     public function testCannotAddParentBecauseVocabularyType()
     {
-        //TODO :: test hierarchy types
-        $this->markTestIncomplete("test needs to be written");
+        I18N::setLanguage('en');
+        Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 0, 'translatable' => true]);
+        $vid = T::vocabulary('family');
+
+        $me = T::getTerm(T::getTermId('Me', $vid));
+        $me->addParent(T::getTermId('Dad', $vid));
     }
 
+    /**
+     * @expectedException \RuntimeException
+     */
     public function testCannotAddMultipleParentBecauseVocabularyType()
     {
-        //TODO :: test hierarchy types
-        $this->markTestIncomplete("test needs to be written");
+        I18N::setLanguage('en');
+        Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 1, 'translatable' => true]);
+        $vid = T::vocabulary('family');
+
+        $me = T::getTerm(T::getTermId('Me', $vid));
+        $me->addParent(T::getTermId('Mom', $vid));
+        $me->addParent(T::getTermId('Dad', $vid));
     }
 }
