@@ -1,17 +1,9 @@
-<?php
-
-/**
- * I18N facade
- */
-
-namespace Rocket\Translation;
-
-use Illuminate\Support\Facades\Facade;
+<?php namespace Rocket\Translation\Support\Laravel5;
 
 /**
  * Class I18N
  */
-class I18NFacade extends Facade
+class Facade extends \Illuminate\Support\Facades\Facade
 {
 
     /**

@@ -1,8 +1,8 @@
 <?php namespace Rocket\Taxonomy;
 
-use Rocket\Taxonomy\Facade as T;
+use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Taxonomy\Model\Vocabulary;
-use Rocket\Translation\I18NFacade as I18N;
+use Rocket\Translation\Support\Laravel5\Facade as I18N;
 use Rocket\Translation\Model\Language;
 use Illuminate\Support\Facades\Cache;
 
@@ -23,8 +23,8 @@ class TaxonomyTest extends \Rocket\Utilities\TestCase
     protected function getPackageProviders($app)
     {
         return [
-            '\Rocket\Taxonomy\ServiceProvider',
-            '\Rocket\Translation\TranslationServiceProvider'
+            '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider',
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider'
         ];
     }
 

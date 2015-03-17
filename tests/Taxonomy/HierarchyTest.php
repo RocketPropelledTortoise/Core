@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Cache;
 use Rocket\Translation\Model\Language;
-use Rocket\Translation\I18NFacade as I18N;
+use Rocket\Translation\Support\Laravel5\Facade as I18N;
 use Rocket\Taxonomy\Model\Vocabulary;
-use Rocket\Taxonomy\Facade as T;
-use \Rocket\Taxonomy\Model\Hierarchy;
+use Rocket\Taxonomy\Support\Laravel5\Facade as T;
+use Rocket\Taxonomy\Model\Hierarchy;
 
 class TermParent {
     public function __construct($term, $parent) {
@@ -30,8 +30,8 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
     protected function getPackageProviders($app)
     {
         return [
-            '\Rocket\Taxonomy\ServiceProvider',
-            '\Rocket\Translation\TranslationServiceProvider'
+            '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider',
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider'
         ];
     }
 

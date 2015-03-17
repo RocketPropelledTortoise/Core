@@ -1,10 +1,10 @@
 <?php namespace Rocket\Taxonomy;
 
-use Rocket\Taxonomy\Facade as T;
+use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Taxonomy\Model\Vocabulary;
 use Rocket\Taxonomy\Utils\RecursiveQuery;
 use Rocket\Taxonomy\Utils\CommonTableExpressionQuery;
-use Rocket\Translation\I18NFacade as I18N;
+use Rocket\Translation\Support\Laravel5\Facade as I18N;
 use Rocket\Translation\Model\Language;
 use Illuminate\Support\Facades\Cache;
 use stdClass;
@@ -25,8 +25,8 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
     protected function getPackageProviders($app)
     {
         return [
-            '\Rocket\Taxonomy\ServiceProvider',
-            '\Rocket\Translation\TranslationServiceProvider'
+            '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider',
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider'
         ];
     }
 
@@ -134,7 +134,7 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
 		if (\DB::connection()->getDriverName() == 'sqlite' && \SQLite3::version()['versionNumber'] < 3008003) {
 			$this->markTestSkipped('Sqlite 3.8.3 is require to run these tests');
 		}
-		
+
         $retriever = new CommonTableExpressionQuery();
 
         $family = $this->generateTestTree();
@@ -186,7 +186,7 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
 		if (\DB::connection()->getDriverName() == 'sqlite' && \SQLite3::version()['versionNumber'] < 3008003) {
 			$this->markTestSkipped('Sqlite 3.8.3 is require to run these tests');
 		}
-		
+
         $retriever = new CommonTableExpressionQuery();
 
         $family = $this->generateTestTree();

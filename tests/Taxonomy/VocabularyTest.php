@@ -1,7 +1,7 @@
 <?php namespace Rocket\Taxonomy;
 
 use Illuminate\Support\Facades\Cache;
-use Rocket\Taxonomy\Facade as T;
+use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Taxonomy\Model\Vocabulary;
 use Rocket\Translation\Model\Language;
 
@@ -20,7 +20,7 @@ class VocabularyTest extends \Rocket\Utilities\TestCase
 
     protected function getPackageProviders($app)
     {
-        return ['\Rocket\Taxonomy\ServiceProvider'];
+        return ['\Rocket\Taxonomy\Support\Laravel5\ServiceProvider'];
     }
 
     public function testNoVocabularies()

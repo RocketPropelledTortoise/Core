@@ -33,7 +33,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
 
     protected function getPackageProviders($app)
     {
-        return ['\Rocket\Entities\EntitiesServiceProvider'];
+        return ['\Rocket\Entities\Support\Laravel5\ServiceProvider'];
     }
 
     public function testGetContentType()

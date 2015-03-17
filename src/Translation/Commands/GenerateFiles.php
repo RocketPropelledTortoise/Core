@@ -3,7 +3,7 @@
 namespace Rocket\Translation\Commands;
 
 use Illuminate\Console\Command;
-use Rocket\Translation\I18NFacade as I18N;
+use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
 class GenerateFiles extends Command
 {

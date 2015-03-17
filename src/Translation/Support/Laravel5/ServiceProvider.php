@@ -1,10 +1,9 @@
-<?php namespace Rocket\Translation;
+<?php namespace Rocket\Translation\Support\Laravel5;
 
 use Illuminate\Foundation\Application;
-use Illuminate\Support\ServiceProvider;
 use Rocket\Translation\Commands\GenerateFiles;
 
-class TranslationServiceProvider extends ServiceProvider
+class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     protected function registerManager()
     {

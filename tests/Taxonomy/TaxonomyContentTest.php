@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
-use Rocket\Taxonomy\Facade as T;
+use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Taxonomy\Model\TermContent;
 use Rocket\Taxonomy\Model\Vocabulary;
 use Rocket\Translation\Model\Language;
@@ -68,8 +68,8 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
     protected function getPackageProviders($app)
     {
         return [
-            '\Rocket\Taxonomy\ServiceProvider',
-            '\Rocket\Translation\TranslationServiceProvider'
+            '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider',
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider'
         ];
     }
 
