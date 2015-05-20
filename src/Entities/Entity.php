@@ -1,127 +1,82 @@
 <?php namespace Rocket\Entities;
 
-use ErrorException;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use RuntimeException;
+use InvalidArgumentException;
 
-/**
- * Represents a content of any form
- *
- * @property integer $id the entity's ID
- */
-class Entity extends Model
+
+abstract class Entity
 {
-    /**
-     * {@inheritdoc}
-     */
-    public $table = 'contents';
 
-    //belongsToMany : revisions
+    public static $types;
 
     /**
-     * Give the field names for this content type
+     * The content represented by this entity
      *
-     * @var array
+     * @var Content
      */
-    protected $fields = [];
-
-    /**
-     * These fields will not be loaded eagerly
-     * @var array
-     */
-    protected $lazy = [];
+    protected $content; //id, created_at
 
     /**
      * The revision represented by this entity
      *
      * @var Revision
      */
-    protected $currentRevision;
-
-    public function __construct($data)
-    {
-        $this->bootIfNotBooted();
-
-        $this->syncOriginal();
-
-        //TODO :: field validators
-
-        $this->currentRevision = new Revision();
-        $this->currentRevision->initShape($this->fields);
-        $this->currentRevision->language_id = $data['language_id'];
-    }
+    protected $revision; //language_id, updated_at
 
     /**
-     * Save a revision
+     * The fields in this entity
      *
-     * @return bool|void
+     * @var array<FieldCollection>
      */
-    public function save(array $options = [])
+    protected $data;
+
+    public function __construct($data = [])
     {
-        //TODO
+        $fields = $this->getFields();
 
-        DB::transaction(
-            function () {
-                //save all revisions
+        //TODO :: populate data
 
-                parent::save();
+        $this->content = new Content;
+        $this->revision = new Revision;
+
+        foreach ($fields as $field => $settings) {
+
+            if ($this->isContentField($field) || $this->isRevisionField($field)) {
+                throw new InvalidArgumentException(
+                    "The field '$field' cannot be used in '" . get_class($this) . "' as it is a reserved name"
+                );
             }
-        );
+
+            $type = $settings['type'];
+
+            if (!array_key_exists($type, self::$types)) {
+                throw new RuntimeException("Unkown type '$type' in '" . get_class($this) . "'");
+                //TODO :: use types for something ...
+            }
+
+            $this->data[$field] = FieldCollection::initField($settings);
+        }
     }
 
-    public function update(array $attributes = [])
-    {
-        //TODO
-    }
-
-    /**
-     * Delete a revision ? Remove content ?
-     *
-     * @return bool|null|void
-     */
-    public function delete()
-    {
-        //TODO
-    }
+    abstract protected function getFields();
 
     /**
-     * Start a new revision
+     * Create a new revision based on the same content ID but without the content.
+     * Very useful if you want to add a new language
      *
-     * @param $language
-     * @return Entity
+     * @param integer $language_id
+     * @return static
      */
-    public function revision($language_id)
+    public function newRevision($language_id = null)
     {
-        if ($language_id == $this->currentRevision->language_id) {
-            return clone $this;
+        $created = new static();
+        $created->content = $this->content;
+
+        if ($language_id) {
+            $created->language_id = $language_id;
         }
 
-        $revision = new static([]);
-        $revision->language_id = $language_id;
-        $revision->content_id = $this->id;
-
-        return $revision;
-    }
-
-    /**
-     * Get the database friendly content type
-     *
-     * @return string
-     */
-    public function getContentType()
-    {
-        return str_replace('\\', '', snake_case(class_basename($this)));
-    }
-
-    /**
-     * Check if the field exists on the entity
-     *
-     * @param string $field
-     * @return bool
-     */
-    protected function hasField($field)
-    {
-        return array_key_exists($field, $this->fields);
+        return $created;
     }
 
     /**
@@ -132,7 +87,27 @@ class Entity extends Model
      */
     protected function isContentField($field)
     {
-        return in_array($field, ['id', 'created_at', 'updated_at']);
+        return in_array($field, ['id', 'created_at']);
+    }
+
+    /**
+     * Check if the field exists on the entity
+     *
+     * @param string $field
+     * @return bool
+     */
+    public function hasField($field)
+    {
+        return array_key_exists($field, $this->data);
+    }
+
+    /**
+     * @param $field
+     * @return FieldCollection
+     */
+    public function getField($field)
+    {
+        return $this->data[$field];
     }
 
     /**
@@ -143,15 +118,7 @@ class Entity extends Model
      */
     protected function isRevisionField($field)
     {
-        return in_array($field, ['language_id']);
-    }
-
-    /**
-     * @return Revision
-     */
-    protected function getCurrentRevision()
-    {
-        return $this->currentRevision;
+        return in_array($field, ['language_id', 'updated_at']);
     }
 
     /**
@@ -159,23 +126,23 @@ class Entity extends Model
      *
      * @param string $key
      * @return $this|bool|\Carbon\Carbon|\DateTime|mixed|static
-     * @throws ErrorException
+     * @throws RuntimeException
      */
     public function __get($key)
     {
         if ($this->isContentField($key)) {
-            return $this->getAttribute($key);
+            return $this->content->getAttribute($key);
         }
 
         if ($this->isRevisionField($key)) {
-            return $this->getCurrentRevision()->getAttribute($key);
+            return $this->revision->getAttribute($key);
         }
 
-        if (!$this->hasField($key)) {
-            throw new ErrorException("Field '$key' doesn't exists in '".get_class($this)."'");
+        if ($this->hasField($key)) {
+            return $this->getField($key);
         }
 
-        return $this->getCurrentRevision()->getAttribute($key);
+        throw new RuntimeException("Field '$key' doesn't exist in '".get_class($this)."'");
     }
 
     /**
@@ -183,51 +150,49 @@ class Entity extends Model
      *
      * @param string $key
      * @param mixed $value
-     * @throws ErrorException
+     * @throws RuntimeException
      */
     public function __set($key, $value)
     {
         if ($this->isContentField($key)) {
-            $this->setAttribute($key, $value);
+            $this->content->setAttribute($key, $value);
             return;
         }
 
         if ($this->isRevisionField($key)) {
-            $this->getCurrentRevision()->setAttribute($key, $value);
+            $this->revision->setAttribute($key, $value);
             return;
         }
 
-        if (!$this->hasField($key)) {
-            throw new ErrorException("Field '$key' doesn't exists in '".get_class($this)."'");
+        if ($this->hasField($key)) {
+            if ($value == []) {
+                $this->getField($key)->clear();
+            } else {
+                $this->getField($key)->offsetSet(0, $value);
+            }
+            return;
         }
 
-        $this->getCurrentRevision()->setAttribute($key, $value);
+        throw new RuntimeException("Field '$key' doesn't exist in '".get_class($this)."'");
     }
 
     /**
-     * Determine if an attribute exists on the model.
+     * Convert the Entity to an array.
      *
-     * @param  string  $key
-     * @return bool
+     * @return array
      */
-    public function __isset($key)
+    public function toArray()
     {
-        //TODO
-        return ((isset($this->attributes[$key]) || isset($this->relations[$key])) ||
-            ($this->hasGetMutator($key) && ! is_null($this->getAttributeValue($key))));
+        $content = [];
+
+        $content['_content'] = $this->content->toArray();
+        $content['_revision'] = $this->revision->toArray();
+
+        foreach ($this->data as $field => $data) {
+            $content[$field] = $data->toArray();
+        }
+
+        return $content;
     }
 
-    /**
-     * Unset an attribute on the model.
-     *
-     * @param  string  $key
-     * @return void
-     */
-    public function __unset($key)
-    {
-        //TODO
-        unset($this->attributes[$key]);
-
-        unset($this->relations[$key]);
-    }
 }

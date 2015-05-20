@@ -3,11 +3,6 @@
 class FieldCollection extends \Illuminate\Support\Collection
 {
     /**
-     * @var string The class name of the childs
-     */
-    protected $itemClass;
-
-    /**
      * @var int The max items this collection can hold
      */
     protected $maxItems = 1;
@@ -20,14 +15,12 @@ class FieldCollection extends \Illuminate\Support\Collection
     /**
      * Initialize a collection with the configuration
      *
-     * @param $itemClass
      * @param array $configuration
-     * @return FieldCollection
+     * @return static
      */
-    public static function initField($itemClass, $configuration = [])
+    public static function initField($configuration = [])
     {
         $collection = new static();
-        $collection->itemClass = $itemClass;
         $collection->configuration = $configuration;
 
         if (array_key_exists('max_items', $configuration)) {
@@ -43,27 +36,28 @@ class FieldCollection extends \Illuminate\Support\Collection
     public function offsetSet($key, $value)
     {
         if ((is_null($key) || !array_key_exists($key, $this->items)) && $this->count() >= $this->getMaxItems()) {
-            throw new \RuntimeException('The maximum number of items has been attained on this field.');
-        }
-
-        if ($value instanceof $this->itemClass) {
-            return parent::offsetSet($key, $value);
+            throw new \RuntimeException('The maximum number of items has been reached on this field.');
         }
 
         if (is_null($key) || !array_key_exists($key, $this->items)) {
-            $item = new $this->itemClass();
-            $item->setAttribute('value', $value);
-
             if (is_null($key)) {
-                $this->items[] = $item;
+                $this->items[] = $value;
             } else {
-                $this->items[$key] = $item;
+                $this->items[$key] = $value;
             }
 
             return;
         }
 
-        $this->items[$key]->setAttribute('value', $value);
+        $this->items[$key] = $value;
+    }
+
+    /**
+     * Remove all items in this collection
+     */
+    public function clear()
+    {
+        $this->items = [];
     }
 
     /**
@@ -91,6 +85,15 @@ class FieldCollection extends \Illuminate\Support\Collection
             return null;
         }
 
-        return $this->items[0]->toArray();
+        return $this->items[0];
+    }
+
+    public function __toString()
+    {
+        if ($this->maxItems == 1) {
+            return $this->items[0];
+        }
+
+        return "Array";
     }
 }
