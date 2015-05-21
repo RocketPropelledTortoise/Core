@@ -9,7 +9,7 @@ namespace Rocket\Translation;
 use Exception;
 use Illuminate\Foundation\Application as IlluminateApplication;
 use Rocket\Translation\Model\Language;
-use Rocket\Translation\Model\String;
+use Rocket\Translation\Model\StringModel;
 use Rocket\Translation\Model\Translation;
 use Request;
 
@@ -368,7 +368,7 @@ class I18N
 
     protected function translateInsertString($context, $text)
     {
-        $string = new String();
+        $string = new StringModel();
         $string->date_creation = mysql_datetime();
         $string->context = $context;
         $string->string = $text;
@@ -410,7 +410,7 @@ class I18N
         }
 
         //check in db
-        $db_string = String::select('id', 'date_creation')
+        $db_string = StringModel::select('id', 'date_creation')
             ->where('string', $string)
             ->where('context', $context)
             ->first();
@@ -478,7 +478,7 @@ class I18N
         }
 
         foreach ($this->languages() as $lang => $d) {
-            $strings = String::select('string', 'text', 'context')
+            $strings = StringModel::select('string', 'text', 'context')
                 ->where('language_id', $d['id'])
                 ->join((new Translation)->getTable(), 'strings.id', '=', 'string_id', 'left')
                 ->get();

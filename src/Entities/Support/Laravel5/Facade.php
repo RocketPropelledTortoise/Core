@@ -11,5 +11,4 @@ class Facade extends \Illuminate\Support\Facades\Facade
     {
         return 'entity_manager';
     }
-
 }

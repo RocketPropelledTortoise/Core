@@ -22,9 +22,9 @@ class EntityManager
     /**
      * Save a revision
      *
-     * @return bool|void
+     * @param Entity $entity
      */
-    public function save(array $options = [])
+    public function save(Entity $entity)
     {
         //TODO
 
@@ -35,7 +35,12 @@ class EntityManager
         );
     }
 
-    public function update(array $attributes = [])
+    /**
+     * Update a revision
+     *
+     * @param Entity $entity
+     */
+    public function updateRevision(Entity $entity)
     {
         //TODO : do we implement update functionnality ?
     }
@@ -45,7 +50,7 @@ class EntityManager
      *
      * @return bool|null|void
      */
-    public function delete()
+    public function deleteRevision(Entity $entity, $revision_id)
     {
         //TODO
     }

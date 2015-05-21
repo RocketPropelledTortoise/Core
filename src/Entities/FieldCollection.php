@@ -54,6 +54,8 @@ class FieldCollection extends \Illuminate\Support\Collection
 
     /**
      * Remove all items in this collection
+     *
+     * @return void
      */
     public function clear()
     {

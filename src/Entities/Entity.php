@@ -1,9 +1,16 @@
 <?php namespace Rocket\Entities;
 
-use RuntimeException;
 use InvalidArgumentException;
+use RuntimeException;
 
-
+/**
+ * Entity manager
+ *
+ * @property int $id The content ID
+ * @property int $language_id The language in which this entity is
+ * @property-read \DateTime $created_at
+ * @property-read \DateTime $updated_at
+ */
 abstract class Entity
 {
 
@@ -34,28 +41,44 @@ abstract class Entity
     {
         $fields = $this->getFields();
 
-        //TODO :: populate data
+        $this->initialize($fields);
 
+        if ($data !== null) {
+            $this->hydrate($data);
+        }
+    }
+
+    protected function initialize(array $fields)
+    {
         $this->content = new Content;
         $this->revision = new Revision;
 
         foreach ($fields as $field => $settings) {
-
-            if ($this->isContentField($field) || $this->isRevisionField($field)) {
-                throw new InvalidArgumentException(
-                    "The field '$field' cannot be used in '" . get_class($this) . "' as it is a reserved name"
-                );
-            }
-
-            $type = $settings['type'];
-
-            if (!array_key_exists($type, self::$types)) {
-                throw new RuntimeException("Unkown type '$type' in '" . get_class($this) . "'");
-                //TODO :: use types for something ...
-            }
-
-            $this->data[$field] = FieldCollection::initField($settings);
+            $this->data[$field] = $this->initializeField($field, $settings);
         }
+    }
+
+    protected function initializeField($field, $settings)
+    {
+        if ($this->isContentField($field) || $this->isRevisionField($field)) {
+            throw new InvalidArgumentException(
+                "The field '$field' cannot be used in '" . get_class($this) . "' as it is a reserved name"
+            );
+        }
+
+        $type = $settings['type'];
+
+        if (!array_key_exists($type, self::$types)) {
+            throw new RuntimeException("Unkown type '$type' in '" . get_class($this) . "'");
+            //TODO :: use types for something ...
+        }
+
+        return FieldCollection::initField($settings);
+    }
+
+    protected function hydrate($data)
+    {
+        //TODO :: populate data
     }
 
     abstract protected function getFields();
@@ -72,7 +95,7 @@ abstract class Entity
         $created = new static();
         $created->content = $this->content;
 
-        if ($language_id) {
+        if ($language_id !== null) {
             $created->language_id = $language_id;
         }
 
@@ -102,7 +125,7 @@ abstract class Entity
     }
 
     /**
-     * @param $field
+     * @param string $field
      * @return FieldCollection
      */
     public function getField($field)
@@ -167,9 +190,10 @@ abstract class Entity
         if ($this->hasField($key)) {
             if ($value == []) {
                 $this->getField($key)->clear();
-            } else {
-                $this->getField($key)->offsetSet(0, $value);
+                return;
             }
+
+            $this->getField($key)->offsetSet(0, $value);
             return;
         }
 
@@ -194,5 +218,4 @@ abstract class Entity
 
         return $content;
     }
-
 }

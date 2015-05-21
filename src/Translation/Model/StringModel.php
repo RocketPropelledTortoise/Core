@@ -10,7 +10,7 @@ namespace Rocket\Translation\Model;
 
 use Eloquent;
 
-class String extends Eloquent
+class StringModel extends Eloquent
 {
     /**
      * {@inheritdoc}

@@ -17,7 +17,7 @@
  */
 function t($string, array $args = [], $context = null, $language = 'default')
 {
-    if ($context == null) {
+    if ($context === null) {
         $context = I18N::getContext();
     }
 
