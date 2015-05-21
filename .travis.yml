@@ -8,9 +8,12 @@ php:
   - hhvm
 
 env:
+  matrix:
   - DB=mysql
   - DB=pgsql
   - DB=sqlite
+  global:
+    secure: HL9vE+Nv37MLSTJbt7BVRt2+DUOhG6NsHvj2EepzpqwaBG+wfilREvdmu6W6x/4PxqkN88ggHeUYRTljBKMGHqjHVi2kQkKtLtyjx/N8U9gIXak2ciiNDrOmfzHl+HaB0o6pRlZiCGsSgqEapDZRPsNPcmA0XmOsfTcZjJCW+eM=
 
 before_script:
   - if [[ $DB = 'pgsql' ]]; then psql -c 'create database travis_test;' -U postgres; fi
