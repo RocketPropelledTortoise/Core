@@ -56,9 +56,14 @@ class ParentChildTree
 
         if ($this->config['create_root']) {
             $this->tree[$this->config['default_root_id']] = $this->config['default_root'];
-            $this->finder[$this->config['default_root_id']] = & $this->tree[$this->config['default_root_id']];
+            $this->finder[$this->config['default_root_id']] = &$this->tree[$this->config['default_root_id']];
         }
 
+        $this->buildTree($tree_data);
+    }
+
+    protected function buildTree($tree_data)
+    {
         $parent_key = $this->config['parent'];
         $default_root_id = $this->config['default_root_id'];
 
@@ -67,15 +72,20 @@ class ParentChildTree
 
             foreach ($tree_data as $node_id => $node) {
                 $node[$this->config['childs']] = array();
-                $parent = (array_key_exists($parent_key, $node))? $node[$parent_key] : $default_root_id;
+                $parent = (array_key_exists($parent_key, $node)) ? $node[$parent_key] : $default_root_id;
                 if ($this->add($parent, $node[$this->config['id']], $node)) {
                     unset($tree_data[$node_id]);
                 }
             }
 
-            if ($beginning_with == count($tree_data)) {
-                throw new \Exception('This tree has some missing parent items: ' . print_r($tree_data, true));
-            }
+            $this->ungracefulExit($beginning_with, $tree_data);
+        }
+    }
+
+    protected function ungracefulExit($beginning_with, $tree_data)
+    {
+        if ($beginning_with == count($tree_data)) {
+            throw new \Exception('This tree has some missing parent items: ' . print_r($tree_data, true));
         }
     }
 
