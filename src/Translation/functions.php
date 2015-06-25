@@ -37,11 +37,12 @@ function t($string, array $args = [], $context = null, $language = 'default')
                 $args[$key] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
                 break;
             case '%':
-            default:
                 // Escaped and placeholder.
                 $args[$key] = '<em>' . $value . '</em>';
                 break;
-
+            case '!':
+            default:
+                //do nothing
         }
     }
 
