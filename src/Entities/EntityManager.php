@@ -26,11 +26,9 @@ class EntityManager
      */
     public function save(Entity $entity)
     {
-        //TODO
-
         DB::transaction(
-            function () {
-                //save all revisions
+            function () use ($entity) {
+                $content = $entity->content;
             }
         );
     }

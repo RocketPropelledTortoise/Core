@@ -2,19 +2,50 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Field extends Model
+abstract class Field extends Model
 {
-    public function __construct(array $attributes = array())
-    {
-        $this->bootIfNotBooted();
-
-        $this->syncOriginal();
-
-        //TODO :: validators
+    /**
+     * Validates a value against the field
+     *
+     * @param $value
+     * @return boolean
+     */
+    public static function validateValue($value) {
+        return true;
     }
 
-    public function toArray()
+    /**
+     * Sanitizes a value against the field
+     *
+     * @param $value
+     * @return boolean
+     */
+    public static function sanitizeValue($value) {
+        return $value;
+    }
+
+    /**
+     * Take a value to be stored in a database
+     *
+     * @param $value
+     * @return static
+     */
+    public static function getForStorage($value)
     {
-        return $this->getAttribute('value');
+        $field = new static();
+        $field->value = $value;
+
+        return $field;
+    }
+
+    /**
+     * Take a value coming from the database to an entity
+     *
+     * @param $value
+     * @return mixed
+     */
+    public static function getForHydration($value)
+    {
+        return $value;
     }
 }

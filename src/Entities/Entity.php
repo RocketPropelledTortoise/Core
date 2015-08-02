@@ -13,7 +13,6 @@ use RuntimeException;
  */
 abstract class Entity
 {
-
     public static $types;
 
     /**

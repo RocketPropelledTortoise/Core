@@ -13,14 +13,21 @@ class FieldCollection extends \Illuminate\Support\Collection
     protected $configuration = [];
 
     /**
+     * @var string The field type
+     */
+    protected $type;
+
+    /**
      * Initialize a collection with the configuration
      *
+     * @param string $type
      * @param array $configuration
      * @return static
      */
-    public static function initField($configuration = [])
+    public static function initField($type, $configuration = [])
     {
         $collection = new static();
+        $collection->type = $type;
         $collection->configuration = $configuration;
 
         if (array_key_exists('max_items', $configuration)) {
@@ -39,13 +46,8 @@ class FieldCollection extends \Illuminate\Support\Collection
             throw new \RuntimeException('The maximum number of items has been reached on this field.');
         }
 
-        if (is_null($key) || !array_key_exists($key, $this->items)) {
-            if (is_null($key)) {
-                $this->items[] = $value;
-            } else {
-                $this->items[$key] = $value;
-            }
-
+        if (is_null($key)) {
+            $this->items[] = $value;
             return;
         }
 
