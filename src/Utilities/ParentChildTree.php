@@ -100,15 +100,15 @@ class ParentChildTree
     {
         //is it a root ?
         if (in_array($parent_id, $this->config['default_parent'])) {
-            if ($this->config['create_root']) {
-                $node[$this->config['parent']] = $this->config['default_root_id'];
-                $parent_id = $this->config['default_root_id'];
-            } else {
+            if (!$this->config['create_root']) {
                 $this->tree[$node_id] = $node;
                 $this->finder[$node_id] = & $this->tree[$node_id];
 
                 return true;
             }
+
+            $node[$this->config['parent']] = $this->config['default_root_id'];
+            $parent_id = $this->config['default_root_id'];
         }
 
         //is it in the finder ?
