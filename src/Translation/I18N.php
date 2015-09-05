@@ -347,7 +347,7 @@ class I18N
     {
         $languages = array();
         foreach (static::languages() as $lang) {
-            $languages[$lang['id']] = __($lang['name'], array(), 'languages');
+            $languages[$lang['id']] = t($lang['name'], array(), 'languages');
         }
         return $languages;
     }
