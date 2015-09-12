@@ -211,7 +211,7 @@ Event::listen(
     'init',
     function () {
         if (!Request::ajax()) {
-            if (user_can('admin_language_string_edit')) {
+            if (Gate::allows('admin_language_string_edit')) {
                 JS::ready(
                     '$(".not_translated").css("color", "red").click(function () {
                         jQuery.facebox({ ajax: "' . URL::to('admin/lang/string_edit') . '/" + $(this).attr("title") });
@@ -219,7 +219,7 @@ Event::listen(
                 );
             }
 
-            if (user_can('admin_term_edit')) {
+            if (Gate::allows('admin_term_edit')) {
                 JS::ready(
                     '$(".not_tagged").css("color", "red").click(function () {
                         jQuery.facebox({ ajax: "' . URL::to('admin/taxonomy/term_edit') . '/" + $(this).attr("title") });
