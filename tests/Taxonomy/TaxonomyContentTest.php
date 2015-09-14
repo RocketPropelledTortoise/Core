@@ -92,8 +92,8 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $post2->setTerms($ids2);
 
         $this->assertEquals(6, TermContent::count());
-        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id'));
-        $this->assertEquals($ids2, TermContent::where('relationable_type', get_class($post2))->where('relationable_id', $post2->id)->lists('term_id'));
+        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id')->toArray());
+        $this->assertEquals($ids2, TermContent::where('relationable_type', get_class($post2))->where('relationable_id', $post2->id)->lists('term_id')->toArray());
     }
 
     public function testSetTermsOverride()
@@ -114,7 +114,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $post->setTerms($ids2);
 
         $this->assertEquals(3, TermContent::count());
-        $this->assertEquals($ids2, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id'));
+        $this->assertEquals($ids2, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id')->toArray());
     }
 
     public function testGetTerms()
@@ -142,7 +142,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $terms = $postRetrieved->getTerms('tag');
         $this->assertCount(3, $terms);
         $this->assertInstanceOf('\Rocket\Taxonomy\Term', $terms[0]);
-        $this->assertEquals($ids, $terms->lists('term_id'));
+        $this->assertEquals($ids, $terms->lists('term_id')->toArray());
     }
 
     public function testAddTermNoOverride()
@@ -161,7 +161,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
 
         $post->addTerm($newId);
         $this->assertEquals(4, TermContent::count());
-        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id'));
+        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id')->toArray());
     }
 
     public function testSetNoDuplicate()
@@ -180,7 +180,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
 
         $post->addTerm($newId);
         $this->assertEquals(3, TermContent::count());
-        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id'));
+        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id')->toArray());
     }
 
     public function testSetTermsForOneVocabulary()
@@ -205,7 +205,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $all = TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id');
 
         $this->assertCount(6, $all);
-        $this->assertEquals(array_merge($tag_ids, $idsNew), $all);
+        $this->assertEquals(array_merge($tag_ids, $idsNew), $all->toArray());
     }
 
     /**
@@ -242,8 +242,6 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
 
     public function testGetRelatedContents()
     {
-
-
         Post::createTable();
         Media::createTable();
 
@@ -275,7 +273,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
 
         $post2->setTerms($ids);
 
-        $postsWithPHP = Post::getAllByTermId(T::getTermId('PHP', 'tag'))->select('posts.id')->lists('id');
+        $postsWithPHP = Post::getAllByTermId(T::getTermId('PHP', 'tag'))->select('posts.id')->lists('id')->toArray();
         $this->assertEquals([$post->id, $post2->id], $postsWithPHP);
     }
 }
