@@ -1,14 +1,14 @@
 <?php namespace Rocket\Utilities;
 
-class FormatTest extends \PHPUnit_Framework_TestCase {
-
+class FormatTest extends \PHPUnit_Framework_TestCase
+{
     public function sizeProvider()
     {
-        return array(
-            array(10, '10 B'),
-            array(12068858100, '11.24 GB'),
-            array(25165824, '24 MB'),
-        );
+        return [
+            [10, '10 B'],
+            [12068858100, '11.24 GB'],
+            [25165824, '24 MB'],
+        ];
     }
 
     /**
@@ -27,7 +27,7 @@ class FormatTest extends \PHPUnit_Framework_TestCase {
         return [
             [10, '10ms'],
             [1200, '1.200s'],
-            [61000, '1m 1.000s']
+            [61000, '1m 1.000s'],
         ];
     }
 

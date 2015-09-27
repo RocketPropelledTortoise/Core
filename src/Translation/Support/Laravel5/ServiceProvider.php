@@ -61,6 +61,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function provides()
     {
-        return array('i18n', 'command.rocket_language_generate');
+        return ['i18n', 'command.rocket_language_generate'];
     }
 }

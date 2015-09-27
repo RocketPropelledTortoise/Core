@@ -3,7 +3,6 @@
 /**
  * Generate tree from a list of entries
  */
-
 namespace Rocket\Utilities;
 
 /**
@@ -11,7 +10,6 @@ namespace Rocket\Utilities;
  */
 class ParentChildTree
 {
-
     /**
      * The tree itself
      * @var array
@@ -28,15 +26,15 @@ class ParentChildTree
      * Configuration values
      * @var array
      */
-    public $config = array(
+    public $config = [
         'id' => 'id',
         'childs' => 'childs',
         'parent' => 'parent_id',
-        'default_parent' => array(null, ''),
+        'default_parent' => [null, ''],
         'create_root' => false,
-        'default_root' => array(),
+        'default_root' => [],
         'default_root_id' => 0,
-    );
+    ];
 
     /**
      * Generate the tree
@@ -46,13 +44,13 @@ class ParentChildTree
      *
      * @throws \Exception
      */
-    public function __construct($tree_data, $config = array())
+    public function __construct($tree_data, $config = [])
     {
         //configure default vars
         $this->config = array_merge($this->config, $config);
 
-        $this->tree = array();
-        $this->finder = array();
+        $this->tree = [];
+        $this->finder = [];
 
         if ($this->config['create_root']) {
             $this->tree[$this->config['default_root_id']] = $this->config['default_root'];
@@ -71,7 +69,7 @@ class ParentChildTree
             $beginning_with = count($tree_data);
 
             foreach ($tree_data as $node_id => $node) {
-                $node[$this->config['childs']] = array();
+                $node[$this->config['childs']] = [];
                 $parent = (array_key_exists($parent_key, $node)) ? $node[$parent_key] : $default_root_id;
                 if ($this->add($parent, $node[$this->config['id']], $node)) {
                     unset($tree_data[$node_id]);
@@ -94,7 +92,7 @@ class ParentChildTree
      * @param  string $parent_id
      * @param  string $node_id
      * @param  array $node
-     * @return boolean
+     * @return bool
      */
     public function add($parent_id, $node_id, $node)
     {
@@ -102,7 +100,7 @@ class ParentChildTree
         if (in_array($parent_id, $this->config['default_parent'])) {
             if (!$this->config['create_root']) {
                 $this->tree[$node_id] = $node;
-                $this->finder[$node_id] = & $this->tree[$node_id];
+                $this->finder[$node_id] = &$this->tree[$node_id];
 
                 return true;
             }
@@ -114,7 +112,7 @@ class ParentChildTree
         //is it in the finder ?
         if (array_key_exists($parent_id, $this->finder)) {
             $this->finder[$parent_id][$this->config['childs']][$node_id] = $node;
-            $this->finder[$node_id] = & $this->finder[$parent_id][$this->config['childs']][$node_id];
+            $this->finder[$node_id] = &$this->finder[$parent_id][$this->config['childs']][$node_id];
 
             return true;
         }
@@ -139,7 +137,7 @@ class ParentChildTree
      */
     public function getChilds($id)
     {
-        $result = array();
+        $result = [];
         if (array_key_exists($id, $this->finder)) {
             return $this->recursiveGetChilds($this->finder[$id][$this->config['childs']], $result);
         } else {
@@ -176,7 +174,7 @@ class ParentChildTree
     /**
      * Internal recursive function
      * @param  array $tree
-     * @return boolean
+     * @return bool
      */
     private function recursiveSort(&$tree)
     {

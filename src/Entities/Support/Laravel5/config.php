@@ -8,5 +8,5 @@ return [
         'entity' => '\Rocket\Entities\Fields\Entity',
         'string' => '\Rocket\Entities\Fields\String',
         'text' => '\Rocket\Entities\Fields\Text',
-    ]
+    ],
 ];

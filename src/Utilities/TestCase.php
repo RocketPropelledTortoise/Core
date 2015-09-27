@@ -2,7 +2,6 @@
 
 /**
  * Class TestCase
- * @package Rocket\Utilities
  * @codeCoverageIgnore
  */
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -11,7 +10,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     public function setUp()
     {
-        if (! $this->app) {
+        if (!$this->app) {
             $this->refreshApplication();
         }
 
@@ -39,9 +38,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
 
         $migrations = [
-            'translations' => "Translation/migrations",
-            'entities' => "Entities/migrations", //depends on translations
-            'taxonomy' => "Taxonomy/migrations", //depends on translations
+            'translations' => 'Translation/migrations',
+            'entities' => 'Entities/migrations', //depends on translations
+            'taxonomy' => 'Taxonomy/migrations', //depends on translations
         ];
 
         foreach ($migrations as $key => $path) {
@@ -94,7 +93,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
                     'charset'  => 'utf8',
                     'prefix'   => '',
                     'schema'   => 'public',
-                ]
+                ],
             ]
         );
 

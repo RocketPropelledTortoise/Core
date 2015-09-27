@@ -13,7 +13,6 @@ use RuntimeException;
  */
 abstract class Entity
 {
-
     public static $types;
 
     /**
@@ -87,7 +86,7 @@ abstract class Entity
      * Create a new revision based on the same content ID but without the content.
      * Very useful if you want to add a new language
      *
-     * @param integer $language_id
+     * @param int $language_id
      * @return static
      */
     public function newRevision($language_id = null)
@@ -148,8 +147,8 @@ abstract class Entity
      * Dynamically retrieve attributes on the model.
      *
      * @param string $key
-     * @return $this|bool|\Carbon\Carbon|\DateTime|mixed|static
      * @throws RuntimeException
+     * @return $this|bool|\Carbon\Carbon|\DateTime|mixed|static
      */
     public function __get($key)
     {
@@ -179,21 +178,25 @@ abstract class Entity
     {
         if ($this->isContentField($key)) {
             $this->content->setAttribute($key, $value);
+
             return;
         }
 
         if ($this->isRevisionField($key)) {
             $this->revision->setAttribute($key, $value);
+
             return;
         }
 
         if ($this->hasField($key)) {
             if ($value == []) {
                 $this->getField($key)->clear();
+
                 return;
             }
 
             $this->getField($key)->offsetSet(0, $value);
+
             return;
         }
 

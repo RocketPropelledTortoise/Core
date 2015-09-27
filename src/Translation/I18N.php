@@ -3,41 +3,37 @@
 /**
  * Translation management
  */
-
 namespace Rocket\Translation;
 
 use Exception;
 use Illuminate\Foundation\Application as IlluminateApplication;
+use Request;
 use Rocket\Translation\Model\Language;
 use Rocket\Translation\Model\StringModel;
 use Rocket\Translation\Model\Translation;
-use Request;
 
 /**
  * Class I18N
- *
- * @package Youmewine
  */
 class I18N
 {
-
     /**
      * An array of the loaded languages
      * @var array
      */
-    protected $languagesLoaded = array();
+    protected $languagesLoaded = [];
 
     /**
      * An array of existing languages by ISO
      * @var array
      */
-    protected $languagesIso = array();
+    protected $languagesIso = [];
 
     /**
      * An array of existing languages by ID
      * @var array
      */
-    protected $languagesId = array();
+    protected $languagesId = [];
 
     /**
      * Language currently in use
@@ -55,7 +51,7 @@ class I18N
      * All the translation strings
      * @var array
      */
-    protected $strings = array();
+    protected $strings = [];
 
     /**
      * Path to the language files
@@ -73,7 +69,7 @@ class I18N
      * Strings cache
      * @var array
      */
-    protected $stringsRaw = array();
+    protected $stringsRaw = [];
 
     protected $cache;
     protected $session;
@@ -100,11 +96,11 @@ class I18N
         );
 
         foreach ($lang as $l) {
-            $this->languagesIso[$l->iso] = $this->languagesId[$l->id] = array(
+            $this->languagesIso[$l->iso] = $this->languagesId[$l->id] = [
                 'id' => $l->id,
                 'name' => $l->title,
-                'iso' => $l->iso
-            );
+                'iso' => $l->iso,
+            ];
         }
 
         $locale = $app['config']['app.locale'];
@@ -114,7 +110,7 @@ class I18N
         $language = $this->getDefaultLanguage($locale, $fallback);
         $this->setLanguage($language);
 
-        $this->log->debug("Language Class Initialized");
+        $this->log->debug('Language Class Initialized');
     }
 
     /**
@@ -126,8 +122,8 @@ class I18N
      *
      * @param $locale string
      * @param $fallback string
-     * @return string
      * @throws Exception if a default language cannot be found
+     * @return string
      */
     public function getDefaultLanguage($locale, $fallback)
     {
@@ -166,14 +162,14 @@ class I18N
             return $fallback;
         }
 
-        throw new \Exception("Cannot find an adapted language");
+        throw new \Exception('Cannot find an adapted language');
     }
 
     /**
      * Set the current language
      *
      * @param  string $language
-     * @return boolean
+     * @return bool
      */
     public function setCurrentLanguage($language)
     {
@@ -192,7 +188,7 @@ class I18N
      * Load a language file
      *
      * @param  string $language
-     * @return boolean
+     * @return bool
      */
     public function loadLanguage($language)
     {
@@ -202,11 +198,11 @@ class I18N
 
         $langfile = $language . '.php';
 
-        $this->strings[$language] = array();
+        $this->strings[$language] = [];
 
         // Determine where the language file is and load it
         if (file_exists($this->filePath . $langfile)) {
-            $this->strings[$language] = include($this->filePath . $langfile);
+            $this->strings[$language] = include $this->filePath . $langfile;
         }
 
         $this->languagesLoaded[] = $language;
@@ -223,7 +219,7 @@ class I18N
 
     /**
      * Get the current language id
-     * @return integer
+     * @return int
      */
     public function getCurrentId()
     {
@@ -234,7 +230,7 @@ class I18N
      * Set the language to use
      *
      * @param  string $language
-     * @return boolean
+     * @return bool
      */
     public function setLanguage($language)
     {
@@ -266,7 +262,7 @@ class I18N
      * Checks if a language is loaded or not
      *
      * @param  string $language
-     * @return boolean
+     * @return bool
      */
     protected function isLoaded($language)
     {
@@ -277,7 +273,7 @@ class I18N
      * Checks if a language is the default one
      *
      * @param  string $language
-     * @return boolean
+     * @return bool
      */
     protected function isDefault($language)
     {
@@ -292,7 +288,7 @@ class I18N
      * Checks if the language is availavble
      *
      * @param  string $language
-     * @return boolean
+     * @return bool
      */
     protected function isAvailable($language)
     {
@@ -334,21 +330,24 @@ class I18N
             if (is_null($subkey)) {
                 return $this->languagesId[$key];
             }
+
             return $this->languagesId[$key][$subkey];
         }
 
         if (is_null($subkey)) {
             return $this->languagesIso[$key];
         }
+
         return $this->languagesIso[$key][$subkey];
     }
 
     public function languagesForSelect()
     {
-        $languages = array();
+        $languages = [];
         foreach (static::languages() as $lang) {
-            $languages[$lang['id']] = t($lang['name'], array(), 'languages');
+            $languages[$lang['id']] = t($lang['name'], [], 'languages');
         }
+
         return $languages;
     }
 
@@ -417,12 +416,14 @@ class I18N
 
         if (!$db_string) {
             $this->translateInsertString($context, $string);
+
             return $string;
         }
 
         $text = $this->translateGetString($context, $language, $db_string->id);
         if ($text) {
             $this->strings[$language][$context][$string] = $text;
+
             return $text;
         }
 
@@ -483,7 +484,7 @@ class I18N
                 ->join((new Translation)->getTable(), 'strings.id', '=', 'string_id', 'left')
                 ->get();
 
-            $final_strings = array();
+            $final_strings = [];
             foreach ($strings as $s) {
                 $final_strings[$s->context][$s->string] = $s->text;
             }

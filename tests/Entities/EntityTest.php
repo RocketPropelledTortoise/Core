@@ -1,18 +1,20 @@
 <?php namespace Rocket\Entities;
 
-use Rocket\Translation\Model\Language;
 use Rocket\Entities\Support\Laravel5\Facade as Entities;
+use Rocket\Translation\Model\Language;
 
 class CommentDemo extends Entity
 {
-    protected function getFields() {
+    protected function getFields()
+    {
         return [];
     }
 }
 
 class Demo extends Entity
 {
-    protected function getFields() {
+    protected function getFields()
+    {
         return [
 
             'title' => [
@@ -20,23 +22,24 @@ class Demo extends Entity
             ],
             'titles' => [
                 'type' => 'string',
-                'max_items' => 4
-            ]
+                'max_items' => 4,
+            ],
         ];
     }
 }
 
 class ReservedFields extends Entity
 {
-    protected function getFields() {
+    protected function getFields()
+    {
         return [
             'created_at' => [
                 'type' => 'string', //max width :: 255
             ],
             'language_id' => [
                 'type' => 'string',
-                'max_items' => 4
-            ]
+                'max_items' => 4,
+            ],
         ];
     }
 }
@@ -48,7 +51,7 @@ class NonExistentType extends Entity
         return [
             'content' => [
                 'type' => 'no_type', //max width :: 255
-            ]
+            ],
         ];
     }
 }
@@ -94,7 +97,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
 
     public function testCreateSimpleEntityAndRetrieve()
     {
-        $title = "new Title";
+        $title = 'new Title';
         $first_lang = Language::pluck('id');
 
         $demo = new Demo();
@@ -110,9 +113,9 @@ class EntityTest extends \Rocket\Utilities\TestCase
 
         $this->assertInstanceOf('\Rocket\Entities\FieldCollection', $demo->getField('titles'));
 
-        $demo->titles[] = "one title";
+        $demo->titles[] = 'one title';
 
-        $this->assertEquals(["one title"], $demo->titles->toArray());
+        $this->assertEquals(['one title'], $demo->titles->toArray());
 
         $demo->titles = [];
 
@@ -121,14 +124,14 @@ class EntityTest extends \Rocket\Utilities\TestCase
         $this->assertInstanceOf(
             '\Rocket\Entities\FieldCollection',
             $demo->getField('titles'),
-            "after reassignment, titles should still be a fieldCollection"
+            'after reassignment, titles should still be a fieldCollection'
         );
     }
 
     public function testCreateSimpleEntityMultipleValues()
     {
-        $title = "new Title";
-        $title2 = "new Title2";
+        $title = 'new Title';
+        $title2 = 'new Title2';
         $first_lang = Language::pluck('id');
 
         $demo = new Demo();
@@ -180,7 +183,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
     {
         $demo = new Demo();
 
-        $demo->titles[] = "one title";
+        $demo->titles[] = 'one title';
 
         $this->assertTrue(isset($demo->titles[0]));
         $this->assertFalse(isset($demo->titles[4]));
@@ -190,18 +193,18 @@ class EntityTest extends \Rocket\Utilities\TestCase
     {
         $demo = new Demo();
 
-        $demo->titles[] = "one title";
-        $demo->titles[] = "two titles";
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
 
         unset($demo->titles[0]);
 
-        $this->assertEquals(["two titles"], array_values($demo->titles->toArray()));
+        $this->assertEquals(['two titles'], array_values($demo->titles->toArray()));
     }
 
     public function testCreateRevision()
     {
-        $title = "new Title";
-        $title2 = "new Title2";
+        $title = 'new Title';
+        $title2 = 'new Title2';
 
         $demo = new Demo();
         $demo->id = 100;
@@ -220,6 +223,5 @@ class EntityTest extends \Rocket\Utilities\TestCase
         $this->assertEquals(2, $demo2->language_id);
         $this->assertEquals(100, $demo2->id);
         $this->assertFalse(isset($demo2->titles[0]));
-
     }
 }

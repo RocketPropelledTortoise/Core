@@ -1,10 +1,10 @@
 <?php namespace Rocket\Taxonomy;
 
-use Rocket\Taxonomy\Support\Laravel5\Facade as T;
-use Rocket\Taxonomy\Model\Vocabulary;
-use Rocket\Translation\Support\Laravel5\Facade as I18N;
-use Rocket\Translation\Model\Language;
 use Illuminate\Support\Facades\Cache;
+use Rocket\Taxonomy\Model\Vocabulary;
+use Rocket\Taxonomy\Support\Laravel5\Facade as T;
+use Rocket\Translation\Model\Language;
+use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
 class TaxonomyTest extends \Rocket\Utilities\TestCase
 {
@@ -24,7 +24,7 @@ class TaxonomyTest extends \Rocket\Utilities\TestCase
     {
         return [
             '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider',
-            '\Rocket\Translation\Support\Laravel5\ServiceProvider'
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider',
         ];
     }
 
@@ -127,8 +127,8 @@ class TaxonomyTest extends \Rocket\Utilities\TestCase
                 'PHP',
                 'Development',
                 'Design Patterns',
-                'TDD'
-            ]
+                'TDD',
+            ],
         ];
 
         $ids = T::getTermIds($terms);
@@ -149,13 +149,13 @@ class TaxonomyTest extends \Rocket\Utilities\TestCase
                 'PHP',
                 'Development',
                 'Design Patterns',
-                'TDD'
+                'TDD',
             ],
             'artist' => [
                 'Blood Red Shoes',
                 'Muse',
-                'Nirvana'
-            ]
+                'Nirvana',
+            ],
         ];
 
         $ids = T::getTermIds($terms);

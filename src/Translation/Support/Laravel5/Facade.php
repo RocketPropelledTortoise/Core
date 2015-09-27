@@ -5,7 +5,6 @@
  */
 class Facade extends \Illuminate\Support\Facades\Facade
 {
-
     /**
      * Get the registered name of the component.
      *

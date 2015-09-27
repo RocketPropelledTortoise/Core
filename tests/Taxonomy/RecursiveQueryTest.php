@@ -1,12 +1,12 @@
 <?php namespace Rocket\Taxonomy;
 
-use Rocket\Taxonomy\Support\Laravel5\Facade as T;
-use Rocket\Taxonomy\Model\Vocabulary;
-use Rocket\Taxonomy\Utils\RecursiveQuery;
-use Rocket\Taxonomy\Utils\CommonTableExpressionQuery;
-use Rocket\Translation\Support\Laravel5\Facade as I18N;
-use Rocket\Translation\Model\Language;
 use Illuminate\Support\Facades\Cache;
+use Rocket\Taxonomy\Model\Vocabulary;
+use Rocket\Taxonomy\Support\Laravel5\Facade as T;
+use Rocket\Taxonomy\Utils\CommonTableExpressionQuery;
+use Rocket\Taxonomy\Utils\RecursiveQuery;
+use Rocket\Translation\Model\Language;
+use Rocket\Translation\Support\Laravel5\Facade as I18N;
 use stdClass;
 
 class RecursiveQueryTest extends \Rocket\Utilities\TestCase
@@ -26,7 +26,7 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
     {
         return [
             '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider',
-            '\Rocket\Translation\Support\Laravel5\ServiceProvider'
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider',
         ];
     }
 
@@ -44,7 +44,7 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
             'son' => T::getTermId('Son', $vid),
             'daughter' => T::getTermId('Daughter', $vid),
             'grandson' => T::getTermId('Grandson', $vid),
-            'granddaughter' => T::getTermId('Dranddaughter', $vid)
+            'granddaughter' => T::getTermId('Dranddaughter', $vid),
         ];
 
         $relations = [
@@ -64,8 +64,8 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
         return $family;
     }
 
-    public function generateComparison(array $family, array $relations) {
-
+    public function generateComparison(array $family, array $relations)
+    {
         $final = [];
         foreach ($relations as $rel) {
             $class = new stdClass();
@@ -107,7 +107,7 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
             ['dad', [['me','dad'], ['daughter', 'me'], ['son', 'me'], ['grandson', 'son'], ['granddaughter', 'son']]],
             [
                 'grandpa',
-                [['mom', 'grandpa'], ['me','mom'], ['daughter', 'me'], ['son', 'me'], ['grandson', 'son'], ['granddaughter', 'son']]
+                [['mom', 'grandpa'], ['me','mom'], ['daughter', 'me'], ['son', 'me'], ['grandson', 'son'], ['granddaughter', 'son']],
             ],
         ];
     }
@@ -131,9 +131,9 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
      */
     public function testDescentCommonTableExpressionQuery($origin, $result)
     {
-		if (\DB::connection()->getDriverName() == 'sqlite' && \SQLite3::version()['versionNumber'] < 3008003) {
-			$this->markTestSkipped('Sqlite 3.8.3 is require to run these tests');
-		}
+        if (\DB::connection()->getDriverName() == 'sqlite' && \SQLite3::version()['versionNumber'] < 3008003) {
+            $this->markTestSkipped('Sqlite 3.8.3 is require to run these tests');
+        }
 
         $retriever = new CommonTableExpressionQuery();
 
@@ -149,13 +149,13 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
         return [
             [
                 'grandson',
-                [['grandson', 'son'], ['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']]
+                [['grandson', 'son'], ['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']],
             ],
             [
                 'granddaughter',
-                [['granddaughter', 'son'], ['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']]
+                [['granddaughter', 'son'], ['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']],
             ],
-            ['son', [['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me'],]],
+            ['son', [['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']]],
             ['daughter', [['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me']]],
             ['me', [['mom', 'grandpa'], ['me','mom'], ['me', 'dad']]],
             ['mom', [['mom', 'grandpa']]],
@@ -183,9 +183,9 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
      */
     public function testAncestryCommonTableExpressionQuery($origin, $result)
     {
-		if (\DB::connection()->getDriverName() == 'sqlite' && \SQLite3::version()['versionNumber'] < 3008003) {
-			$this->markTestSkipped('Sqlite 3.8.3 is require to run these tests');
-		}
+        if (\DB::connection()->getDriverName() == 'sqlite' && \SQLite3::version()['versionNumber'] < 3008003) {
+            $this->markTestSkipped('Sqlite 3.8.3 is require to run these tests');
+        }
 
         $retriever = new CommonTableExpressionQuery();
 

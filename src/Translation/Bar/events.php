@@ -37,7 +37,7 @@ Event::listen(
 
         $strings = $query->select('id')->where('context', $main_context)->get();
 
-        $unused = array();
+        $unused = [];
         if (!empty($strings)) {
             $unused = array_map(
                 function ($arg) {
@@ -75,8 +75,8 @@ Event::listen(
                 $final_translations .= anchor_modal('admin/lang/string_edit/' . $string_id, $link) . ' ';
                 $final_translations .= anchor_modal(
                     'admin/lang/string_delete/' . $string_id,
-                    t('Supprimer', array(), 'admin/lang/bar'),
-                    array('class' => 'icon icon_bin')
+                    t('Supprimer', [], 'admin/lang/bar'),
+                    ['class' => 'icon icon_bin']
                 );
                 $final_translations .= '</div>';
                 foreach ($string as $lid => $translation) {
@@ -93,7 +93,7 @@ Event::listen(
         //TODO :: transform to the new system
         if (isset(CI()->taxonomy)) {
             foreach (CI()->taxonomy->admin_taxonomy as $vid => $strings) {
-                $final_contexts .= '<div class="t_line context" title="taxonomies_' . $vid . '">' . t('Vocabulaire', array(), 'admin/lang/bar') . ': ' . t(Taxonomy::vocabulary($vid), [], 'vocabulary') . '</div>';
+                $final_contexts .= '<div class="t_line context" title="taxonomies_' . $vid . '">' . t('Vocabulaire', [], 'admin/lang/bar') . ': ' . t(Taxonomy::vocabulary($vid), [], 'vocabulary') . '</div>';
                 $final_strings .= '<div id="taxonomies_' . $vid . '" class="t_internal" style="display:none;">';
                 foreach ($strings as $term) {
                     if ($term['translated']) {
@@ -104,13 +104,13 @@ Event::listen(
 
                     $final_translations .= '<div id="taxonomy_' . $term['term_id'] . '" class="t_internal" style="display:none;">';
                     $final_translations .= '<div class="t_links t_bar">';
-                    $final_translations .= anchor_modal('admin/taxonomy/term_edit/' . $term['term_id'], t('Editer', array(), 'admin/lang/bar'), array('class' => 'icon icon_pencil'));
+                    $final_translations .= anchor_modal('admin/taxonomy/term_edit/' . $term['term_id'], t('Editer', [], 'admin/lang/bar'), ['class' => 'icon icon_pencil']);
                     $final_translations .= '</div>';
                     if (Taxonomy::isTranslatable($term['vocabulary_id'])) {
                         foreach (I18N::languages() as $lang => $name) {
                             if ($term->translated($lang)) {
                                 $final_translations .= '<div class="t_line">';
-                                $final_translations .= '<div class="t_title">' . t($name['name'], array(), 'languages') . '</div>';
+                                $final_translations .= '<div class="t_title">' . t($name['name'], [], 'languages') . '</div>';
                                 $final_translations .= strip_tags($term->title($lang));
                                 $final_translations .= '</div>';
                             }
@@ -141,17 +141,17 @@ Event::listen(
             <div class="faire_valoir_bottom">&nbsp;</div>
             <div id="translation_section">
                 <div class="translation_bar t_bar">
-                    <div class="t_link" id="t_show" style="display:none;">' . t('Afficher', array(), 'admin/lang/bar') . '</div>
-                    <div class="t_link" id="t_hide">' . t('Cacher', array(), 'admin/lang/bar') . '</div>
-                    <div class="t_link" id="t_disable">' . t('Désactiver', array(), 'admin/lang/bar') . '</div>
-                    <div class="t_link">' . anchor('admin/lang/generate', t('Appliquer', array(), 'admin/lang/bar')) . '</div>
+                    <div class="t_link" id="t_show" style="display:none;">' . t('Afficher', [], 'admin/lang/bar') . '</div>
+                    <div class="t_link" id="t_hide">' . t('Cacher', [], 'admin/lang/bar') . '</div>
+                    <div class="t_link" id="t_disable">' . t('Désactiver', [], 'admin/lang/bar') . '</div>
+                    <div class="t_link">' . anchor('admin/lang/generate', t('Appliquer', [], 'admin/lang/bar')) . '</div>
                     ' . $lang_links . '
-                    <strong>' . t('Barre de langue', array(), 'admin/lang/bar') . '</strong>
+                    <strong>' . t('Barre de langue', [], 'admin/lang/bar') . '</strong>
                 </div>
                 <div class="translation_titles t_bar">
-                    <div class="presentation contexts">' . t('Contextes', array(), 'admin/lang/bar') . '</div>
-                    <div class="presentation strings">' . t('Chaines', array(), 'admin/lang/bar') . '</div>
-                    <div class="presentation string">' . t('Informations', array(), 'admin/lang/bar') . '</div>
+                    <div class="presentation contexts">' . t('Contextes', [], 'admin/lang/bar') . '</div>
+                    <div class="presentation strings">' . t('Chaines', [], 'admin/lang/bar') . '</div>
+                    <div class="presentation string">' . t('Informations', [], 'admin/lang/bar') . '</div>
                 </div>
                 <div class="translation_internal">
                     <div class="presentation contexts">
@@ -204,7 +204,7 @@ Event::listen(
     }
 );
 
-/**
+/*
  * Loads the ability to translate contents on the fly
  */
 Event::listen(
