@@ -84,7 +84,7 @@ class FieldCollection extends \Illuminate\Support\Collection
         }
 
         if (!array_key_exists(0, $this->items)) {
-            return null;
+            return;
         }
 
         return $this->items[0];
@@ -96,6 +96,6 @@ class FieldCollection extends \Illuminate\Support\Collection
             return $this->items[0];
         }
 
-        return "Array";
+        return 'Array';
     }
 }

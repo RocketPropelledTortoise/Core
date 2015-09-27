@@ -5,7 +5,6 @@
  * Date: 23.02.14
  * Time: 15:45
  */
-
 namespace Rocket\Translation;
 
 use Rocket\Translation\Model\Translation;
@@ -38,12 +37,12 @@ class I18NToolbar extends I18N
         $translation = parent::translateInsertString($context, $text);
         $language = $this->languagesIso[app('config')['app.locale']]['id'];
 
-        $this->stringsRaw[$context][$translation->string_id][$language] = array(
+        $this->stringsRaw[$context][$translation->string_id][$language] = [
             'id' => $translation->id,
             'string_id' => $translation->string_id,
             'text' => $text,
-            'date_edition' => mysql_datetime()
-        );
+            'date_edition' => mysql_datetime(),
+        ];
 
         return $translation;
     }
@@ -52,7 +51,7 @@ class I18NToolbar extends I18N
      * Load a language file
      *
      * @param  string $language
-     * @return boolean
+     * @return bool
      */
     public function loadLanguage($language)
     {
@@ -60,7 +59,7 @@ class I18NToolbar extends I18N
             return;
         }
 
-        $this->strings[$language] = array();
+        $this->strings[$language] = [];
         $this->languagesLoaded[] = $language;
     }
 }

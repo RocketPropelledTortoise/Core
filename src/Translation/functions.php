@@ -47,7 +47,6 @@ function t($string, array $args = [], $context = null, $language = 'default')
     }
 
     return strtr($translated, $args);
-
 }
 
 /**

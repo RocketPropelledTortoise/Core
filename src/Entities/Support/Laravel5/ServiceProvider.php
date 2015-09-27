@@ -19,7 +19,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         $this->app->singleton(
             'entity_manager',
-            function() {
+            function () {
                 return new EntityManager;
             }
         );

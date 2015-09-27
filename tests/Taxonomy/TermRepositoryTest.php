@@ -1,10 +1,10 @@
 <?php namespace Rocket\Taxonomy;
 
 use Illuminate\Support\Facades\Cache;
-use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Taxonomy\Model\Vocabulary;
-use Rocket\Translation\Support\Laravel5\Facade as I18N;
+use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Translation\Model\Language;
+use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
 class TermRepositoryTest extends \Rocket\Utilities\TestCase
 {
@@ -23,7 +23,7 @@ class TermRepositoryTest extends \Rocket\Utilities\TestCase
     {
         return [
             '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider',
-            '\Rocket\Translation\Support\Laravel5\ServiceProvider'
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider',
         ];
     }
 

@@ -12,13 +12,14 @@ class Format
     {
         $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         $exp = floor(log($bytes, 1024)) | 0;
+
         return round($bytes / (pow(1024, $exp)), 2) . " $unit[$exp]";
     }
 
     /**
      * Format time
      *
-     * @param integer $time
+     * @param int $time
      * @return string
      */
     public static function getReadableTime($time)
@@ -29,10 +30,10 @@ class Format
 
         $prefix = '';
         if ($time >= 60000) {
-            $prefix = floor($time / 60000) . "m ";
+            $prefix = floor($time / 60000) . 'm ';
             $time = $time % 60000;
         }
 
-        return $prefix . number_format((float)($time / 1000), 3, '.', '') . "s";
+        return $prefix . number_format((float) ($time / 1000), 3, '.', '') . 's';
     }
 }

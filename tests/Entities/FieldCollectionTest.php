@@ -105,12 +105,11 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
     {
         $collection = FieldCollection::initField(['max_items' => 1]);
         $collection[] = 'test';
-        $this->assertEquals("test", strval($collection));
-
+        $this->assertEquals('test', strval($collection));
 
         $collection = FieldCollection::initField(['max_items' => 2]);
         $collection[] = 'test';
         $collection[] = 'test2';
-        $this->assertEquals("Array", strval($collection));
+        $this->assertEquals('Array', strval($collection));
     }
 }

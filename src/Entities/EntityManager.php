@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Represents a content of any form
  *
- * @property integer $id the entity's ID
+ * @property int $id the entity's ID
  */
 class EntityManager
 {

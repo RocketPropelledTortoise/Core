@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Field extends Model
 {
-    public function __construct(array $attributes = array())
+    public function __construct(array $attributes = [])
     {
         $this->bootIfNotBooted();
 

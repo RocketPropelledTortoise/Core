@@ -1,14 +1,16 @@
 <?php namespace Rocket\Taxonomy;
 
 use Illuminate\Support\Facades\Cache;
-use Rocket\Translation\Model\Language;
-use Rocket\Translation\Support\Laravel5\Facade as I18N;
+use Rocket\Taxonomy\Model\Hierarchy;
 use Rocket\Taxonomy\Model\Vocabulary;
 use Rocket\Taxonomy\Support\Laravel5\Facade as T;
-use Rocket\Taxonomy\Model\Hierarchy;
+use Rocket\Translation\Model\Language;
+use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
-class TermParent {
-    public function __construct($term, $parent) {
+class TermParent
+{
+    public function __construct($term, $parent)
+    {
         $this->term_id = $term;
         $this->parent_id = $parent;
     }
@@ -31,7 +33,7 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
     {
         return [
             '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider',
-            '\Rocket\Translation\Support\Laravel5\ServiceProvider'
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider',
         ];
     }
 
@@ -45,7 +47,7 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
     {
         $final = [];
         foreach ($results as $result) {
-            $final[] = implode(",", $result);
+            $final[] = implode(',', $result);
         }
 
         $final = natsort($final);
@@ -55,7 +57,7 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
 
     protected function assertSamePaths($expected, $actual)
     {
-        $this->assertEquals($this->toComparable($expected), $this->toComparable($actual)) ;
+        $this->assertEquals($this->toComparable($expected), $this->toComparable($actual));
     }
 
     public function testAddParent()
@@ -180,7 +182,7 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
 
         $this->assertSamePaths(
             [
-                [$family['me'], $family['dad']]
+                [$family['me'], $family['dad']],
             ],
             T::getDescentPaths($family['dad'])
         );
@@ -199,8 +201,8 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
     public function testDetectLoopPathResolver()
     {
         $family = [
-            'me' => "1",
-            'dad' => "2",
+            'me' => '1',
+            'dad' => '2',
         ];
 
         // Fake a cache entry so we wont touch the database
@@ -214,7 +216,6 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         );
 
         $this->assertSamePaths([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
-
 
         // Fake a cache entry so we wont touch the database
         Cache::put(

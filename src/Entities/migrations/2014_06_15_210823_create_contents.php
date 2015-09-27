@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CreateContents extends Migration
 {
-
     public function fieldTableFields(Blueprint $table)
     {
         $table->increments('id');

@@ -1,15 +1,16 @@
 <?php namespace Rocket\Taxonomy;
 
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
-use Rocket\Taxonomy\Support\Laravel5\Facade as T;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use Rocket\Taxonomy\Model\TermContent;
 use Rocket\Taxonomy\Model\Vocabulary;
+use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Translation\Model\Language;
-use Illuminate\Support\Facades\Schema;
 
-class Post extends Model {
+class Post extends Model
+{
     use TaxonomyTrait;
 
     public $timestamps = false;
@@ -27,7 +28,8 @@ class Post extends Model {
     }
 }
 
-class Media extends Model {
+class Media extends Model
+{
     use TaxonomyTrait;
 
     public $timestamps = false;
@@ -69,7 +71,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
     {
         return [
             '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider',
-            '\Rocket\Translation\Support\Laravel5\ServiceProvider'
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider',
         ];
     }
 
@@ -79,12 +81,10 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
 
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => false]);
 
-
         $ids = T::getTermIds(['tag' => ['TDD', 'PHP', 'Add some tags']]);
         $post = new Post(['content' => 'a test post']);
         $post->save();
         $post->setTerms($ids);
-
 
         $ids2 = T::getTermIds(['tag' => ['TDD', 'HTML', 'JavaScript']]);
         $post2 = new Post(['content' => 'a seconds test post']);
@@ -265,7 +265,6 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $media = new Media(['file' => '/var/www/image.jpg']);
         $media->save();
         $media->setTerms($ids);
-
 
         $postWithPHP = Post::getAllByTermId(T::getTermId('PHP', 'tag'))->get();
         $this->assertEquals($post->id, $postWithPHP[0]->id);
