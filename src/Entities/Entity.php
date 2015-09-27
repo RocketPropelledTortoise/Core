@@ -164,7 +164,7 @@ abstract class Entity
             return $this->getField($key);
         }
 
-        throw new RuntimeException("Field '$key' doesn't exist in '".get_class($this)."'");
+        throw new RuntimeException("Field '$key' doesn't exist in '" . get_class($this) . "'");
     }
 
     /**
@@ -200,7 +200,7 @@ abstract class Entity
             return;
         }
 
-        throw new RuntimeException("Field '$key' doesn't exist in '".get_class($this)."'");
+        throw new RuntimeException("Field '$key' doesn't exist in '" . get_class($this) . "'");
     }
 
     /**
