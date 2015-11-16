@@ -109,8 +109,6 @@ class I18N
         //current default language
         $language = $this->getDefaultLanguage($locale, $fallback);
         $this->setLanguage($language);
-
-        $this->log->debug('Language Class Initialized');
     }
 
     /**
