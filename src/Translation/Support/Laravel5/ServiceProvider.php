@@ -30,7 +30,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
     protected function registerCommand()
     {
-        $this->app->bindShared(
+        $this->app->singleton(
             'command.rocket_language_generate',
             function () {
                 return new GenerateFiles;
