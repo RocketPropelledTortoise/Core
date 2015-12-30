@@ -49,7 +49,7 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
 
         $relations = [
             ['mom', 'grandpa'],
-            ['me','mom'],
+            ['me', 'mom'],
             ['me', 'dad'],
             ['daughter', 'me'],
             ['son', 'me'],
@@ -102,12 +102,12 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
             ['grandson', []],
             ['son', [['grandson', 'son'], ['granddaughter', 'son']]],
             ['daughter', []],
-            ['me', [['grandson', 'son'], ['granddaughter', 'son'],['daughter', 'me'], ['son', 'me']]],
-            ['mom', [['me','mom'], ['daughter', 'me'], ['son', 'me'], ['grandson', 'son'], ['granddaughter', 'son']]],
-            ['dad', [['me','dad'], ['daughter', 'me'], ['son', 'me'], ['grandson', 'son'], ['granddaughter', 'son']]],
+            ['me', [['grandson', 'son'], ['granddaughter', 'son'], ['daughter', 'me'], ['son', 'me']]],
+            ['mom', [['me', 'mom'], ['daughter', 'me'], ['son', 'me'], ['grandson', 'son'], ['granddaughter', 'son']]],
+            ['dad', [['me', 'dad'], ['daughter', 'me'], ['son', 'me'], ['grandson', 'son'], ['granddaughter', 'son']]],
             [
                 'grandpa',
-                [['mom', 'grandpa'], ['me','mom'], ['daughter', 'me'], ['son', 'me'], ['grandson', 'son'], ['granddaughter', 'son']],
+                [['mom', 'grandpa'], ['me', 'mom'], ['daughter', 'me'], ['son', 'me'], ['grandson', 'son'], ['granddaughter', 'son']],
             ],
         ];
     }
@@ -149,15 +149,15 @@ class RecursiveQueryTest extends \Rocket\Utilities\TestCase
         return [
             [
                 'grandson',
-                [['grandson', 'son'], ['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']],
+                [['grandson', 'son'], ['mom', 'grandpa'], ['me', 'mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']],
             ],
             [
                 'granddaughter',
-                [['granddaughter', 'son'], ['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']],
+                [['granddaughter', 'son'], ['mom', 'grandpa'], ['me', 'mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']],
             ],
-            ['son', [['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']]],
-            ['daughter', [['mom', 'grandpa'], ['me','mom'], ['me', 'dad'], ['daughter', 'me']]],
-            ['me', [['mom', 'grandpa'], ['me','mom'], ['me', 'dad']]],
+            ['son', [['mom', 'grandpa'], ['me', 'mom'], ['me', 'dad'], ['daughter', 'me'], ['son', 'me']]],
+            ['daughter', [['mom', 'grandpa'], ['me', 'mom'], ['me', 'dad'], ['daughter', 'me']]],
+            ['me', [['mom', 'grandpa'], ['me', 'mom'], ['me', 'dad']]],
             ['mom', [['mom', 'grandpa']]],
             ['dad', []],
             ['grandpa', []],
