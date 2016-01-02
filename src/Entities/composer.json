@@ -1,7 +1,7 @@
 {
     "name": "rocket/entities",
     "description": "Advanced Content Storage",
-    "licence": "MIT",
+    "license": "MIT",
     "authors": [
         {
             "name": "Stéphane Goetz",

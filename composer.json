@@ -1,7 +1,7 @@
 {
     "name": "rocket/core",
     "description": "Rocket Propelled Tortoise CMS - Core",
-    "licence": "MIT",
+    "license": "MIT",
     "authors": [
         {
             "name": "Stéphane Goetz",

@@ -1,7 +1,7 @@
 {
     "name": "rocket/utilities",
     "description": "Utilities that don't go in any category",
-    "licence": "MIT",
+    "license": "MIT",
     "authors": [
         {
             "name": "Stéphane Goetz",
