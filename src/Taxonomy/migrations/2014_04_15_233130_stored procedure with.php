@@ -18,7 +18,8 @@ class StoredProcedureWith extends Migration
      * CALL WITH_EMULATOR(recursive_table, initial_SELECT, recursive_SELECT, final_SELECT, 0, "").
      *
      * ALGORITHM:
-     * 1) we have an initial table T0 (actual name is an argument "recursive_table"), we fill it with result of initial_SELECT.
+     * 1) we have an initial table T0 (actual name is an argument "recursive_table"),
+     *    we fill it with result of initial_SELECT.
      * 2) We have a union table U, initially empty.
      * 3) Loop:
      *      add rows of T0 to U,
@@ -46,7 +47,8 @@ CREATE PROCEDURE WITH_EMULATOR(
   recursive_SELECT     VARCHAR(21845), # recursive member
   final_SELECT         VARCHAR(21845), # final SELECT on UNION result
   max_recursion        INT UNSIGNED,   # safety against infinite loop, use 0 for default
-  create_table_options VARCHAR(21845)  # you can add CREATE-TABLE-time options to your recursive_table, to speed up initial/recursive/final SELECTs; example: "(KEY(some_column)) ENGINE=MEMORY"
+  create_table_options VARCHAR(21845)  # you can add CREATE-TABLE-time options to your recursive_table, to speed up
+                                       # initial/recursive/final SELECTs; example: "(KEY(some_column)) ENGINE=MEMORY"
 )
 
 BEGIN
@@ -140,7 +142,8 @@ BEGIN
   EXECUTE stmt;
 
   # Remove old temporary tables
-  SET @str = CONCAT("DROP TEMPORARY TABLE IF EXISTS ", recursive_table, ", ", recursive_table_next, ", ", recursive_table_tmp);
+  SET @str = CONCAT("DROP TEMPORARY TABLE IF EXISTS ", recursive_table, ", ", recursive_table_next,
+    ", ", recursive_table_tmp);
   PREPARE stmt FROM @str;
   EXECUTE stmt;
 

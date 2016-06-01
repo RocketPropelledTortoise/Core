@@ -71,7 +71,10 @@ class CreateTaxonomies extends Migration
 
                 $table->foreign('term_id')->references('id')->on('taxonomy_terms');
 
-                $table->primary(['term_id', 'relationable_id', 'relationable_type'], 'taxonomy_contents_composed_primary');
+                $table->primary(
+                    ['term_id', 'relationable_id', 'relationable_type'],
+                    'taxonomy_contents_composed_primary'
+                );
             }
         );
     }

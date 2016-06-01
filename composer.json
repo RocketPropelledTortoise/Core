@@ -23,7 +23,8 @@
     "require-dev": {
         "mockery/mockery": ">=0.9.0",
         "phpunit/phpunit": ">=4.0.0",
-        "orchestra/testbench": "3.*"
+        "orchestra/testbench": "3.*",
+        "squizlabs/php_codesniffer": "^2.6"
     },
     "autoload": {
         "classmap": [
@@ -41,6 +42,10 @@
         "branch-alias": {
             "dev-master": "1.0-dev"
         }
+    },
+    "scripts": {
+        "lint": "phpcs --standard=PSR2 src",
+        "lint-fix": "phpcbf --standard=PSR2 src"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

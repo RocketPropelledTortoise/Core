@@ -56,16 +56,26 @@ Event::listen(
         }
 
         foreach ($raw_strings as $context => $strings) {
-            $final_contexts .= '<div class="t_line context" title="strings_' . str_replace('/', '_', $context) . '">' . $context . '</div>';
+            $final_contexts .= '<div class="t_line context" title="strings_' . str_replace(
+                '/',
+                '_',
+                $context
+            ) . '">' . $context . '</div>';
 
-            $final_strings .= '<div id="strings_' . str_replace('/', '_', $context) . '" class="t_internal" style="display:none;">';
+            $final_strings .= '<div id="strings_' . str_replace(
+                '/',
+                '_',
+                $context
+            ) . '" class="t_internal" style="display:none;">';
             foreach ($strings as $string_id => $string) {
                 $class = (in_array($string_id, $unused)) ? ' unused' : '';
                 if (array_key_exists($current_id, $string)) {
-                    $final_strings .= '<div class="t_line string' . $class . '" title="string_' . $string_id . '">' . $string[$current_id]->text . '</div>';
+                    $final_strings .= "<div class='t_line string $class' title='string_$string_id'>" .
+                        $string[$current_id]->text . '</div>';
                 } else {
                     //not translated
-                    $final_strings .= '<div class="t_line string not' . $class . '" title="string_' . $string_id . '">' . $string[1]->text . '</div>';
+                    $final_strings .= "<div class='t_line string not $class' title='string_$string_id'>" .
+                        $string[1]->text . "</div>";
                 }
 
                 $final_translations .= '<div id="string_' . $string_id . '" class="t_internal" style="display:none;">';
@@ -81,7 +91,11 @@ Event::listen(
                 $final_translations .= '</div>';
                 foreach ($string as $lid => $translation) {
                     $final_translations .= '<div class="t_line">';
-                    $final_translations .= '<div class="t_title">' . t(I18N::languages((int) $lid, 'name'), [], 'languages') . '</div>';
+                    $final_translations .= '<div class="t_title">' . t(
+                        I18N::languages((int)$lid, 'name'),
+                        [],
+                        'languages'
+                    ) . '</div>';
                     $final_translations .= strip_tags($translation->text);
                     $final_translations .= '</div>';
                 }
@@ -93,26 +107,34 @@ Event::listen(
         //TODO :: transform to the new system
         if (isset(CI()->taxonomy)) {
             foreach (CI()->taxonomy->admin_taxonomy as $vid => $strings) {
-                $final_contexts .= '<div class="t_line context" title="taxonomies_' . $vid . '">' . t('Vocabulaire', [], 'admin/lang/bar') . ': ' . t(Taxonomy::vocabulary($vid), [], 'vocabulary') . '</div>';
+                $final_contexts .= "<div class='t_line context' title='taxonomies_$vid'>" .
+                    t('Vocabulaire', [], 'admin/lang/bar') . ': ' . t(Taxonomy::vocabulary($vid), [], 'vocabulary') .
+                    '</div>';
                 $final_strings .= '<div id="taxonomies_' . $vid . '" class="t_internal" style="display:none;">';
                 foreach ($strings as $term) {
                     if ($term['translated']) {
-                        $final_strings .= '<div class="t_line string" title="taxonomy_' . $term['term_id'] . '">' . $term . '</div>';
+                        $final_strings .= "<div class=\"t_line string\" title=\"taxonomy_$term[term_id]\">$term</div>";
                     } else {
-                        $final_strings .= '<div class="t_line string not" title="taxonomy_' . $term['term_id'] . '">' . $term['lang_fr']['title'] . '</div>';
+                        $final_strings .= "<div class=\"t_line string not\" title=\"taxonomy_$term[term_id]\">" .
+                            $term[lang_fr][title] .
+                            "</div>";
                     }
 
-                    $final_translations .= '<div id="taxonomy_' . $term['term_id'] . '" class="t_internal" style="display:none;">';
+                    $final_translations .= "<div id='taxonomy_$term[term_id]' class='t_internal' style='display:none'>";
                     $final_translations .= '<div class="t_links t_bar">';
-                    $final_translations .= anchor_modal('admin/taxonomy/term_edit/' . $term['term_id'], t('Editer', [], 'admin/lang/bar'), ['class' => 'icon icon_pencil']);
+                    $final_translations .= anchor_modal(
+                        'admin/taxonomy/term_edit/' . $term['term_id'],
+                        t('Editer', [], 'admin/lang/bar'),
+                        ['class' => 'icon icon_pencil']
+                    );
                     $final_translations .= '</div>';
                     if (Taxonomy::isTranslatable($term['vocabulary_id'])) {
                         foreach (I18N::languages() as $lang => $name) {
                             if ($term->translated($lang)) {
-                                $final_translations .= '<div class="t_line">';
-                                $final_translations .= '<div class="t_title">' . t($name['name'], [], 'languages') . '</div>';
-                                $final_translations .= strip_tags($term->title($lang));
-                                $final_translations .= '</div>';
+                                $final_translations .= '<div class="t_line">' .
+                                    '<div class="t_title">' . t($name['name'], [], 'languages') . '</div>' .
+                                    strip_tags($term->title($lang)) .
+                                    '</div>';
                             }
                         }
                     } else {
@@ -131,7 +153,11 @@ Event::listen(
             if ($lang == I18N::getCurrent()) {
                 $lang_links .= '<div class="t_link">' . ucfirst(t($name['name'], [], 'languages')) . '</div> ';
             } else {
-                $lang_links .= anchor('lang/index/' . $lang, ucfirst(t($name['name'], [], 'languages')), ['class' => 't_link']) . ' ';
+                $lang_links .= anchor(
+                    'lang/index/' . $lang,
+                    ucfirst(t($name['name'], [], 'languages')),
+                    ['class' => 't_link']
+                ) . ' ';
             }
         }
         $lang_links .= '</div>';
@@ -141,10 +167,12 @@ Event::listen(
             <div class="faire_valoir_bottom">&nbsp;</div>
             <div id="translation_section">
                 <div class="translation_bar t_bar">
-                    <div class="t_link" id="t_show" style="display:none;">' . t('Afficher', [], 'admin/lang/bar') . '</div>
+                    <div class="t_link" id="t_show" style="display:none;">' . t('Afficher', [], 'admin/lang/bar') . '
+                    </div>
                     <div class="t_link" id="t_hide">' . t('Cacher', [], 'admin/lang/bar') . '</div>
                     <div class="t_link" id="t_disable">' . t('Désactiver', [], 'admin/lang/bar') . '</div>
-                    <div class="t_link">' . anchor('admin/lang/generate', t('Appliquer', [], 'admin/lang/bar')) . '</div>
+                    <div class="t_link">' . anchor('admin/lang/generate', t('Appliquer', [], 'admin/lang/bar')) .
+            '</div>
                     ' . $lang_links . '
                     <strong>' . t('Barre de langue', [], 'admin/lang/bar') . '</strong>
                 </div>
@@ -167,7 +195,10 @@ Event::listen(
              </div>';
 
         JS::ready(
-            '$("#t_show, #t_hide").click(function () { $(".translation_internal, .translation_titles, .faire_valoir_bottom").toggle(); $("#t_show, #t_hide").toggle();  });
+            '$("#t_show, #t_hide").click(function () {
+                $(".translation_internal, .translation_titles, .faire_valoir_bottom").toggle();
+                $("#t_show, #t_hide").toggle();
+            });
 
             $("#t_disable").click(function () {
                 jQuery.setCookie("YMW_Lang_Bar", "-", {path:"/"});
@@ -222,7 +253,7 @@ Event::listen(
             if (Gate::allows('admin_term_edit')) {
                 JS::ready(
                     '$(".not_tagged").css("color", "red").click(function () {
-                        jQuery.facebox({ ajax: "' . URL::to('admin/taxonomy/term_edit') . '/" + $(this).attr("title") });
+                        jQuery.facebox({ ajax: "' . URL::to('admin/taxonomy/term_edit') . '/" + $(this).attr("title")});
                     });'
                 );
             }
