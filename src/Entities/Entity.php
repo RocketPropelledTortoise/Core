@@ -69,8 +69,9 @@ abstract class Entity
 
         if (!array_key_exists($type, self::$types)) {
             throw new RuntimeException("Unkown type '$type' in '" . get_class($this) . "'");
-            //TODO :: use types for something ...
         }
+
+        $settings['type'] = self::$types[$settings['type']];
 
         return FieldCollection::initField($settings);
     }

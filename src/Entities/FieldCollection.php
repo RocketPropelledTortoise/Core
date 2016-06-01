@@ -1,5 +1,7 @@
 <?php namespace Rocket\Entities;
 
+use Illuminate\Contracts\Support\Arrayable;
+
 class FieldCollection extends \Illuminate\Support\Collection
 {
     /**
@@ -13,6 +15,11 @@ class FieldCollection extends \Illuminate\Support\Collection
     protected $configuration = [];
 
     /**
+     * @var string The type of this collection
+     */
+    protected $type;
+
+    /**
      * Initialize a collection with the configuration
      *
      * @param array $configuration
@@ -20,8 +27,13 @@ class FieldCollection extends \Illuminate\Support\Collection
      */
     public static function initField($configuration = [])
     {
+        if (!array_key_exists('type', $configuration) || !class_exists($configuration['type'])) {
+            throw new \RuntimeException('You did not specify a type on this class.');
+        }
+
         $collection = new static();
         $collection->configuration = $configuration;
+        $collection->type = $configuration['type'];
 
         if (array_key_exists('max_items', $configuration)) {
             $collection->maxItems = $configuration['max_items'];
@@ -39,17 +51,31 @@ class FieldCollection extends \Illuminate\Support\Collection
             throw new \RuntimeException('The maximum number of items has been reached on this field.');
         }
 
-        if (is_null($key) || !array_key_exists($key, $this->items)) {
-            if (is_null($key)) {
-                $this->items[] = $value;
-            } else {
-                $this->items[$key] = $value;
-            }
+        $container = new $this->type();
+        $container->value = $value;
 
-            return;
+        if (is_null($key)) {
+            $this->items[] = $container;
+        } else {
+            $this->items[$key] = $container;
+        }
+    }
+
+    /**
+     * Get an item at a given offset.
+     *
+     * @param  mixed  $key
+     * @return mixed
+     */
+    public function offsetGet($key)
+    {
+        $value = parent::offsetGet($key);
+
+        if (!$value) {
+            return null;
         }
 
-        $this->items[$key] = $value;
+        return $value->value;
     }
 
     /**
@@ -80,20 +106,23 @@ class FieldCollection extends \Illuminate\Support\Collection
     public function toArray()
     {
         if ($this->maxItems != 1) {
-            return parent::toArray();
+            return array_map(function ($value) {
+                return $value instanceof Arrayable ? $value->toArray() : $value->value;
+
+            }, $this->items);
         }
 
         if (!array_key_exists(0, $this->items)) {
             return;
         }
 
-        return $this->items[0];
+        return $this->items[0]->value;
     }
 
     public function __toString()
     {
         if ($this->maxItems == 1) {
-            return $this->items[0];
+            return $this->items[0]->value;
         }
 
         return 'Array';

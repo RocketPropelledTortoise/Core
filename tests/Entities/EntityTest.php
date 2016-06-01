@@ -3,59 +3,6 @@
 use Rocket\Entities\Support\Laravel5\Facade as Entities;
 use Rocket\Translation\Model\Language;
 
-class CommentDemo extends Entity
-{
-    protected function getFields()
-    {
-        return [];
-    }
-}
-
-class Demo extends Entity
-{
-    protected function getFields()
-    {
-        return [
-
-            'title' => [
-                'type' => 'string', //max width :: 255
-            ],
-            'titles' => [
-                'type' => 'string',
-                'max_items' => 4,
-            ],
-        ];
-    }
-}
-
-class ReservedFields extends Entity
-{
-    protected function getFields()
-    {
-        return [
-            'created_at' => [
-                'type' => 'string', //max width :: 255
-            ],
-            'language_id' => [
-                'type' => 'string',
-                'max_items' => 4,
-            ],
-        ];
-    }
-}
-
-class NonExistentType extends Entity
-{
-    protected function getFields()
-    {
-        return [
-            'content' => [
-                'type' => 'no_type', //max width :: 255
-            ],
-        ];
-    }
-}
-
 class EntityTest extends \Rocket\Utilities\TestCase
 {
     public function setUp()
