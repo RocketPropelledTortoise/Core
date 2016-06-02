@@ -36,11 +36,23 @@ abstract class Entity
      */
     protected $data;
 
-    public function __construct($data = [])
+    /**
+     * Entity constructor.
+     *
+     * @param int $language_id The language this specific entity is in
+     * @param array $data The data for this entity
+     */
+    public function __construct($language_id, $data = [])
     {
+        if (!is_int($language_id) || $language_id == 0) {
+            throw new InvalidArgumentException("You must set a valid 'language_id'.");
+        }
+
         $fields = $this->getFields();
 
         $this->initialize($fields);
+
+        $this->revision->language_id = $language_id;
 
         if ($data !== null) {
             $this->hydrate($data);
@@ -92,12 +104,8 @@ abstract class Entity
      */
     public function newRevision($language_id = null)
     {
-        $created = new static();
+        $created = new static($language_id ?: $this->language_id);
         $created->content = $this->content;
-
-        if ($language_id !== null) {
-            $created->language_id = $language_id;
-        }
 
         return $created;
     }

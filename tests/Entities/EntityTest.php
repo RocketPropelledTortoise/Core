@@ -20,24 +20,11 @@ class EntityTest extends \Rocket\Utilities\TestCase
         return ['\Rocket\Entities\Support\Laravel5\ServiceProvider'];
     }
 
-    public function testGetContentType()
-    {
-        $comment = new Demo(['language_id' => 1]);
-        $this->assertEquals('demo', Entities::getContentType($comment));
-    }
-
-    public function testExtendedGetContentType()
-    {
-        $comment = new CommentDemo(['language_id' => 1]);
-        $this->assertEquals('comment_demo', Entities::getContentType($comment));
-    }
-
     public function testCreateSimpleEntity()
     {
-        $first_lang = Language::pluck('id');
+        $first_lang = Language::value('id');
 
-        $demo = new Demo();
-        $demo->language_id = $first_lang;
+        $demo = new Demo($first_lang);
 
         $this->assertEquals($first_lang, $demo->language_id);
     }
@@ -45,10 +32,9 @@ class EntityTest extends \Rocket\Utilities\TestCase
     public function testCreateSimpleEntityAndRetrieve()
     {
         $title = 'new Title';
-        $first_lang = Language::pluck('id');
+        $first_lang = Language::value('id');
 
-        $demo = new Demo();
-        $demo->language_id = $first_lang;
+        $demo = new Demo($first_lang);
         $demo->title = $title;
 
         $this->assertEquals($title, $demo->title);
@@ -56,7 +42,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
 
     public function testFieldCollectionResilience()
     {
-        $demo = new Demo();
+        $demo = new Demo(Language::value('id'));
 
         $this->assertInstanceOf('\Rocket\Entities\FieldCollection', $demo->getField('titles'));
 
@@ -79,10 +65,9 @@ class EntityTest extends \Rocket\Utilities\TestCase
     {
         $title = 'new Title';
         $title2 = 'new Title2';
-        $first_lang = Language::pluck('id');
+        $first_lang = Language::value('id');
 
-        $demo = new Demo();
-        $demo->language_id = $first_lang;
+        $demo = new Demo($first_lang);
 
         $demo->titles = [];
         $demo->titles[] = $title;
@@ -97,7 +82,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
      */
     public function testGetNonExistentField()
     {
-        $demo = new Demo();
+        $demo = new Demo(Language::value('id'));
         $demo->foo = [];
     }
 
@@ -106,7 +91,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
      */
     public function testSetNonExistentField()
     {
-        $demo = new Demo();
+        $demo = new Demo(Language::value('id'));
         $foo = $demo->foo;
     }
 
@@ -115,7 +100,15 @@ class EntityTest extends \Rocket\Utilities\TestCase
      */
     public function testReservedFieldNames()
     {
-        $test = new ReservedFields();
+        $test = new ReservedFields(Language::value('id'));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testValidLanguageNeeded()
+    {
+        $test = new Demo(0);
     }
 
     /**
@@ -123,12 +116,12 @@ class EntityTest extends \Rocket\Utilities\TestCase
      */
     public function testNonExistentFieldType()
     {
-        $test = new NonExistentType();
+        $test = new NonExistentType(Language::value('id'));
     }
 
     public function testIsset()
     {
-        $demo = new Demo();
+        $demo = new Demo(Language::value('id'));
 
         $demo->titles[] = 'one title';
 
@@ -138,7 +131,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
 
     public function testUnset()
     {
-        $demo = new Demo();
+        $demo = new Demo(Language::value('id'));
 
         $demo->titles[] = 'one title';
         $demo->titles[] = 'two titles';
@@ -150,18 +143,18 @@ class EntityTest extends \Rocket\Utilities\TestCase
 
     public function testCreateRevision()
     {
+        $first_lang = Language::value('id');
         $title = 'new Title';
         $title2 = 'new Title2';
 
-        $demo = new Demo();
+        $demo = new Demo($first_lang);
         $demo->id = 100;
-        $demo->language_id = 1;
 
         $demo->titles = [];
         $demo->titles[] = $title;
         $demo->titles[] = $title2;
 
-        $this->assertEquals(1, $demo->language_id);
+        $this->assertEquals($first_lang, $demo->language_id);
         $this->assertEquals(100, $demo->id);
         $this->assertEquals($title, $demo->titles[0]);
         $this->assertEquals($title2, $demo->titles[1]);
