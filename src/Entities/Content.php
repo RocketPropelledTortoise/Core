@@ -3,7 +3,11 @@
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * {@inheritdoc}
+ * Represent a Content
+ *
+ * @property int $id The field id
+ * @property-read \DateTime $created_at
+ * @property-read \DateTime $updated_at
  */
 class Content extends Model
 {
