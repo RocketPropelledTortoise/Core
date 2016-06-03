@@ -26,11 +26,28 @@ class EntityManager
      */
     public function save(Entity $entity)
     {
-        //TODO
-
         DB::transaction(
-            function () {
-                //save all revisions
+            function () use ($entity) {
+                // Save content
+                $content = $entity->getContent();
+                $content->save();
+
+                // Create revision ID
+                $revision = $entity->getRevision();
+                $revision->content_id = $content->id;
+                $revision->save();
+
+                // Prepare and save fields
+                foreach (array_keys($entity->getFields()) as $fieldName) {
+                    $field = $entity->getField($fieldName);
+                    $field->each(function (Field $value, $key) use ($revision, $fieldName) {
+                        $value->weight = $key;
+                        $value->revision_id = $revision->id;
+                        $value->name = $fieldName;
+
+                        $value->save();
+                    });
+                }
             }
         );
     }

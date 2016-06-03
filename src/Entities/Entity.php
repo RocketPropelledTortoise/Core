@@ -93,7 +93,7 @@ abstract class Entity
         //TODO :: populate data
     }
 
-    abstract protected function getFields();
+    abstract public function getFields();
 
     /**
      * Create a new revision based on the same content ID but without the content.
@@ -212,6 +212,16 @@ abstract class Entity
         throw new RuntimeException("Field '$key' doesn't exist in '" . get_class($this) . "'");
     }
 
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    public function getRevision()
+    {
+        return $this->revision;
+    }
+
     /**
      * Convert the Entity to an array.
      *
@@ -219,10 +229,10 @@ abstract class Entity
      */
     public function toArray()
     {
-        $content = [];
-
-        $content['_content'] = $this->content->toArray();
-        $content['_revision'] = $this->revision->toArray();
+        $content = [
+            '_content' => $this->content->toArray(),
+            '_revision' => $this->revision->toArray(),
+        ];
 
         foreach ($this->data as $field => $data) {
             $content[$field] = $data->toArray();

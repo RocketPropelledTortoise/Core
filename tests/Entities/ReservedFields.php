@@ -4,7 +4,7 @@ namespace Rocket\Entities;
 
 class ReservedFields extends Entity
 {
-    protected function getFields()
+    public function getFields()
     {
         return [
             'created_at' => [

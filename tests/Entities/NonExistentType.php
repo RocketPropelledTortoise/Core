@@ -4,7 +4,7 @@ namespace Rocket\Entities;
 
 class NonExistentType extends Entity
 {
-    protected function getFields()
+    public function getFields()
     {
         return [
             'content' => [

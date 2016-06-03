@@ -2,12 +2,15 @@
 
 namespace Rocket\Entities;
 
+/**
+ * @property array<string> $titles
+ * @property string $title
+ */
 class Demo extends Entity
 {
-    protected function getFields()
+    public function getFields()
     {
         return [
-
             'title' => [
                 'type' => 'string', //max width :: 255
             ],
