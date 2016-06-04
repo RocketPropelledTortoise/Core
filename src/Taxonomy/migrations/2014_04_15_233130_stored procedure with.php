@@ -39,7 +39,7 @@ class StoredProcedureWith extends Migration
      *
      * @var string
      */
-    protected static $PROCEDURE = <<<SQL
+    protected static $PROCEDURE = <<<'SQL'
 DROP PROCEDURE IF EXISTS WITH_EMULATOR;
 CREATE PROCEDURE WITH_EMULATOR(
   recursive_table      VARCHAR(100),   # name of recursive table

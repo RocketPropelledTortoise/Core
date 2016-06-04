@@ -75,7 +75,7 @@ Event::listen(
                 } else {
                     //not translated
                     $final_strings .= "<div class='t_line string not $class' title='string_$string_id'>" .
-                        $string[1]->text . "</div>";
+                        $string[1]->text . '</div>';
                 }
 
                 $final_translations .= '<div id="string_' . $string_id . '" class="t_internal" style="display:none;">';
@@ -92,7 +92,7 @@ Event::listen(
                 foreach ($string as $lid => $translation) {
                     $final_translations .= '<div class="t_line">';
                     $final_translations .= '<div class="t_title">' . t(
-                        I18N::languages((int)$lid, 'name'),
+                        I18N::languages((int) $lid, 'name'),
                         [],
                         'languages'
                     ) . '</div>';
@@ -117,7 +117,7 @@ Event::listen(
                     } else {
                         $final_strings .= "<div class=\"t_line string not\" title=\"taxonomy_$term[term_id]\">" .
                             $term[lang_fr][title] .
-                            "</div>";
+                            '</div>';
                     }
 
                     $final_translations .= "<div id='taxonomy_$term[term_id]' class='t_internal' style='display:none'>";

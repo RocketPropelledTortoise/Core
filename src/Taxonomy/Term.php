@@ -294,8 +294,6 @@ class Term implements ArrayAccess
         if (array_key_exists('lang_' . I18N::getCurrent(), $this->container)) {
             return $this->container['lang_' . I18N::getCurrent()][$offset];
         }
-
-        return;
     }
 
     /**

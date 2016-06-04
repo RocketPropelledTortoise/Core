@@ -10,6 +10,6 @@ use Rocket\Entities\Field;
 class Date extends Field
 {
     public $table = 'field_date';
-    
+
     //TODO :: treat date fields as such
 }

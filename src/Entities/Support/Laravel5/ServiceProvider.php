@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Config;
 use Rocket\Entities\Entity;
-use Rocket\Entities\EntityManager;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {

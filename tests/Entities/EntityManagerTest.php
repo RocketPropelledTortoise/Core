@@ -54,8 +54,8 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $array = $demo->toArray();
         $revision_id = $array['_revision']['id'];
 
-        $this->assertInternalType("int", $array['_content']['id']);
-        $this->assertInternalType("int", $revision_id);
+        $this->assertInternalType('int', $array['_content']['id']);
+        $this->assertInternalType('int', $revision_id);
 
         $titles = $demo->getField('titles')->all();
 
@@ -88,8 +88,8 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
     public function testUpdateEntity()
     {
-        $this->markTestSkipped("Not implemented yet");
-        
+        $this->markTestSkipped('Not implemented yet');
+
         $language_id = Language::value('id');
 
         //GIVEN :: a base entity
@@ -111,26 +111,26 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
     public function testCreateNewRevision()
     {
-        $this->markTestSkipped("Not implemented yet");
+        $this->markTestSkipped('Not implemented yet');
     }
 
     public function testPublishOldRevision()
     {
-        $this->markTestSkipped("Not implemented yet");
+        $this->markTestSkipped('Not implemented yet');
     }
 
     public function testUnpublishContent()
     {
-        $this->markTestSkipped("Not implemented yet");
+        $this->markTestSkipped('Not implemented yet');
     }
 
     public function testDeleteRevision()
     {
-        $this->markTestSkipped("Not implemented yet");
+        $this->markTestSkipped('Not implemented yet');
     }
 
     public function testDeleteContent()
     {
-        $this->markTestSkipped("Not implemented yet");
+        $this->markTestSkipped('Not implemented yet');
     }
 }

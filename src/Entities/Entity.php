@@ -71,9 +71,9 @@ abstract class Entity
     /**
      * @param string $field
      * @param array $settings
-     * @return static
      * @throws InvalidFieldTypeException
      * @throws ReservedFieldNameException
+     * @return static
      */
     protected function initializeField($field, $settings)
     {
