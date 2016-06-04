@@ -264,8 +264,14 @@ abstract class Entity
     /**
      * Save a revision
      */
-    public function save()
+    public function save($newRevision = false)
     {
+        if ($newRevision) {
+            $revision = new Revision;
+            $revision->language_id = $this->revision->language_id;
+
+            $this->revision = $revision;
+        }
 
         DB::transaction(
             function () use ($newRevision) {
@@ -282,13 +288,21 @@ abstract class Entity
 
                     //TODO :: remove deleted fields
 
-                    $field->each(function (Field $value, $key) use ($fieldName) {
-                        $value->weight = $key;
-                        $value->revision_id = $this->revision->id;
-                        $value->name = $fieldName;
+                    $field->each(
+                        function (Field $value, $key) use ($newRevision, $fieldName) {
 
-                        $value->save();
-                    });
+                            if ($newRevision) {
+                                $value->id = null;
+                                $value->created_at = null;
+                            }
+
+                            $value->weight = $key;
+                            $value->revision_id = $this->revision->id;
+                            $value->name = $fieldName;
+
+                            $value->save();
+                        }
+                    );
                 }
             }
         );
