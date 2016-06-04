@@ -11,7 +11,6 @@
 Event::listen(
     'output',
     function ($output) {
-
         if (true) {
             return;
         }

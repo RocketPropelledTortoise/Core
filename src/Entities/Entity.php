@@ -241,19 +241,19 @@ abstract class Entity
 
         (new Collection($instance->getFields()))
             ->map(function ($options) {
-                    return $options['type'];
+                return $options['type'];
             })
             ->values()
             ->unique()
             ->map(function ($type) {
-                    return self::$types[$type];
+                return self::$types[$type];
             })
             ->each(
                 function ($type) use ($instance) {
                     $type::where('revision_id', $instance->revision->id)
                         ->get()
                         ->each(function (Field $value) use ($instance) {
-                                $instance->data[$value->name][$value->weight] = $value;
+                            $instance->data[$value->name][$value->weight] = $value;
                         });
                 }
             );
@@ -290,7 +290,6 @@ abstract class Entity
 
                     $field->each(
                         function (Field $value, $key) use ($newRevision, $fieldName) {
-
                             if ($newRevision) {
                                 $value->id = null;
                                 $value->created_at = null;

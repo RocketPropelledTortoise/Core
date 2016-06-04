@@ -5,7 +5,7 @@ use Rocket\Entities\Field;
 /**
  * Date Field
  *
- * @property String $value The field's value
+ * @property string $value The field's value
  */
 class StringField extends Field
 {
