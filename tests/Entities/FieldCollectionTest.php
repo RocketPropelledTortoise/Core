@@ -1,17 +1,24 @@
 <?php namespace Rocket\Entities;
 
+use Rocket\Entities\Fields\String;
+
 class FieldCollectionTest extends \Rocket\Utilities\TestCase
 {
+    protected function getFieldCollection(array $options = [])
+    {
+        return FieldCollection::initField(array_merge_recursive(['type' => String::class], $options));
+    }
+
     public function testInit()
     {
-        $collection = FieldCollection::initField(['max_items' => 4]);
+        $collection = $this->getFieldCollection(['max_items' => 4]);
 
         $this->assertEquals(4, $collection->getMaxItems());
     }
 
     public function testUnique()
     {
-        $collection = FieldCollection::initField();
+        $collection = $this->getFieldCollection();
         $collection[0] = 'test3';
 
         $this->assertEquals('test3', $collection->toArray());
@@ -19,7 +26,7 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
 
     public function testSetFieldInstance()
     {
-        $collection = FieldCollection::initField();
+        $collection = $this->getFieldCollection();
         $collection[0] = 'test3';
 
         $this->assertEquals('test3', $collection->toArray());
@@ -27,7 +34,7 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
 
     public function testReplaceFieldInstance()
     {
-        $collection = FieldCollection::initField();
+        $collection = $this->getFieldCollection();
         $collection[] = 'hey hey';
         $collection[0] = 'test3';
 
@@ -36,14 +43,14 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
 
     public function testUniqueEmpty()
     {
-        $collection = FieldCollection::initField();
+        $collection = $this->getFieldCollection();
 
         $this->assertNull($collection->toArray());
     }
 
     public function testMultipleValues()
     {
-        $collection = FieldCollection::initField(['max_items' => 3]);
+        $collection = $this->getFieldCollection(['max_items' => 3]);
 
         $collection[] = 'test';
         $collection[] = 'test2';
@@ -54,11 +61,11 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \Rocket\Entities\Exceptions\ItemCountException
      */
     public function testTooManyItems()
     {
-        $collection = FieldCollection::initField(['max_items' => 2]);
+        $collection = $this->getFieldCollection(['max_items' => 2]);
 
         $collection[] = 'test';
         $collection[] = 'test2';
@@ -67,7 +74,7 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
 
     public function testRemoveItem()
     {
-        $collection = FieldCollection::initField(['max_items' => 3]);
+        $collection = $this->getFieldCollection(['max_items' => 3]);
 
         $collection[] = 'test';
         $collection[] = 'test2';
@@ -80,7 +87,7 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
 
     public function testIssetItem()
     {
-        $collection = FieldCollection::initField(['max_items' => 3]);
+        $collection = $this->getFieldCollection(['max_items' => 3]);
 
         $collection[] = 'test';
         $collection[] = 'test2';
@@ -92,7 +99,7 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
 
     public function testAddItems()
     {
-        $collection = FieldCollection::initField(['max_items' => 2]);
+        $collection = $this->getFieldCollection(['max_items' => 2]);
 
         $collection[] = 'test';
         $collection[] = 'test2';
@@ -103,11 +110,11 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
 
     public function testToString()
     {
-        $collection = FieldCollection::initField(['max_items' => 1]);
+        $collection = $this->getFieldCollection(['max_items' => 1]);
         $collection[] = 'test';
         $this->assertEquals('test', strval($collection));
 
-        $collection = FieldCollection::initField(['max_items' => 2]);
+        $collection = $this->getFieldCollection(['max_items' => 2]);
         $collection[] = 'test';
         $collection[] = 'test2';
         $this->assertEquals('Array', strval($collection));

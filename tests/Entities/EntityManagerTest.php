@@ -1,5 +1,7 @@
 <?php namespace Rocket\Entities;
 
+use Rocket\Entities\Fixtures\CommentDemo;
+use Rocket\Entities\Fixtures\Demo;
 use Rocket\Translation\Model\Language;
 
 class EntityManagerTest extends \Rocket\Utilities\TestCase
@@ -35,16 +37,20 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $title1 = 'one title';
         $title2 = 'two titles';
 
+        // GIVEN a simple entity
         $demo = new Demo($language_id);
         $demo->titles[] = $title1;
         $demo->titles[] = $title2;
 
+        // no id's exist before save
         $array = $demo->toArray();
         $this->assertEquals([], $array['_content']);
         $this->assertEquals(['language_id' => $language_id], $array['_revision']);
 
+        // WHEN this entity is saved
         $demo->save();
 
+        // THEN the id's and creation dates are filled
         $array = $demo->toArray();
         $revision_id = $array['_revision']['id'];
 
@@ -67,32 +73,40 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
     {
         $language_id = Language::value('id');
 
+        // GIVEN a simple entity saved to database
         $demo = new Demo($language_id);
         $demo->titles[] = 'one title';
         $demo->titles[] = 'two titles';
         $demo->save();
 
-        $array = $demo->toArray();
-
+        // WHEN it is retrieved
         $demo2 = Demo::find($demo->id, $language_id);
 
-        $this->assertEquals($array, $demo2->toArray());
+        // THEN it is identical to the original
+        $this->assertEquals($demo->toArray(), $demo2->toArray());
     }
 
     public function testUpdateEntity()
     {
+        $this->markTestSkipped("Not implemented yet");
+        
         $language_id = Language::value('id');
 
+        //GIVEN :: a base entity
         $demo = new Demo($language_id);
         $demo->titles[] = 'one title';
         $demo->titles[] = 'two titles';
         $demo->save();
 
-        $array = $demo->toArray();
-
+        // WHEN an entity is modified
         $demo2 = Demo::find($demo->id, $language_id);
+        $demo2->titles[1] = 'new title';
+        unset($demo2->titles[0]);
+        $demo2->save();
 
-        $this->assertEquals($array, $demo2->toArray());
+        // THEN the fields are updated and deleted
+        $demo3 = Demo::find($demo->id, $language_id);
+        $this->assertEquals($demo2->toArray(), $demo3->toArray());
     }
 
     public function testCreateNewRevision()

@@ -1,5 +1,8 @@
 <?php namespace Rocket\Entities;
 
+use Rocket\Entities\Exceptions\InvalidFieldTypeException;
+use Rocket\Entities\Exceptions\ItemCountException;
+
 class FieldCollection extends \Illuminate\Support\Collection
 {
     /**
@@ -26,7 +29,7 @@ class FieldCollection extends \Illuminate\Support\Collection
     public static function initField($configuration = [])
     {
         if (!array_key_exists('type', $configuration) || !class_exists($configuration['type'])) {
-            throw new \RuntimeException('You did not specify a type on this class.');
+            throw new InvalidFieldTypeException('You did not specify a type on this class.');
         }
 
         $collection = new static();
@@ -46,7 +49,7 @@ class FieldCollection extends \Illuminate\Support\Collection
     public function offsetSet($key, $value)
     {
         if ((is_null($key) || !array_key_exists($key, $this->items)) && $this->count() >= $this->getMaxItems()) {
-            throw new \RuntimeException('The maximum number of items has been reached on this field.');
+            throw new ItemCountException('The maximum number of items has been reached on this field.');
         }
 
         if ($value instanceof Field) {

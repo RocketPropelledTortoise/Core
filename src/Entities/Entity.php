@@ -1,9 +1,11 @@
 <?php namespace Rocket\Entities;
 
 use Illuminate\Support\Collection;
-use InvalidArgumentException;
-use RuntimeException;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+use Rocket\Entities\Exceptions\InvalidFieldTypeException;
+use Rocket\Entities\Exceptions\NonExistentFieldException;
+use Rocket\Entities\Exceptions\ReservedFieldNameException;
 
 /**
  * Entity manager
@@ -42,9 +44,8 @@ abstract class Entity
      * Entity constructor.
      *
      * @param int $language_id The language this specific entity is in
-     * @param array $data The data for this entity
      */
-    public function __construct($language_id, $data = [])
+    public function __construct($language_id)
     {
         if (!is_int($language_id) || $language_id == 0) {
             throw new InvalidArgumentException("You must set a valid 'language_id'.");
@@ -55,10 +56,6 @@ abstract class Entity
         $this->initialize($fields);
 
         $this->revision->language_id = $language_id;
-
-        if ($data !== null) {
-            $this->hydrate($data);
-        }
     }
 
     protected function initialize(array $fields)
@@ -71,10 +68,17 @@ abstract class Entity
         }
     }
 
+    /**
+     * @param string $field
+     * @param array $settings
+     * @return static
+     * @throws InvalidFieldTypeException
+     * @throws ReservedFieldNameException
+     */
     protected function initializeField($field, $settings)
     {
         if ($this->isContentField($field) || $this->isRevisionField($field)) {
-            throw new InvalidArgumentException(
+            throw new ReservedFieldNameException(
                 "The field '$field' cannot be used in '" . get_class($this) . "' as it is a reserved name"
             );
         }
@@ -82,17 +86,12 @@ abstract class Entity
         $type = $settings['type'];
 
         if (!array_key_exists($type, self::$types)) {
-            throw new RuntimeException("Unkown type '$type' in '" . get_class($this) . "'");
+            throw new InvalidFieldTypeException("Unkown type '$type' in '" . get_class($this) . "'");
         }
 
         $settings['type'] = self::$types[$settings['type']];
 
         return FieldCollection::initField($settings);
-    }
-
-    protected function hydrate($data)
-    {
-        //TODO :: populate data
     }
 
     abstract public function getFields();
@@ -168,7 +167,7 @@ abstract class Entity
      * Dynamically retrieve attributes on the model.
      *
      * @param string $key
-     * @throws RuntimeException
+     * @throws NonExistentFieldException
      * @return $this|bool|\Carbon\Carbon|\DateTime|mixed|static
      */
     public function __get($key)
@@ -185,7 +184,7 @@ abstract class Entity
             return $this->getField($key);
         }
 
-        throw new RuntimeException("Field '$key' doesn't exist in '" . get_class($this) . "'");
+        throw new NonExistentFieldException("Field '$key' doesn't exist in '" . get_class($this) . "'");
     }
 
     /**
@@ -193,7 +192,7 @@ abstract class Entity
      *
      * @param string $key
      * @param mixed $value
-     * @throws RuntimeException
+     * @throws NonExistentFieldException
      */
     public function __set($key, $value)
     {
@@ -221,7 +220,7 @@ abstract class Entity
             return;
         }
 
-        throw new RuntimeException("Field '$key' doesn't exist in '" . get_class($this) . "'");
+        throw new NonExistentFieldException("Field '$key' doesn't exist in '" . get_class($this) . "'");
     }
 
     /**
@@ -241,19 +240,23 @@ abstract class Entity
         $instance->revision = Revision::where('content_id', $id)->where('language_id', $language_id)->firstOrFail();
 
         (new Collection($instance->getFields()))
-            ->map(function($options) {
-                return $options['type'];
+            ->map(function ($options) {
+                    return $options['type'];
             })
             ->values()
             ->unique()
-            ->map(function($type) {
-                return self::$types[$type];
+            ->map(function ($type) {
+                    return self::$types[$type];
             })
-            ->each(function($type) use ($instance) {
-                $type::where('revision_id', $instance->revision->id)->get()->each(function(Field $value) use ($instance) {
-                    $instance->data[$value->name][$value->weight] = $value;
-                });
-            });
+            ->each(
+                function ($type) use ($instance) {
+                    $type::where('revision_id', $instance->revision->id)
+                        ->get()
+                        ->each(function (Field $value) use ($instance) {
+                                $instance->data[$value->name][$value->weight] = $value;
+                        });
+                }
+            );
 
         return $instance;
     }

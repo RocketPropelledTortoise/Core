@@ -1,5 +1,8 @@
 <?php namespace Rocket\Entities;
 
+use Rocket\Entities\Fixtures\Demo;
+use Rocket\Entities\Fixtures\NonExistentType;
+use Rocket\Entities\Fixtures\ReservedFields;
 use Rocket\Entities\Support\Laravel5\Facade as Entities;
 use Rocket\Translation\Model\Language;
 
@@ -78,7 +81,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \Rocket\Entities\Exceptions\NonExistentFieldException
      */
     public function testGetNonExistentField()
     {
@@ -87,7 +90,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \Rocket\Entities\Exceptions\NonExistentFieldException
      */
     public function testSetNonExistentField()
     {
@@ -96,7 +99,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Rocket\Entities\Exceptions\ReservedFieldNameException
      */
     public function testReservedFieldNames()
     {
@@ -112,7 +115,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \Rocket\Entities\Exceptions\InvalidFieldTypeException
      */
     public function testNonExistentFieldType()
     {

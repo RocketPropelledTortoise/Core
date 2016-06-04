@@ -1,6 +1,6 @@
-<?php
+<?php namespace Rocket\Entities\Fixtures;
 
-namespace Rocket\Entities;
+use Rocket\Entities\Entity;
 
 class ReservedFields extends Entity
 {
