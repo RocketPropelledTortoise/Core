@@ -1,12 +1,12 @@
 <?php namespace Rocket\Entities;
 
-use Rocket\Entities\Fields\String;
+use Rocket\Entities\Fields\StringField;
 
 class FieldCollectionTest extends \Rocket\Utilities\TestCase
 {
     protected function getFieldCollection(array $options = [])
     {
-        return FieldCollection::initField(array_merge_recursive(['type' => String::class], $options));
+        return FieldCollection::initField(array_merge_recursive(['type' => StringField::class], $options));
     }
 
     public function testInit()
