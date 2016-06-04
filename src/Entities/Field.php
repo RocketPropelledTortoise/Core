@@ -19,14 +19,20 @@ class Field extends Model
         $this->bootIfNotBooted();
 
         $this->syncOriginal();
-
-        //TODO :: validators
     }
+
+    //TODO :: validate values
 
     public function toArray()
     {
         return $this->getAttribute('value');
     }
 
-    // TODO :: relations
+    /**
+     * Get the revisions for this class
+     */
+    public function revision()
+    {
+        return $this->belongsTo(Revision::class);
+    }
 }

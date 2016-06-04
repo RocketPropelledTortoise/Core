@@ -1,7 +1,5 @@
 <?php namespace Rocket\Entities;
 
-use Illuminate\Contracts\Support\Arrayable;
-
 class FieldCollection extends \Illuminate\Support\Collection
 {
     /**
@@ -51,8 +49,12 @@ class FieldCollection extends \Illuminate\Support\Collection
             throw new \RuntimeException('The maximum number of items has been reached on this field.');
         }
 
-        $container = new $this->type();
-        $container->value = $value;
+        if ($value instanceof Field) {
+            $container = $value;
+        } else {
+            $container = new $this->type();
+            $container->value = $value;
+        }
 
         if (is_null($key)) {
             $this->items[] = $container;
@@ -101,22 +103,19 @@ class FieldCollection extends \Illuminate\Support\Collection
     /**
      * As we use a field collection even if we have only one value, we use it that way.
      *
-     * @return array|null
+     * @return array|mixed|null
      */
     public function toArray()
     {
         if ($this->maxItems != 1) {
-            return array_map(function ($value) {
-                return $value instanceof Arrayable ? $value->toArray() : $value->value;
-
-            }, $this->items);
+            return parent::toArray();
         }
 
         if (!array_key_exists(0, $this->items)) {
-            return;
+            return null;
         }
 
-        return $this->items[0]->value;
+        return $this->get(0)->toArray();
     }
 
     public function __toString()

@@ -13,4 +13,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Revision extends Model
 {
+    /**
+     * Get the revisions for this class
+     */
+    public function content()
+    {
+        return $this->belongsTo(Content::class);
+    }
 }

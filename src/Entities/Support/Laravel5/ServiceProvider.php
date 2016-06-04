@@ -16,13 +16,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                 __DIR__ . '/config.php' => config_path('rocket_entities.php'),
             ]
         );
-
-        $this->app->singleton(
-            'entity_manager',
-            function () {
-                return new EntityManager;
-            }
-        );
     }
 
     /**

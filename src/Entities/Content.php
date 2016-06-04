@@ -12,4 +12,12 @@ use Illuminate\Database\Eloquent\Model;
 class Content extends Model
 {
     public $table = 'contents';
+
+    /**
+     * Get the revisions for this class
+     */
+    public function revisions()
+    {
+        return $this->hasMany(Revision::class);
+    }
 }

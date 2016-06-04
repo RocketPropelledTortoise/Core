@@ -1,7 +1,9 @@
 <?php namespace Rocket\Entities;
 
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use RuntimeException;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Entity manager
@@ -94,6 +96,16 @@ abstract class Entity
     }
 
     abstract public function getFields();
+
+    /**
+     * Get the database friendly content type
+     *
+     * @return string
+     */
+    public static function getContentType()
+    {
+        return str_replace('\\', '', snake_case((new \ReflectionClass(get_called_class()))->getShortName()));
+    }
 
     /**
      * Create a new revision based on the same content ID but without the content.
@@ -212,14 +224,71 @@ abstract class Entity
         throw new RuntimeException("Field '$key' doesn't exist in '" . get_class($this) . "'");
     }
 
-    public function getContent()
+    /**
+     * Find the latest valid revision for this entity
+     *
+     * @param int $id
+     * @param int $language_id
+     * @return static
+     */
+    public static function find($id, $language_id)
     {
-        return $this->content;
+        $instance = new static($language_id);
+
+        $instance->content = Content::findOrFail($id);
+
+        // TODO :: logic to get valid revision, this will retrieve only one revision
+        $instance->revision = Revision::where('content_id', $id)->where('language_id', $language_id)->firstOrFail();
+
+        (new Collection($instance->getFields()))
+            ->map(function($options) {
+                return $options['type'];
+            })
+            ->values()
+            ->unique()
+            ->map(function($type) {
+                return self::$types[$type];
+            })
+            ->each(function($type) use ($instance) {
+                $type::where('revision_id', $instance->revision->id)->get()->each(function(Field $value) use ($instance) {
+                    $instance->data[$value->name][$value->weight] = $value;
+                });
+            });
+
+        return $instance;
     }
 
-    public function getRevision()
+    /**
+     * Save a revision
+     */
+    public function save()
     {
-        return $this->revision;
+
+        DB::transaction(
+            function () use ($newRevision) {
+                // Save content
+                $this->content->save();
+
+                // Create revision ID
+                $this->revision->content_id = $this->content->id;
+                $this->revision->save();
+
+                // Prepare and save fields
+                foreach (array_keys($this->data) as $fieldName) {
+                    $field = $this->data[$fieldName];
+
+                    //TODO :: remove deleted fields
+
+                    $field->each(function (Field $value, $key) use ($fieldName) {
+                        $value->weight = $key;
+                        $value->revision_id = $this->revision->id;
+                        $value->name = $fieldName;
+
+                        $value->save();
+                    });
+                }
+            }
+        );
     }
 
     /**

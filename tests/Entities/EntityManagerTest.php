@@ -1,6 +1,5 @@
 <?php namespace Rocket\Entities;
 
-use Rocket\Entities\Support\Laravel5\Facade as Entities;
 use Rocket\Translation\Model\Language;
 
 class EntityManagerTest extends \Rocket\Utilities\TestCase
@@ -22,33 +21,34 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
     public function testGetContentType()
     {
-        $comment = new Demo(Language::value('id'));
-        $this->assertEquals('demo', Entities::getContentType($comment));
+        $this->assertEquals('demo', Demo::getContentType());
     }
 
     public function testExtendedGetContentType()
     {
-        $comment = new CommentDemo(Language::value('id'));
-        $this->assertEquals('comment_demo', Entities::getContentType($comment));
+        $this->assertEquals('comment_demo', CommentDemo::getContentType());
     }
 
     public function testSaveEntity()
     {
+        $language_id = Language::value('id');
         $title1 = 'one title';
         $title2 = 'two titles';
 
-        $demo = new Demo(Language::value('id'));
+        $demo = new Demo($language_id);
         $demo->titles[] = $title1;
         $demo->titles[] = $title2;
 
-        $this->assertNull($demo->getContent()->id);
-        $this->assertNull($demo->getRevision()->id);
+        $array = $demo->toArray();
+        $this->assertEquals([], $array['_content']);
+        $this->assertEquals(['language_id' => $language_id], $array['_revision']);
 
-        Entities::save($demo);
+        $demo->save();
 
-        $revision_id = $demo->getRevision()->id;
+        $array = $demo->toArray();
+        $revision_id = $array['_revision']['id'];
 
-        $this->assertInternalType("int", $demo->getContent()->id);
+        $this->assertInternalType("int", $array['_content']['id']);
         $this->assertInternalType("int", $revision_id);
 
         $titles = $demo->getField('titles')->all();
@@ -61,5 +61,62 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
         $this->assertEquals($title2, $titles[1]->value);
         $this->assertEquals($revision_id, $titles[1]->revision_id);
+    }
+
+    public function testRetrieveEntity()
+    {
+        $language_id = Language::value('id');
+
+        $demo = new Demo($language_id);
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
+        $demo->save();
+
+        $array = $demo->toArray();
+
+        $demo2 = Demo::find($demo->id, $language_id);
+
+        $this->assertEquals($array, $demo2->toArray());
+    }
+
+    public function testUpdateEntity()
+    {
+        $language_id = Language::value('id');
+
+        $demo = new Demo($language_id);
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
+        $demo->save();
+
+        $array = $demo->toArray();
+
+        $demo2 = Demo::find($demo->id, $language_id);
+
+        $this->assertEquals($array, $demo2->toArray());
+    }
+
+    public function testCreateNewRevision()
+    {
+        $this->markTestSkipped("Not implemented yet");
+    }
+
+    public function testPublishOldRevision()
+    {
+        $this->markTestSkipped("Not implemented yet");
+    }
+
+    public function testUnpublishContent()
+    {
+        $this->markTestSkipped("Not implemented yet");
+    }
+
+    public function testDeleteRevision()
+    {
+        $this->markTestSkipped("Not implemented yet");
+    }
+
+    public function testDeleteContent()
+    {
+        $this->markTestSkipped("Not implemented yet");
     }
 }
