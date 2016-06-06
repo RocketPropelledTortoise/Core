@@ -55,7 +55,8 @@ abstract class Entity
 
         $this->initialize($fields);
 
-        $this->revision->language_id = $language_id;
+        $this->type = $this->getContentType();
+        $this->language_id = $language_id;
     }
 
     protected function initialize(array $fields)
@@ -73,7 +74,7 @@ abstract class Entity
      * @param array $settings
      * @throws InvalidFieldTypeException
      * @throws ReservedFieldNameException
-     * @return static
+     * @return FieldCollection
      */
     protected function initializeField($field, $settings)
     {
@@ -129,7 +130,7 @@ abstract class Entity
      */
     protected function isContentField($field)
     {
-        return in_array($field, ['id', 'created_at']);
+        return in_array($field, ['id', 'created_at', 'type', 'published']);
     }
 
     /**
@@ -160,7 +161,7 @@ abstract class Entity
      */
     protected function isRevisionField($field)
     {
-        return in_array($field, ['language_id', 'updated_at']);
+        return in_array($field, ['language_id', 'updated_at', 'published']);
     }
 
     /**
@@ -182,6 +183,10 @@ abstract class Entity
 
         if ($this->hasField($key)) {
             return $this->getField($key);
+        }
+
+        if ($key == 'revisions') {
+            return $this->content->revisions;
         }
 
         throw new NonExistentFieldException("Field '$key' doesn't exist in '" . get_class($this) . "'");
@@ -209,13 +214,22 @@ abstract class Entity
         }
 
         if ($this->hasField($key)) {
-            if ($value == []) {
-                $this->getField($key)->clear();
+            $field = $this->getField($key);
+
+            if (is_array($value)) {
+                $field->clear();
+
+                // This happens when the array is replaced completely by another array
+                if (count($value)) {
+                    foreach ($value as $k => $v) {
+                        $field->offsetSet($k, $v);
+                    }
+                }
 
                 return;
             }
 
-            $this->getField($key)->offsetSet(0, $value);
+            $field->offsetSet(0, $value);
 
             return;
         }
@@ -236,8 +250,10 @@ abstract class Entity
 
         $instance->content = Content::findOrFail($id);
 
-        // TODO :: logic to get valid revision, this will retrieve only one revision
-        $instance->revision = Revision::where('content_id', $id)->where('language_id', $language_id)->firstOrFail();
+        $instance->revision = Revision::where('content_id', $id)
+            ->where('language_id', $language_id)
+            ->where('published', true)
+            ->firstOrFail();
 
         (new Collection($instance->getFields()))
             ->map(function ($options) {
@@ -248,15 +264,13 @@ abstract class Entity
             ->map(function ($type) {
                 return self::$types[$type];
             })
-            ->each(
-                function ($type) use ($instance) {
-                    $type::where('revision_id', $instance->revision->id)
-                        ->get()
-                        ->each(function (Field $value) use ($instance) {
-                            $instance->data[$value->name][$value->weight] = $value;
-                        });
-                }
-            );
+            ->each(function ($type) use ($instance) {
+                $type::where('revision_id', $instance->revision->id)
+                    ->get()
+                    ->each(function (Field $value) use ($instance) {
+                        $instance->data[$value->name][$value->weight] = $value;
+                    });
+            });
 
         return $instance;
     }
@@ -264,7 +278,7 @@ abstract class Entity
     /**
      * Save a revision
      */
-    public function save($newRevision = false)
+    public function save($newRevision = false, $publishRevision = true)
     {
         if ($newRevision) {
             $revision = new Revision;
@@ -274,37 +288,72 @@ abstract class Entity
         }
 
         DB::transaction(
-            function () use ($newRevision) {
-                // Save content
-                $this->content->save();
+            function () use ($newRevision, $publishRevision) {
 
-                // Create revision ID
-                $this->revision->content_id = $this->content->id;
-                $this->revision->save();
+                $this->saveContent();
+
+                $this->saveRevision($publishRevision);
 
                 // Prepare and save fields
                 foreach (array_keys($this->data) as $fieldName) {
+                    /** @var FieldCollection $field */
                     $field = $this->data[$fieldName];
 
-                    //TODO :: remove deleted fields
+                    if (!$newRevision) {
+                        $field->deleted()->each(function (Field $value) {
+                            $value->delete();
+                        });
+                    }
 
-                    $field->each(
-                        function (Field $value, $key) use ($newRevision, $fieldName) {
-                            if ($newRevision) {
-                                $value->id = null;
-                                $value->created_at = null;
-                            }
+                    $field->each(function (Field $value, $key) use ($newRevision, $fieldName) {
+                        $value->weight = $key;
+                        $value->name = $fieldName;
+                        $this->saveField($value, $newRevision);
+                    });
 
-                            $value->weight = $key;
-                            $value->revision_id = $this->revision->id;
-                            $value->name = $fieldName;
-
-                            $value->save();
-                        }
-                    );
+                    $field->syncOriginal();
                 }
             }
         );
+    }
+
+    protected function saveContent()
+    {
+        $this->content->save();
+    }
+
+    protected function saveRevision($publishRevision)
+    {
+
+        if (!$this->revision->exists && !$publishRevision) {
+            $this->revision->published = $publishRevision;
+        }
+
+        $this->revision->content_id = $this->content->id;
+        $this->revision->save();
+
+        if (!$this->content->wasRecentlyCreated && $publishRevision) {
+            // Unpublish all other revisions
+            Revision::where('content_id', $this->content->id)
+                ->where('language_id', $this->revision->language_id)
+                ->where('id', '!=', $this->revision->id)
+                ->update(['published' => false]);
+        }
+    }
+
+    protected function saveField(Field $field, $newRevision)
+    {
+        // If we create a new revision, this will
+        // reinit the field to a non-saved field
+        // and create a new row in the database
+        if ($newRevision) {
+            $field->id = null;
+            $field->exists = false;
+        }
+
+        $field->revision_id = $this->revision->id;
+
+        $field->save();
     }
 
     /**

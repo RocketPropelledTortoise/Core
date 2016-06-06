@@ -167,4 +167,21 @@ class EntityTest extends \Rocket\Utilities\TestCase
         $this->assertEquals(100, $demo2->id);
         $this->assertFalse(isset($demo2->titles[0]));
     }
+
+    public function testGetType()
+    {
+        $demo = new Demo(Language::value('id'));
+        $this->assertEquals('demo', $demo->type);
+    }
+
+    public function testReplaceFieldContent()
+    {
+        $content = ['title', 'title 2'];
+
+        $demo = new Demo(Language::value('id'));
+        $demo->titles = $content;
+
+        $this->assertInstanceOf(FieldCollection::class, $demo->getField('titles'));
+        $this->assertEquals($content, $demo->toArray()['titles']);
+    }
 }

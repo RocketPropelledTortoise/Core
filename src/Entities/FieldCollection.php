@@ -1,7 +1,9 @@
 <?php namespace Rocket\Entities;
 
+use Illuminate\Support\Collection;
 use Rocket\Entities\Exceptions\InvalidFieldTypeException;
 use Rocket\Entities\Exceptions\ItemCountException;
+use Rocket\Entities\Exceptions\NullValueException;
 
 class FieldCollection extends \Illuminate\Support\Collection
 {
@@ -19,6 +21,11 @@ class FieldCollection extends \Illuminate\Support\Collection
      * @var string The type of this collection
      */
     protected $type;
+
+    /**
+     * @var array An array of fields that were deleted
+     */
+    protected $deleted = [];
 
     /**
      * Initialize a collection with the configuration
@@ -52,6 +59,15 @@ class FieldCollection extends \Illuminate\Support\Collection
             throw new ItemCountException('The maximum number of items has been reached on this field.');
         }
 
+        if (is_null($key) && is_null($value)) {
+            throw new NullValueException('You cannot add a null value');
+        }
+
+        if (is_null($value)) {
+            $this->offsetUnset($key);
+            return;
+        }
+
         if ($value instanceof Field) {
             $container = $value;
         } else {
@@ -74,13 +90,36 @@ class FieldCollection extends \Illuminate\Support\Collection
      */
     public function offsetGet($key)
     {
-        $value = parent::offsetGet($key);
+        return parent::offsetGet($key)->value;
+    }
 
-        if (!$value) {
-            return null;
+    /**
+     * Unset the item at a given offset.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function offsetUnset($key)
+    {
+        if ($this->offsetExists($key)) {
+            $this->deleted[] = $this->items[$key];
         }
+        parent::offsetUnset($key);
+    }
 
-        return $value->value;
+    /**
+     * Get all deleted fields
+     *
+     * @return Collection
+     */
+    public function deleted()
+    {
+        return new Collection($this->deleted);
+    }
+
+    public function syncOriginal()
+    {
+        $this->deleted = [];
     }
 
     /**

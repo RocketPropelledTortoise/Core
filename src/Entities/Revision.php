@@ -8,13 +8,23 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id The field id
  * @property int $language_id the language of this revision
  * @property int $content_id the content this revision is related to
+ * @property bool $published the published state
  * @property-read \DateTime $created_at
  * @property-read \DateTime $updated_at
  */
 class Revision extends Model
 {
     /**
+     * @inheritdoc
+     */
+    protected $casts = [
+        'published' => 'boolean',
+    ];
+
+    /**
      * Get the revisions for this class
+     *
+     * @codeCoverageIgnore
      */
     public function content()
     {

@@ -30,6 +30,8 @@ class Field extends Model
 
     /**
      * Get the revisions for this class
+     *
+     * @codeCoverageIgnore
      */
     public function revision()
     {
