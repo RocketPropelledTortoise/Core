@@ -80,6 +80,9 @@ class FieldCollection extends \Illuminate\Support\Collection
         if (is_null($key)) {
             $this->items[] = $container;
         } else {
+            if ($value instanceof Field && $this->has($key)) {
+                $this->deleted[] = $this->items[$key];
+            }
             $this->items[$key] = $container;
         }
     }
@@ -110,7 +113,7 @@ class FieldCollection extends \Illuminate\Support\Collection
      */
     public function deleted()
     {
-        return new Collection($this->deleted);
+        return new Collection(array_diff($this->deleted, $this->items));
     }
 
     /**
@@ -128,6 +131,10 @@ class FieldCollection extends \Illuminate\Support\Collection
      */
     public function clear()
     {
+        foreach ($this->items as $item) {
+            $this->deleted[] = $item;
+        }
+
         $this->items = [];
     }
 

@@ -13,8 +13,8 @@ use Rocket\Entities\Exceptions\ReservedFieldNameException;
  * @property int $id The content ID
  * @property int $language_id The language in which this entity is
  * @property string $type The type of the Entity
- * @property boolean $published Is this content published
- * @property array<Rocket\Entities\Revision> $revisions all revisions in this content
+ * @property bool $published Is this content published
+ * @property \Rocket\Entities\Revision[] $revisions all revisions in this content
  * @property-read \DateTime $created_at
  * @property-read \DateTime $updated_at
  */
@@ -387,7 +387,7 @@ abstract class Entity
      * Save a single field instance
      *
      * @param Field $field The field instance to save
-     * @param boolean $newRevision Should we create a new revision?
+     * @param bool $newRevision Should we create a new revision?
      */
     protected function saveField(Field $field, $newRevision)
     {

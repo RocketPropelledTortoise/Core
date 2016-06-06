@@ -161,33 +161,55 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
         $collection[1] = null;
 
         $this->assertCount(0, $collection);
+        $this->assertInstanceOf(Field::class, $collection->deleted()[0]);
         $this->assertEquals(['test', 'test2'], $collection->deleted()->toArray());
     }
 
     public function testGetDeletedOnClear()
     {
-        // When we clear the collection, all fields must be marked as deleted
+        $collection = $this->getFieldCollection(['max_items' => 2]);
+        $collection[0] = 'test';
+        $collection[1] = 'test2';
 
-        // TODO :: implement feature
-        $this->markTestSkipped('Not implemented');
+        $collection->clear();
+
+        $this->assertCount(0, $collection);
+        $this->assertInstanceOf(Field::class, $collection->deleted()[0]);
+        $this->assertInstanceOf(Field::class, $collection->deleted()[1]);
+        $this->assertEquals(['test', 'test2'], $collection->deleted()->toArray());
     }
 
     public function testDeletedByReplacement()
     {
-        // If a value is replaced by a Field instance,
-        // the other instance is ditched.
-        // we must track that deletion
+        $collection = $this->getFieldCollection(['max_items' => 2]);
+        $collection[0] = 'test';
 
-        // TODO :: implement feature
-        $this->markTestSkipped('Not implemented');
+        $value1 = new StringField();
+        $value1->value = 'test2';
+        $collection[0] = $value1;
+
+        $this->assertCount(1, $collection);
+        $this->assertInstanceOf(Field::class, $collection->deleted()[0]);
+        $this->assertEquals(['test'], $collection->deleted()->toArray());
     }
 
     public function testGetDeletedTricky()
     {
-        // If a value is taken to be placed somewhere else,
-        // it might be detected as a deletion, but it actually isn't
+        // Very weird case, might never happen ... but we can get the fields throug "getField"
 
-        // TODO :: implement feature
-        $this->markTestSkipped('Not implemented');
+        // GIVEN a simple collection
+        $collection = $this->getFieldCollection(['max_items' => 2]);
+        $collection[0] = 'test';
+        $collection[1] = 'test2';
+
+        // WHEN a field is removed and re-added
+        $field = $collection->all()[1];
+        unset($collection[1]);
+        $collection[1] = $field;
+
+        // THEN there should be no field in the "deleted" list
+        $this->assertCount(2, $collection);
+        $this->assertCount(0, $collection->deleted());
+        $this->assertEquals([], $collection->deleted()->toArray());
     }
 }
