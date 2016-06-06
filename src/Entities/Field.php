@@ -14,15 +14,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Field extends Model
 {
-    public function __construct(array $attributes = [])
-    {
-        $this->bootIfNotBooted();
-
-        $this->syncOriginal();
-    }
-
     //TODO :: validate values
 
+    /**
+     * {@inheritdoc}
+     */
     public function toArray()
     {
         return $this->getAttribute('value');

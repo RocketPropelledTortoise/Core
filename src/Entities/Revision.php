@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 class Revision extends Model
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected $casts = [
         'published' => 'boolean',

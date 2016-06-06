@@ -12,11 +12,17 @@ use Rocket\Entities\Exceptions\ReservedFieldNameException;
  *
  * @property int $id The content ID
  * @property int $language_id The language in which this entity is
+ * @property string $type The type of the Entity
+ * @property boolean $published Is this content published
+ * @property array<Rocket\Entities\Revision> $revisions all revisions in this content
  * @property-read \DateTime $created_at
  * @property-read \DateTime $updated_at
  */
 abstract class Entity
 {
+    /**
+     * @var array<class> The list of field types, filled with the configuration
+     */
     public static $types;
 
     /**
@@ -24,14 +30,14 @@ abstract class Entity
      *
      * @var Content
      */
-    protected $content; //id, created_at
+    protected $content; //id, created_at, type, published
 
     /**
      * The revision represented by this entity
      *
      * @var Revision
      */
-    protected $revision; //language_id, updated_at
+    protected $revision; //language_id, updated_at, type, published
 
     /**
      * The fields in this entity
@@ -59,6 +65,13 @@ abstract class Entity
         $this->language_id = $language_id;
     }
 
+    /**
+     * Creates the Content, Revision and FieldCollections
+     *
+     * @param array $fields The fields and their configurations
+     * @throws InvalidFieldTypeException
+     * @throws ReservedFieldNameException
+     */
     protected function initialize(array $fields)
     {
         $this->content = new Content;
@@ -70,6 +83,8 @@ abstract class Entity
     }
 
     /**
+     * Validate configuration and prepare a FieldCollection
+     *
      * @param string $field
      * @param array $settings
      * @throws InvalidFieldTypeException
@@ -95,6 +110,11 @@ abstract class Entity
         return FieldCollection::initField($settings);
     }
 
+    /**
+     * Return the fields in this entity
+     *
+     * @return array
+     */
     abstract public function getFields();
 
     /**
@@ -277,6 +297,9 @@ abstract class Entity
 
     /**
      * Save a revision
+     *
+     * @param bool $newRevision Should we create a new revision, false by default
+     * @param bool $publishRevision Should we immediately publish this revision, true by default
      */
     public function save($newRevision = false, $publishRevision = true)
     {
@@ -289,7 +312,6 @@ abstract class Entity
 
         DB::transaction(
             function () use ($newRevision, $publishRevision) {
-
                 $this->saveContent();
 
                 $this->saveRevision($publishRevision);
@@ -317,14 +339,21 @@ abstract class Entity
         );
     }
 
+    /**
+     * Save the content
+     */
     protected function saveContent()
     {
         $this->content->save();
     }
 
+    /**
+     * Save the revision
+     *
+     * @param bool $publishRevision Should we immediately publish this revision, true by default
+     */
     protected function saveRevision($publishRevision)
     {
-
         if (!$this->revision->exists && !$publishRevision) {
             $this->revision->published = $publishRevision;
         }
@@ -332,15 +361,34 @@ abstract class Entity
         $this->revision->content_id = $this->content->id;
         $this->revision->save();
 
-        if (!$this->content->wasRecentlyCreated && $publishRevision) {
-            // Unpublish all other revisions
-            Revision::where('content_id', $this->content->id)
-                ->where('language_id', $this->revision->language_id)
-                ->where('id', '!=', $this->revision->id)
-                ->update(['published' => false]);
+        if ($publishRevision) {
+            $this->unpublishOtherRevisions();
         }
     }
 
+    /**
+     * Unpublish the revisions other than this one.
+     * Only for the same content_id and language_id
+     */
+    protected function unpublishOtherRevisions()
+    {
+        if ($this->content->wasRecentlyCreated) {
+            return;
+        }
+
+        // Unpublish all other revisions
+        Revision::where('content_id', $this->content->id)
+            ->where('language_id', $this->revision->language_id)
+            ->where('id', '!=', $this->revision->id)
+            ->update(['published' => false]);
+    }
+
+    /**
+     * Save a single field instance
+     *
+     * @param Field $field The field instance to save
+     * @param boolean $newRevision Should we create a new revision?
+     */
     protected function saveField(Field $field, $newRevision)
     {
         // If we create a new revision, this will

@@ -191,4 +191,3 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
         $this->markTestSkipped('Not implemented');
     }
 }
-

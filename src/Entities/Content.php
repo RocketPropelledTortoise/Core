@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class Content extends Model
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected $casts = [
         'published' => 'boolean',
@@ -24,6 +24,7 @@ class Content extends Model
      * Get the revisions for this class
      *
      * @codeCoverageIgnore
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function revisions()
     {

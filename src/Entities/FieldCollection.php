@@ -31,6 +31,7 @@ class FieldCollection extends \Illuminate\Support\Collection
      * Initialize a collection with the configuration
      *
      * @param array $configuration
+     * @throws InvalidFieldTypeException
      * @return static
      */
     public static function initField($configuration = [])
@@ -65,6 +66,7 @@ class FieldCollection extends \Illuminate\Support\Collection
 
         if (is_null($value)) {
             $this->offsetUnset($key);
+
             return;
         }
 
@@ -83,10 +85,7 @@ class FieldCollection extends \Illuminate\Support\Collection
     }
 
     /**
-     * Get an item at a given offset.
-     *
-     * @param  mixed  $key
-     * @return mixed
+     * {@inheritdoc}
      */
     public function offsetGet($key)
     {
@@ -94,10 +93,7 @@ class FieldCollection extends \Illuminate\Support\Collection
     }
 
     /**
-     * Unset the item at a given offset.
-     *
-     * @param  string  $key
-     * @return void
+     * {@inheritdoc}
      */
     public function offsetUnset($key)
     {
@@ -117,6 +113,9 @@ class FieldCollection extends \Illuminate\Support\Collection
         return new Collection($this->deleted);
     }
 
+    /**
+     * Mark the content as current and saved
+     */
     public function syncOriginal()
     {
         $this->deleted = [];
@@ -160,6 +159,9 @@ class FieldCollection extends \Illuminate\Support\Collection
         return $this->get(0)->toArray();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function __toString()
     {
         if ($this->maxItems == 1) {

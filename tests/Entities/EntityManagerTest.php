@@ -1,6 +1,5 @@
 <?php namespace Rocket\Entities;
 
-use Rocket\Entities\Fields\StringField;
 use Rocket\Entities\Fixtures\CommentDemo;
 use Rocket\Entities\Fixtures\Demo;
 use Rocket\Translation\Model\Language;

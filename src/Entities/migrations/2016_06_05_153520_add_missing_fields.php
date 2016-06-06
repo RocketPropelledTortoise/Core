@@ -26,8 +26,6 @@ class AddMissingFields extends Migration
                 $table->boolean('published')->default(true);
             }
         );
-
-
     }
 
     /**
