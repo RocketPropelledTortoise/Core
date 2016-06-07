@@ -46,8 +46,8 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
         // no id's exist before save
         $array = $demo->toArray();
-        $this->assertEquals(['type' => 'demo'], $array['_content']);
-        $this->assertEquals(['language_id' => $language_id], $array['_revision']);
+        $this->assertEquals(['type' => 'demo', 'published' => true], $array['_content']);
+        $this->assertEquals(['language_id' => $language_id, 'published' => true], $array['_revision']);
 
         // WHEN this entity is saved
         $demo->save();
@@ -254,22 +254,115 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $this->assertEquals($demoR1->toArray()['titles'], $demoR1Bis->toArray()['titles']);
     }
 
-    public function testPublishOldRevision()
+    public function testEntityPublishedByDefault()
     {
-        // TODO :: implement feature
-        $this->markTestSkipped('Not implemented yet');
+        $language_id = Language::value('id');
+
+        // GIVEN a base entity with two revisions
+        $demoR1 = new Demo($language_id);
+        $demoR1->titles[] = 'one title';
+        $demoR1->titles[] = 'two titles';
+        $demoR1->save();
+
+        $this->assertTrue($demoR1->published);
+        $this->assertTrue($demoR1->publishedRevision);
+        $this->assertTrue($demoR1->toArray()['_content']['published']);
+        $this->assertTrue($demoR1->toArray()['_revision']['published']);
+
+        $demoR2 = Demo::find($demoR1->id, $language_id);
+        $this->assertTrue($demoR2->published);
+        $this->assertTrue($demoR2->publishedRevision);
+        $this->assertTrue($demoR2->toArray()['_content']['published']);
+        $this->assertTrue($demoR2->toArray()['_revision']['published']);
     }
 
-    public function testPublishOtherRevision()
+    public function testPublishOldRevision()
     {
-        // TODO :: implement feature
-        $this->markTestSkipped('Not implemented yet');
+        $language_id = Language::value('id');
+
+        // GIVEN a base entity with two revisions
+        $demoR1 = new Demo($language_id);
+        $demoR1->titles[] = 'one title';
+        $demoR1->titles[] = 'two titles';
+        $demoR1->save();
+
+        $demoR2 = Demo::find($demoR1->id, $language_id);
+        $demoR2->titles[1] = 'new title';
+        unset($demoR2->titles[0]);
+        $demoR2->save(true);
+
+        // THEN the second revision is published automatically
+        $demoR2Bis = Demo::find($demoR1->id, $language_id);
+        $this->assertEquals($demoR2->revision_id, $demoR2Bis->revision_id);
+
+        // THEN the first revision is unpublished
+        $demoR1Bis = Demo::find($demoR1->id, $language_id, $demoR1->revision_id);
+        $this->assertFalse($demoR1Bis->publishedRevision);
+
+        // WHEN we republish the old revision
+        $demoR1Bis->publishRevision();
+
+        // THEN the first revision is published again
+        $this->assertTrue($demoR1Bis->publishedRevision);
+
+        $demoR1BisBis = Demo::find($demoR1->id, $language_id);
+        $this->assertEquals($demoR1->revision_id, $demoR1BisBis->revision_id);
+
+        // THEN the second revision is unpublished
+        $demoR2BisBis = Demo::find($demoR1->id, $language_id, $demoR2->revision_id);
+        $this->assertFalse($demoR2BisBis->publishedRevision);
     }
 
     public function testUnpublishContent()
     {
-        // TODO :: implement feature
-        $this->markTestSkipped('Not implemented yet');
+        $language_id = Language::value('id');
+
+        // GIVEN a base entity
+        $demo = new Demo($language_id);
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
+        $demo->save();
+
+        // THEN the content is published
+        $demoBis = Demo::find($demo->id, $language_id);
+        $this->assertTrue($demoBis->published);
+        $this->assertTrue($demoBis->publishedRevision);
+
+        // WHEN it is unpublished
+        $demoBis->published = false;
+        $demoBis->save();
+
+        // THEN we can retrieve it but it is unpublished
+        $demoBisBis = Demo::find($demo->id, $language_id);
+        $this->assertFalse($demoBisBis->published);
+        $this->assertTrue($demoBisBis->publishedRevision);
+    }
+
+    public function testDeleteRevisionWillRepublishOldRevision()
+    {
+        $language_id = Language::value('id');
+
+        // GIVEN a base entity with two revisions
+        $demoR1 = new Demo($language_id);
+        $demoR1->titles[] = 'one title';
+        $demoR1->titles[] = 'two titles';
+        $demoR1->save();
+
+        $demoR2 = Demo::find($demoR1->id, $language_id);
+        $demoR2->titles[1] = 'new title';
+        unset($demoR2->titles[0]);
+        $demoR2->save(true);
+
+        // THEN on load, the second revision is taken
+        $demoR2Bis = Demo::find($demoR1->id, $language_id);
+        $this->assertEquals($demoR2->revision_id, $demoR2Bis->revision_id);
+
+        // WHEN we delete the newest revision
+        $demoR2->deleteRevision();
+
+        // WHEN we get this entity
+        $demoR1Bis = Demo::find($demoR1->id, $language_id);
+        $this->assertEquals($demoR1->revision_id, $demoR1Bis->revision_id);
     }
 
     public function testDeleteRevisionCleared()
@@ -280,7 +373,7 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $demo = new Demo($language_id);
         $demo->titles[] = 'one title';
         $demo->titles[] = 'two titles';
-        $demo->save(true, false);
+        $demo->save();
 
         $demo->deleteRevision();
 
@@ -306,7 +399,7 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $demo = new Demo($language_id);
         $demo->titles[] = 'one title';
         $demo->titles[] = 'two titles';
-        $demo->save(true, false);
+        $demo->save();
 
         $demo->deleteRevision(false);
 

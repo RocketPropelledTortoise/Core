@@ -22,6 +22,13 @@ class Content extends Model
     ];
 
     /**
+     * {@inheritdoc}
+     */
+    protected $attributes = [
+        'published' => true,
+    ];
+
+    /**
      * Get the revisions for this class
      *
      * @codeCoverageIgnore

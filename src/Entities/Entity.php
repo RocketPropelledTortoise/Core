@@ -21,7 +21,8 @@ use Rocket\Entities\Exceptions\RevisionNotFoundException;
  * @property int $revision_id The current revision id
  * @property string $type The type of the Entity
  * @property bool $published Is this content published
- * @property \Rocket\Entities\Revision[] $revisions all revisions in this content
+ * @property-read bool $publishedRevision Is the revision published
+ * @property-read \Rocket\Entities\Revision[] $revisions all revisions in this content
  * @property-read \DateTime $created_at
  * @property-read \DateTime $updated_at
  */
@@ -224,6 +225,10 @@ abstract class Entity
             return $this->content->revisions;
         }
 
+        if ($key == 'publishedRevision') {
+            return $this->revision->published;
+        }
+
         throw new NonExistentFieldException("Field '$key' doesn't exist in '" . get_class($this) . "'");
     }
 
@@ -310,9 +315,10 @@ abstract class Entity
      * @throws RevisionNotFoundException
      * @return Revision
      */
-    protected static function findRevision($id, $language_id, $revision_id = null) {
+    protected static function findRevision($id, $language_id, $revision_id = null)
+    {
         try {
-            if ($revision_id) {
+            if (is_numeric($revision_id) && $revision_id != 0) {
                 $revision = Revision::findOrFail($revision_id);
 
                 if ($revision->content_id != $id) {
@@ -327,8 +333,7 @@ abstract class Entity
                 ->where('published', true)
                 ->firstOrFail();
         } catch (ModelNotFoundException $e) {
-
-            if ($revision_id) {
+            if (is_numeric($revision_id) && $revision_id != 0) {
                 throw new RevisionNotFoundException("This revision doesn't exist", 0, $e);
             }
 
@@ -568,5 +573,13 @@ abstract class Entity
             $field->clear();
             $field->syncOriginal();
         }
+    }
+
+    public function publishRevision()
+    {
+        $this->revision->published = true;
+        $this->revision->save();
+
+        $this->unpublishOtherRevisions();
     }
 }
