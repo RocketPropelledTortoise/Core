@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id The field id
  * @property bool $published the published state
  * @property string $type the type of the entity
+ * @property Revision[] $revisions the revisions attached to this content
  * @property-read \DateTime $created_at
  * @property-read \DateTime $updated_at
  */

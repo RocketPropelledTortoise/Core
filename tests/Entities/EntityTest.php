@@ -32,6 +32,15 @@ class EntityTest extends \Rocket\Utilities\TestCase
         $this->assertEquals($first_lang, $demo->language_id);
     }
 
+    public function testCreateSimpleEntityWithNumberInString()
+    {
+        $first_lang = Language::value('id');
+
+        $demo = new Demo("$first_lang");
+
+        $this->assertEquals($first_lang, $demo->language_id);
+    }
+
     public function testCreateSimpleEntityAndRetrieve()
     {
         $title = 'new Title';

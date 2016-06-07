@@ -1,10 +1,14 @@
 <?php namespace Rocket\Entities;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Rocket\Entities\Exceptions\EntityNotFoundException;
 use Rocket\Entities\Exceptions\InvalidFieldTypeException;
 use Rocket\Entities\Exceptions\NonExistentFieldException;
+use Rocket\Entities\Exceptions\NoPublishedRevisionForLanguageException;
+use Rocket\Entities\Exceptions\NoRevisionForLanguageException;
 use Rocket\Entities\Exceptions\ReservedFieldNameException;
 
 /**
@@ -53,7 +57,7 @@ abstract class Entity
      */
     public function __construct($language_id)
     {
-        if (!is_int($language_id) || $language_id == 0) {
+        if (!is_numeric($language_id) || $language_id == 0) {
             throw new InvalidArgumentException("You must set a valid 'language_id'.");
         }
 
@@ -165,6 +169,10 @@ abstract class Entity
     }
 
     /**
+     * Get a field's FieldCollection.
+     *
+     * Be careful as this gives you the real field instances.
+     *
      * @param string $field
      * @return FieldCollection
      */
@@ -268,24 +276,13 @@ abstract class Entity
     }
 
     /**
-     * Find the latest valid revision for this entity
+     * Get all field types in this Entity.
      *
-     * @param int $id
-     * @param int $language_id
-     * @return static
+     * @return Collection<string>
      */
-    public static function find($id, $language_id)
+    protected function getFieldTypes()
     {
-        $instance = new static($language_id);
-
-        $instance->content = Content::findOrFail($id);
-
-        $instance->revision = Revision::where('content_id', $id)
-            ->where('language_id', $language_id)
-            ->where('published', true)
-            ->firstOrFail();
-
-        (new Collection($instance->getFields()))
+        return (new Collection($this->getFields()))
             ->map(function ($options) {
                 return $options['type'];
             })
@@ -293,7 +290,48 @@ abstract class Entity
             ->unique()
             ->map(function ($type) {
                 return self::$types[$type];
-            })
+            });
+    }
+
+    /**
+     * Find the latest valid revision for this entity
+     *
+     * @param int $id
+     * @param int $language_id
+     * @return static
+     * @throws EntityNotFoundException
+     * @throws NoPublishedRevisionForLanguageException
+     * @throws NoRevisionForLanguageException
+     */
+    public static function find($id, $language_id)
+    {
+        $instance = new static($language_id);
+
+        try {
+            $instance->content = Content::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw new EntityNotFoundException("The entity with id '$id' doesn't exist", 0, $e);
+        }
+
+        try {
+            $instance->revision = Revision::where('content_id', $id)
+                ->where('language_id', $language_id)
+                ->where('published', true)
+                ->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            $count = Revision::where('content_id', $id)->where('language_id', $language_id)->count();
+
+            if ($count) {
+                $message = "There are revisions in language_id='$language_id' for Entity '$id' but none is published";
+                throw new NoPublishedRevisionForLanguageException($message, 0, $e);
+            } else {
+                $message = "There no revisions in language_id='$language_id' for Entity '$id' but none is published";
+                throw new NoRevisionForLanguageException($message, 0, $e);
+            }
+        }
+
+
+        $instance->getFieldTypes()
             ->each(function ($type) use ($instance) {
                 $type::where('revision_id', $instance->revision->id)
                     ->get()
@@ -431,5 +469,65 @@ abstract class Entity
         }
 
         return $content;
+    }
+
+    public function delete($clear = true)
+    {
+        $revisions = Revision::where('content_id', $this->content->id)->get();
+
+        $ids = $revisions->pluck('id');
+
+        $this->getFieldTypes()->each(function ($type) use ($ids) {
+            $type::whereIn('revision_id', $ids)->delete();
+        });
+
+        Revision::whereIn('id', $ids)->delete();
+        $this->revision->exists = false;
+
+        // TODO :: add an event system to be able to remove this content from entity fields
+
+        $this->content->delete();
+
+        if ($clear) {
+            $this->revision->id = null;
+            $this->content->id = null;
+            $this->clearFields();
+        }
+    }
+
+    public function deleteRevision($clear = true)
+    {
+        $this->getFieldTypes()->each(function ($type) {
+            $type::where('revision_id', $this->revision->id)->delete();
+        });
+
+        // If this revision is currently
+        // published, we need to publish
+        // another revision in place.
+        if ($this->revision->published && $this->revision->exists) {
+            //TODO :: improve this logic
+            Revision::where('content_id', $this->content->id)
+                ->where('id', '!=', $this->revision->id)
+                ->take(1)
+                ->update(['published' => true]);
+        }
+
+        $this->revision->delete();
+
+        if ($clear) {
+            $this->clearFields();
+        }
+    }
+
+    protected function clearFields()
+    {
+        // Void all the fields
+        foreach (array_keys($this->data) as $fieldName) {
+            /** @var FieldCollection $field */
+            $field = $this->data[$fieldName];
+
+            $field->clear();
+            $field->syncOriginal();
+        }
     }
 }

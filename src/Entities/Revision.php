@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $language_id the language of this revision
  * @property int $content_id the content this revision is related to
  * @property bool $published the published state
+ * @property Content $content the content this revision is linked to
  * @property-read \DateTime $created_at
  * @property-read \DateTime $updated_at
  */

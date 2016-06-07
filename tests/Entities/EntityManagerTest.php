@@ -1,5 +1,7 @@
 <?php namespace Rocket\Entities;
 
+use Rocket\Entities\Exceptions\EntityNotFoundException;
+use Rocket\Entities\Exceptions\NoRevisionForLanguageException;
 use Rocket\Entities\Fixtures\CommentDemo;
 use Rocket\Entities\Fixtures\Demo;
 use Rocket\Translation\Model\Language;
@@ -178,7 +180,22 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $this->assertNotEquals($demo2->toArray()['_revision']['id'], $demo3->toArray()['_revision']['id']);
     }
 
+    public function testRetrieveOldRevisionAfterNewOneWasCreated()
+    {
+        // To test correctly the creation of new revisions
+        // If a revision overrides an old one, we need to detect it
+
+        // TODO :: implement feature
+        $this->markTestSkipped('Not implemented yet');
+    }
+
     public function testPublishOldRevision()
+    {
+        // TODO :: implement feature
+        $this->markTestSkipped('Not implemented yet');
+    }
+
+    public function testPublishOtherRevision()
     {
         // TODO :: implement feature
         $this->markTestSkipped('Not implemented yet');
@@ -190,15 +207,151 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $this->markTestSkipped('Not implemented yet');
     }
 
-    public function testDeleteRevision()
+    public function testDeleteRevisionCleared()
     {
-        // TODO :: implement feature
-        $this->markTestSkipped('Not implemented yet');
+        $language_id = Language::value('id');
+
+        // GIVEN a base entity
+        $demo = new Demo($language_id);
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
+        $demo->save(true, false);
+
+        $demo->deleteRevision();
+
+        $this->assertInternalType("integer", $demo->id);
+        $this->assertCount(0, $demo->titles);
+
+        // WHEN we get this entity
+        $threw = false;
+        try {
+            Demo::find($demo->id, $language_id);
+        } catch (NoRevisionForLanguageException $e) {
+            $threw = true;
+        }
+
+        $this->assertTrue($threw);
     }
 
-    public function testDeleteContent()
+    public function testDeleteRevisionUnCleared()
     {
-        // TODO :: implement feature
-        $this->markTestSkipped('Not implemented yet');
+        $language_id = Language::value('id');
+
+        // GIVEN a base entity
+        $demo = new Demo($language_id);
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
+        $demo->save(true, false);
+
+        $demo->deleteRevision(false);
+
+        $this->assertInternalType("integer", $demo->id);
+        $this->assertCount(2, $demo->titles);
+
+        // WHEN we get this entity
+        $threw = false;
+        try {
+            Demo::find($demo->id, $language_id);
+        } catch (NoRevisionForLanguageException $e) {
+            $threw = true;
+        }
+
+        $this->assertTrue($threw);
+    }
+
+    public function testDeleteContentCleared()
+    {
+        $language_id = Language::value('id');
+
+        // GIVEN a base entity
+        $demo = new Demo($language_id);
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
+        $demo->save(true, false);
+
+        $id = $demo->id;
+        $demo->delete();
+
+        $this->assertNull($demo->id);
+        $this->assertCount(0, $demo->titles);
+
+        // WHEN we get this entity
+        $threw = false;
+        try {
+            Demo::find($id, $language_id);
+        } catch (EntityNotFoundException $e) {
+            $threw = true;
+        }
+
+        $this->assertTrue($threw);
+    }
+
+    public function testDeleteContentUncleared()
+    {
+        $language_id = Language::value('id');
+
+        // GIVEN a base entity
+        $demo = new Demo($language_id);
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
+        $demo->save(true, false);
+
+        $id = $demo->id;
+        $demo->delete(false);
+
+        $this->assertInternalType("integer", $demo->id);
+        $this->assertCount(2, $demo->titles);
+
+        // WHEN we get this entity
+        $threw = false;
+        try {
+            Demo::find($id, $language_id);
+        } catch (EntityNotFoundException $e) {
+            $threw = true;
+        }
+
+        $this->assertTrue($threw);
+    }
+
+    /**
+     * @expectedException \Rocket\Entities\Exceptions\EntityNotFoundException
+     */
+    public function testContentNotFound()
+    {
+        Demo::find(1, Language::value('id'));
+    }
+
+    /**
+     * @expectedException \Rocket\Entities\Exceptions\NoPublishedRevisionForLanguageException
+     */
+    public function testNoPublishedRevisionForThisLanguage()
+    {
+        $language_id = Language::value('id');
+
+        // GIVEN a base entity
+        $demo = new Demo($language_id);
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
+        $demo->save(true, false);
+
+        // WHEN we get an this entity but with another language
+        Demo::find($demo->id, $language_id);
+    }
+
+    /**
+     * @expectedException \Rocket\Entities\Exceptions\NoRevisionForLanguageException
+     */
+    public function testNoRevisionForThisLanguage()
+    {
+        $language_ids = Language::pluck('id');
+
+        // GIVEN a base entity
+        $demo = new Demo($language_ids[0]);
+        $demo->titles[] = 'one title';
+        $demo->titles[] = 'two titles';
+        $demo->save();
+
+        // WHEN we get an this entity but with another language
+        Demo::find($demo->id, $language_ids[1]);
     }
 }

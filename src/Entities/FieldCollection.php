@@ -59,7 +59,8 @@ class FieldCollection extends \Illuminate\Support\Collection
      * @throws ItemCountException
      * @throws NullValueException
      */
-    protected function validateSet($key, $value) {
+    protected function validateSet($key, $value)
+    {
         if ((is_null($key) || !array_key_exists($key, $this->items)) && $this->count() >= $this->getMaxItems()) {
             throw new ItemCountException('The maximum number of items has been reached on this field.');
         }
@@ -75,7 +76,8 @@ class FieldCollection extends \Illuminate\Support\Collection
      * @param Field|mixed $value
      * @return Field
      */
-    protected function getFieldInstance($value) {
+    protected function getFieldInstance($value)
+    {
         if ($value instanceof Field) {
             return $value;
         }
