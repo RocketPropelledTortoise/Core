@@ -52,10 +52,14 @@ class FieldCollection extends \Illuminate\Support\Collection
     }
 
     /**
-     * {@inheritdoc}
+     * Validate input of OffsetSet
+     *
+     * @param $key
+     * @param $value
+     * @throws ItemCountException
+     * @throws NullValueException
      */
-    public function offsetSet($key, $value)
-    {
+    protected function validateSet($key, $value) {
         if ((is_null($key) || !array_key_exists($key, $this->items)) && $this->count() >= $this->getMaxItems()) {
             throw new ItemCountException('The maximum number of items has been reached on this field.');
         }
@@ -63,6 +67,31 @@ class FieldCollection extends \Illuminate\Support\Collection
         if (is_null($key) && is_null($value)) {
             throw new NullValueException('You cannot add a null value');
         }
+    }
+
+    /**
+     * Get a field from a value
+     *
+     * @param Field|mixed $value
+     * @return Field
+     */
+    protected function getFieldInstance($value) {
+        if ($value instanceof Field) {
+            return $value;
+        }
+
+        $container = new $this->type();
+        $container->value = $value;
+
+        return $container;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetSet($key, $value)
+    {
+        $this->validateSet($key, $value);
 
         if (is_null($value)) {
             $this->offsetUnset($key);
@@ -70,21 +99,17 @@ class FieldCollection extends \Illuminate\Support\Collection
             return;
         }
 
-        if ($value instanceof Field) {
-            $container = $value;
-        } else {
-            $container = new $this->type();
-            $container->value = $value;
+        if (is_null($key)) {
+            $this->items[] = $this->getFieldInstance($value);
+
+            return;
         }
 
-        if (is_null($key)) {
-            $this->items[] = $container;
-        } else {
-            if ($value instanceof Field && $this->has($key)) {
-                $this->deleted[] = $this->items[$key];
-            }
-            $this->items[$key] = $container;
+        if ($value instanceof Field && $this->has($key)) {
+            $this->deleted[] = $this->items[$key];
         }
+
+        $this->items[$key] = $this->getFieldInstance($value);
     }
 
     /**

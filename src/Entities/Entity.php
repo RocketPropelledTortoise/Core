@@ -234,27 +234,37 @@ abstract class Entity
         }
 
         if ($this->hasField($key)) {
-            $field = $this->getField($key);
-
-            if (is_array($value)) {
-                $field->clear();
-
-                // This happens when the array is replaced completely by another array
-                if (count($value)) {
-                    foreach ($value as $k => $v) {
-                        $field->offsetSet($k, $v);
-                    }
-                }
-
-                return;
-            }
-
-            $field->offsetSet(0, $value);
+            $this->setOnField($this->getField($key), $value);
 
             return;
         }
 
         throw new NonExistentFieldException("Field '$key' doesn't exist in '" . get_class($this) . "'");
+    }
+
+    /**
+     * Set values on a field
+     *
+     * @param FieldCollection $field
+     * @param $value
+     */
+    protected function setOnField(FieldCollection $field, $value)
+    {
+        if (!is_array($value)) {
+            $field->offsetSet(0, $value);
+
+            return;
+        }
+
+        $field->clear();
+
+        // This happens when the array is
+        // replaced completely by another array
+        if (count($value)) {
+            foreach ($value as $k => $v) {
+                $field->offsetSet($k, $v);
+            }
+        }
     }
 
     /**
