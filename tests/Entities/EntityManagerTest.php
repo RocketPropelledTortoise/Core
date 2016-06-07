@@ -118,8 +118,8 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         // THEN the fields are updated and deleted
         $demo3 = Demo::find($demo->id, $language_id);
         $this->assertEquals($demo2->toArray(), $demo3->toArray());
-        $this->assertEquals($demo->toArray()['_revision']['id'], $demo3->toArray()['_revision']['id']);
-        $this->assertEquals($demo2->toArray()['_revision']['id'], $demo3->toArray()['_revision']['id']);
+        $this->assertEquals($demo->revision_id, $demo3->revision_id);
+        $this->assertEquals($demo2->revision_id, $demo3->revision_id);
         $this->assertEquals(1, $demo3->revisions->count());
     }
 
@@ -143,8 +143,8 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $demo3 = Demo::find($demo->id, $language_id);
 
         $this->assertEquals($demo2->toArray()['titles'], $demo3->toArray()['titles']);
-        $this->assertNotEquals($demo->toArray()['_revision']['id'], $demo3->toArray()['_revision']['id']);
-        $this->assertEquals($demo2->toArray()['_revision']['id'], $demo3->toArray()['_revision']['id']);
+        $this->assertNotEquals($demo->revision_id, $demo3->revision_id);
+        $this->assertEquals($demo2->revision_id, $demo3->revision_id);
         $this->assertEquals(2, $demo3->revisions->count());
     }
 
@@ -171,22 +171,87 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
         // Demo and demo3 are identical
         $this->assertEquals($demo->toArray()['titles'], $demo3->toArray()['titles']);
-        $this->assertEquals($demo->toArray()['_revision']['id'], $demo3->toArray()['_revision']['id']);
+        $this->assertEquals($demo->revision_id, $demo3->revision_id);
 
         // We still have two revisions
         $this->assertEquals(2, $demo3->revisions->count());
 
         // Demo2 contains the new revision whereas Demo3 contains the first revision
-        $this->assertNotEquals($demo2->toArray()['_revision']['id'], $demo3->toArray()['_revision']['id']);
+        $this->assertNotEquals($demo2->revision_id, $demo3->revision_id);
+    }
+
+    /**
+     * @expectedException \Rocket\Entities\Exceptions\RevisionEntityMismatchException
+     */
+    public function testRetrieveRevisionFromOtherEntity()
+    {
+        $language_id = Language::value('id');
+
+        // GIVEN two entities
+        $demo1 = new Demo($language_id);
+        $demo1->titles[] = 'one title';
+        $demo1->titles[] = 'two titles';
+        $demo1->save();
+
+        $demo2 = new Demo($language_id);
+        $demo2->titles[] = 'one title';
+        $demo2->titles[] = 'two titles';
+        $demo2->save();
+
+        // WHEN you load a revision from another content
+        Demo::find($demo1->id, $language_id, $demo2->revision_id);
+    }
+
+    /**
+     * @expectedException \Rocket\Entities\Exceptions\RevisionNotFoundException
+     */
+    public function testRetrieveNonExistentRevision()
+    {
+        $language_id = Language::value('id');
+
+        // GIVEN two entities
+        $demo1 = new Demo($language_id);
+        $demo1->titles[] = 'one title';
+        $demo1->titles[] = 'two titles';
+        $demo1->save();
+
+        // WHEN you load a revision that doesn't exist
+        Demo::find($demo1->id, $language_id, 1000);
     }
 
     public function testRetrieveOldRevisionAfterNewOneWasCreated()
     {
-        // To test correctly the creation of new revisions
-        // If a revision overrides an old one, we need to detect it
+        $language_id = Language::value('id');
 
-        // TODO :: implement feature
-        $this->markTestSkipped('Not implemented yet');
+        // GIVEN a base entity
+        $demoR1 = new Demo($language_id);
+        $demoR1->titles[] = 'one title';
+        $demoR1->titles[] = 'two titles';
+        $demoR1->save();
+
+        // WHEN an entity is modified
+        $demoR2 = Demo::find($demoR1->id, $language_id);
+        $demoR2->titles[1] = 'new title';
+        unset($demoR2->titles[0]);
+        $demoR2->save(true);
+
+        $this->assertCount(0, $demoR2->getField('titles')->deleted());
+
+        // THEN the fields are updated and deleted
+        $demoR2Bis = Demo::find($demoR1->id, $language_id);
+        $this->assertEquals($demoR2->toArray()['titles'], $demoR2Bis->toArray()['titles']);
+        $this->assertNotEquals($demoR1->revision_id, $demoR2Bis->revision_id);
+        $this->assertEquals($demoR2->revision_id, $demoR2Bis->revision_id);
+
+        $this->assertEquals(2, $demoR2Bis->revisions->count());
+
+        // WHEN we retrieve the previous revision again
+        $demoR1Bis = Demo::find($demoR1->id, $language_id, $demoR1->revision_id);
+
+        // THEN the fields are the same as before
+        $this->assertEquals($demoR1->revision_id, $demoR1Bis->revision_id);
+        $this->assertNotEquals($demoR1Bis->toArray()['titles'], $demoR2Bis->toArray()['titles']);
+        $this->assertEquals($demoR1->toArray()['titles'], $demoR1Bis->toArray()['titles']);
     }
 
     public function testPublishOldRevision()
@@ -219,7 +284,7 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
         $demo->deleteRevision();
 
-        $this->assertInternalType("integer", $demo->id);
+        $this->assertInternalType('integer', $demo->id);
         $this->assertCount(0, $demo->titles);
 
         // WHEN we get this entity
@@ -245,7 +310,7 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
         $demo->deleteRevision(false);
 
-        $this->assertInternalType("integer", $demo->id);
+        $this->assertInternalType('integer', $demo->id);
         $this->assertCount(2, $demo->titles);
 
         // WHEN we get this entity
@@ -299,7 +364,7 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $id = $demo->id;
         $demo->delete(false);
 
-        $this->assertInternalType("integer", $demo->id);
+        $this->assertInternalType('integer', $demo->id);
         $this->assertCount(2, $demo->titles);
 
         // WHEN we get this entity

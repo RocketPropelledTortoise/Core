@@ -10,12 +10,15 @@ use Rocket\Entities\Exceptions\NonExistentFieldException;
 use Rocket\Entities\Exceptions\NoPublishedRevisionForLanguageException;
 use Rocket\Entities\Exceptions\NoRevisionForLanguageException;
 use Rocket\Entities\Exceptions\ReservedFieldNameException;
+use Rocket\Entities\Exceptions\RevisionEntityMismatchException;
+use Rocket\Entities\Exceptions\RevisionNotFoundException;
 
 /**
  * Entity manager
  *
  * @property int $id The content ID
  * @property int $language_id The language in which this entity is
+ * @property int $revision_id The current revision id
  * @property string $type The type of the Entity
  * @property bool $published Is this content published
  * @property \Rocket\Entities\Revision[] $revisions all revisions in this content
@@ -213,6 +216,10 @@ abstract class Entity
             return $this->getField($key);
         }
 
+        if ($key == 'revision_id') {
+            return $this->revision->id;
+        }
+
         if ($key == 'revisions') {
             return $this->content->revisions;
         }
@@ -278,7 +285,7 @@ abstract class Entity
     /**
      * Get all field types in this Entity.
      *
-     * @return Collection<string>
+     * @return Collection
      */
     protected function getFieldTypes()
     {
@@ -294,31 +301,37 @@ abstract class Entity
     }
 
     /**
-     * Find the latest valid revision for this entity
-     *
-     * @param int $id
-     * @param int $language_id
-     * @return static
-     * @throws EntityNotFoundException
+     * @param int $id The content ID
+     * @param int $language_id The language ID
+     * @param int $revision_id The revision ID which you want to load, this is optional
      * @throws NoPublishedRevisionForLanguageException
      * @throws NoRevisionForLanguageException
+     * @throws RevisionEntityMismatchException
+     * @throws RevisionNotFoundException
+     * @return Revision
      */
-    public static function find($id, $language_id)
-    {
-        $instance = new static($language_id);
-
+    protected static function findRevision($id, $language_id, $revision_id = null) {
         try {
-            $instance->content = Content::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            throw new EntityNotFoundException("The entity with id '$id' doesn't exist", 0, $e);
-        }
+            if ($revision_id) {
+                $revision = Revision::findOrFail($revision_id);
 
-        try {
-            $instance->revision = Revision::where('content_id', $id)
+                if ($revision->content_id != $id) {
+                    throw new RevisionEntityMismatchException("This revision doesn't belong to this entity");
+                }
+
+                return $revision;
+            }
+
+            return Revision::where('content_id', $id)
                 ->where('language_id', $language_id)
                 ->where('published', true)
                 ->firstOrFail();
         } catch (ModelNotFoundException $e) {
+
+            if ($revision_id) {
+                throw new RevisionNotFoundException("This revision doesn't exist", 0, $e);
+            }
+
             $count = Revision::where('content_id', $id)->where('language_id', $language_id)->count();
 
             if ($count) {
@@ -329,7 +342,32 @@ abstract class Entity
                 throw new NoRevisionForLanguageException($message, 0, $e);
             }
         }
+    }
 
+    /**
+     * Find the latest valid revision for this entity
+     *
+     * @param int $id The content ID
+     * @param int $language_id The language ID
+     * @param int $revision_id The revision ID which you want to load, this is optional
+     * @throws EntityNotFoundException
+     * @throws NoPublishedRevisionForLanguageException
+     * @throws NoRevisionForLanguageException
+     * @throws RevisionEntityMismatchException
+     * @throws RevisionNotFoundException
+     * @return static
+     */
+    public static function find($id, $language_id, $revision_id = null)
+    {
+        $instance = new static($language_id);
+
+        try {
+            $instance->content = Content::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw new EntityNotFoundException("The entity with id '$id' doesn't exist", 0, $e);
+        }
+
+        $instance->revision = static::findRevision($id, $language_id, $revision_id);
 
         $instance->getFieldTypes()
             ->each(function ($type) use ($instance) {
@@ -460,6 +498,7 @@ abstract class Entity
     public function toArray()
     {
         $content = [
+            'id' => $this->content->id,
             '_content' => $this->content->toArray(),
             '_revision' => $this->revision->toArray(),
         ];
