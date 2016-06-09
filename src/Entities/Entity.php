@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Rocket\Entities\Exceptions\EntityNotFoundException;
 use Rocket\Entities\Exceptions\InvalidFieldTypeException;
+use Rocket\Entities\Exceptions\MultipleFieldAssignmentException;
 use Rocket\Entities\Exceptions\NonExistentFieldException;
 use Rocket\Entities\Exceptions\NoPublishedRevisionForLanguageException;
 use Rocket\Entities\Exceptions\NoRevisionForLanguageException;
@@ -29,28 +30,27 @@ use Rocket\Entities\Exceptions\RevisionNotFoundException;
 abstract class Entity
 {
     /**
-     * @var array<class> The list of field types, filled with the configuration
+     * @var int This key identifies where the only item is stored in single item fields.
+     */
+    public static $SINGLE_ITEM_KEY = 0;
+
+    /**
+     * @var array<class> The list of field types, filled by the ServiceProvider from a configuration file.
      */
     public static $types;
 
     /**
-     * The content represented by this entity
-     *
-     * @var Content
+     * @var Content The content represented by this entity
      */
     protected $content; //id, created_at, type, published
 
     /**
-     * The revision represented by this entity
-     *
-     * @var Revision
+     * @var Revision The revision represented by this entity
      */
     protected $revision; //language_id, updated_at, type, published
 
     /**
-     * The fields in this entity
-     *
-     * @var array<FieldCollection>
+     * @var FieldCollection[] The fields in this entity
      */
     protected $data;
 
@@ -214,7 +214,17 @@ abstract class Entity
         }
 
         if ($this->hasField($key)) {
-            return $this->getField($key);
+            $field = $this->getField($key);
+
+            if ($field->getMaxItems() != 1) {
+                return $field;
+            }
+
+            if ($field->has(static::$SINGLE_ITEM_KEY)) {
+                return $field->get(static::$SINGLE_ITEM_KEY)->value;
+            }
+
+            return null;
         }
 
         if ($key == 'revision_id') {
@@ -267,11 +277,16 @@ abstract class Entity
      *
      * @param FieldCollection $field
      * @param $value
+     * @throws MultipleFieldAssignmentException
      */
     protected function setOnField(FieldCollection $field, $value)
     {
         if (!is_array($value)) {
-            $field->offsetSet(0, $value);
+            if ($field->getMaxItems() != 1) {
+                throw new MultipleFieldAssignmentException("You cannot assign a value to replace a multiple field");
+            }
+
+            $field->offsetSet(static::$SINGLE_ITEM_KEY, $value);
 
             return;
         }

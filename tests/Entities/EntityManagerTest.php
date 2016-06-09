@@ -1,7 +1,9 @@
 <?php namespace Rocket\Entities;
 
+use Carbon\Carbon;
 use Rocket\Entities\Exceptions\EntityNotFoundException;
 use Rocket\Entities\Exceptions\NoRevisionForLanguageException;
+use Rocket\Entities\Fixtures\AllFields;
 use Rocket\Entities\Fixtures\CommentDemo;
 use Rocket\Entities\Fixtures\Demo;
 use Rocket\Translation\Model\Language;
@@ -511,5 +513,70 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
         // WHEN we get an this entity but with another language
         Demo::find($demo->id, $language_ids[1]);
+    }
+
+    public function testAllFieldsButDatesIntegration()
+    {
+        $language_id = Language::value('id');
+
+        // GIVEN a big entity
+        $demo = new AllFields($language_id);
+
+        $demo->bool = true;
+        $demo->bools = [true, false];
+        $demo->double = M_PI;
+        $demo->doubles = [2.9, 1.2];
+        $demo->integer = 6;
+        $demo->integers = [3, -1];
+        $demo->string = "This is a string";
+        $demo->strings = ["This is a big test", "very verbose"];
+        $demo->text = str_repeat("Much text", 30);
+        $demo->texts = [str_repeat("Much test", 30), str_repeat("Such test", 30)];
+
+        $demo->save();
+
+        $demoArray = $demo->toArray();
+
+        $demoBis = AllFields::find($demo->id, $language_id);
+
+        foreach ($demo->getFields() as $key => $settings) {
+            if (array_key_exists('max_items', $settings)) {
+                $this->assertEquals($demo->$key->toArray(), $demoBis->$key->toArray());
+            } else {
+                $this->assertEquals($demoArray[$key], $demoBis->$key);
+            }
+
+        }
+    }
+
+    public function testDatesIntegration()
+    {
+        $language_id = Language::value('id');
+
+        // GIVEN a big entity
+        $demo = new AllFields($language_id);
+
+        $demo->date = "1989-12-24";
+        $demo->dates = [Carbon::createFromDate(1989, 12, 24)];
+        $demo->datetime = Carbon::create(1989, 12, 24, 04, 53, 00);
+        $demo->datetimes = [Carbon::create(1989, 12, 24, 04, 53, 00), Carbon::create(1991, 07, 22, 16, 20, 00)];
+
+        $demo->save();
+
+        $demoBis = AllFields::find($demo->id, $language_id);
+
+        $format = "Y-m-d H:i:s";
+
+        $this->assertEquals($demo->toArray(), $demoBis->toArray());
+        $this->assertEquals("1989-12-24 00:00:00", $demo->date->format($format));
+        $this->assertEquals("1989-12-24 00:00:00", $demo->dates[0]->format($format));
+        $this->assertEquals("1989-12-24 04:53:00", $demo->datetime->format($format));
+        $this->assertEquals("1989-12-24 04:53:00", $demo->datetimes[0]->format($format));
+        $this->assertEquals("1991-07-22 16:20:00", $demo->datetimes[1]->format($format));
+
+        $this->assertInstanceOf(Carbon::class, $demo->dates[0]);
+        $this->assertInstanceOf(Carbon::class, $demo->datetimes[0]);
+        $this->assertInstanceOf(Carbon::class, $demo->date);
+        $this->assertInstanceOf(Carbon::class, $demo->datetime);
     }
 }

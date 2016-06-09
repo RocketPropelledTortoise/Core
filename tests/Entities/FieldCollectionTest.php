@@ -77,6 +77,20 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
         $this->assertEquals(['test', 'test3'], $collection->toArray());
     }
 
+
+    public function testUnlimitedValues()
+    {
+        $collection = $this->getFieldCollection(['max_items' => 0]);
+
+        $collection[] = 'test';
+        $collection[] = 'test2';
+        $collection[] = 'heya';
+        $collection[] = 'even more values';
+        $collection[] = 'test3';
+
+        $this->assertEquals(['test', 'test2', 'heya', 'even more values', 'test3'], $collection->toArray());
+    }
+
     /**
      * @expectedException \Rocket\Entities\Exceptions\ItemCountException
      */

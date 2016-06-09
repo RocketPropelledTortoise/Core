@@ -11,5 +11,40 @@ class Datetime extends Field
 {
     public $table = 'field_datetime';
 
-    //TODO :: treat date fields as such
+    /**
+     * {@inheritdoc}
+     */
+    protected $casts = [
+        'value' => 'datetime',
+    ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function prepareValue($value)
+    {
+        return $this->fromDateTime($value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        return $this->serializeDate($this->getAttribute('value'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isValid($value)
+    {
+        try {
+            $this->asDateTime($value);
+
+            return true;
+        } catch (\InvalidArgumentException $e) {
+            return false;
+        }
+    }
 }

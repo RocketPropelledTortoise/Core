@@ -10,4 +10,12 @@ use Rocket\Entities\Field;
 class Text extends Field
 {
     public $table = 'field_text';
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isValid($value)
+    {
+        return is_string($value);
+    }
 }

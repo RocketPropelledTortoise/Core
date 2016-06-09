@@ -1,6 +1,8 @@
 <?php namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
+use Rocket\Entities\Exceptions\InvalidValueException;
 
 /**
  * Field
@@ -12,10 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \DateTime $created_at
  * @property-read \DateTime $updated_at
  */
-class Field extends Model
+abstract class Field extends Model
 {
-    //TODO :: validate values
-
     /**
      * {@inheritdoc}
      */
@@ -33,4 +33,39 @@ class Field extends Model
     {
         return $this->belongsTo(Revision::class);
     }
+
+    /**
+     * Validate and set the value
+     *
+     * @param  mixed  $value
+     */
+    public function setValueAttribute($value)
+    {
+        if (!$this->isValid($value)) {
+            throw new InvalidValueException("The value in the field '" . get_class($this) . "' is invalid");
+        }
+
+        $this->attributes['value'] = $this->prepareValue($value);
+    }
+
+    /**
+     * Prepare the value to be stored.
+     *
+     * Particularly useful for dates or very special fields
+     *
+     * @param mixed $value The value to prepare
+     * @return mixed
+     */
+    protected function prepareValue($value)
+    {
+        return $value;
+    }
+
+    /**
+     * Checks if a field is valid
+     *
+     * @param mixed $value The value to validate
+     * @return bool
+     */
+    abstract protected function isValid($value);
 }

@@ -61,7 +61,8 @@ class FieldCollection extends \Illuminate\Support\Collection
      */
     protected function validateSet($key, $value)
     {
-        if ((is_null($key) || !array_key_exists($key, $this->items)) && $this->count() >= $this->getMaxItems()) {
+        $maxItems = $this->getMaxItems();
+        if ((is_null($key) || !array_key_exists($key, $this->items)) && $maxItems != 0 && $this->count() >= $maxItems) {
             throw new ItemCountException('The maximum number of items has been reached on this field.');
         }
 
@@ -182,7 +183,7 @@ class FieldCollection extends \Illuminate\Support\Collection
      */
     public function toArray()
     {
-        if ($this->maxItems != 1) {
+        if ($this->getMaxItems() != 1) {
             return parent::toArray();
         }
 
@@ -198,7 +199,7 @@ class FieldCollection extends \Illuminate\Support\Collection
      */
     public function __toString()
     {
-        if ($this->maxItems == 1) {
+        if ($this->getMaxItems() == 1) {
             return $this->items[0]->value;
         }
 

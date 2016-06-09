@@ -52,6 +52,17 @@ class EntityTest extends \Rocket\Utilities\TestCase
         $this->assertEquals($title, $demo->title);
     }
 
+    /**
+     * @expectedException \Rocket\Entities\Exceptions\MultipleFieldAssignmentException
+     */
+    public function testAssignOnMultipleField()
+    {
+        $first_lang = Language::value('id');
+
+        $demo = new Demo($first_lang);
+        $demo->titles = "This is a wrong value";
+    }
+
     public function testFieldCollectionResilience()
     {
         $demo = new Demo(Language::value('id'));
