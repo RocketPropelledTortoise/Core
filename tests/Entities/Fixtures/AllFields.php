@@ -9,8 +9,8 @@ use Rocket\Entities\Entity;
  * @property Date[] $dates
  * @property \Datetime $datetime
  * @property \Datetime[] $datetimes
- * @property double $double
- * @property double[] $doubles
+ * @property float $double
+ * @property float[] $doubles
  * @property int $integer
  * @property int[] $integers
  * @property string $string
@@ -24,7 +24,7 @@ class AllFields extends Entity
     {
         return [
             'bool' => [
-                'type' => 'bool'
+                'type' => 'bool',
             ],
             'bools' => [
                 'type' => 'bool',
@@ -38,7 +38,7 @@ class AllFields extends Entity
                 'max_items' => 2,
             ],
             'datetime' => [
-                'type' => 'datetime'
+                'type' => 'datetime',
             ],
             'datetimes' => [
                 'type' => 'datetime',
@@ -71,7 +71,7 @@ class AllFields extends Entity
             'texts' => [
                 'type' => 'text',
                 'max_items' => 2,
-            ]
+            ],
         ];
     }
 }

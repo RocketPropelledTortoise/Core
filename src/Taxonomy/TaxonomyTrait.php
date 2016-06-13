@@ -3,7 +3,6 @@
 /**
  * Trait used to give Taxonomy abilities to another model.
  */
-
 namespace Rocket\Taxonomy;
 
 use Illuminate\Database\Eloquent\Builder;

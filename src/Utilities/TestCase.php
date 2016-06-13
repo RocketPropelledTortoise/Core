@@ -3,7 +3,6 @@
 /**
  * Simplifies the creation of tests creating a full application, running migrations and loading multiple Service Providers
  */
-
 namespace Rocket\Utilities;
 
 /**

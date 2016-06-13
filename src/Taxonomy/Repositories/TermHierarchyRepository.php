@@ -2,7 +2,6 @@
 /**
  * The repository of all hierarchies of terms
  */
-
 namespace Rocket\Taxonomy\Repositories;
 
 use CentralDesktop\Graph\Graph\DirectedGraph;

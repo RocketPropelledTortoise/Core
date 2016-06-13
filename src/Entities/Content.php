@@ -5,7 +5,6 @@
  *
  * The Content holds the Revision which in turn holds the Fields.
  */
-
 namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\Model;

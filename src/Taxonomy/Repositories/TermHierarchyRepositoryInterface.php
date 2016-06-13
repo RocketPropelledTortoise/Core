@@ -3,7 +3,6 @@
 /**
  * Repository of everything that can be done with a Term hierarchy
  */
-
 namespace Rocket\Taxonomy\Repositories;
 
 /**

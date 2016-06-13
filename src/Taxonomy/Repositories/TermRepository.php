@@ -2,7 +2,6 @@
 /**
  * The Term Repository handles the retrieval of Taxonomy terms.
  */
-
 namespace Rocket\Taxonomy\Repositories;
 
 use Illuminate\Cache\Repository as CacheRepository;

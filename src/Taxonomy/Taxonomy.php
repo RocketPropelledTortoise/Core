@@ -3,7 +3,6 @@
 /**
  * The Taxonomy base class handles the cache and the creation/modification of terms
  */
-
 namespace Rocket\Taxonomy;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;

@@ -3,7 +3,6 @@
 /**
  * An entity field
  */
-
 namespace Rocket\Entities\Fields;
 
 use Rocket\Entities\Field;

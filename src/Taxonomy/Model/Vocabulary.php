@@ -3,7 +3,6 @@
 /**
  * A vocabulary can contain any number of terms
  */
-
 namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;

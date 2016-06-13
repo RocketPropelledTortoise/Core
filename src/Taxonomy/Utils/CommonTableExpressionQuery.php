@@ -7,7 +7,6 @@
  *
  * The choice of a Common Table Expression or a standard query is done automatically
  */
-
 namespace Rocket\Taxonomy\Utils;
 
 use Illuminate\Support\Facades\DB;

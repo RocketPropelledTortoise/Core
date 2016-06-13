@@ -3,7 +3,6 @@
 /**
  * The term is the core element of the taxonomies system.
  */
-
 namespace Rocket\Taxonomy;
 
 use ArrayAccess;
