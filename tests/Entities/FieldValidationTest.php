@@ -13,21 +13,6 @@ use Rocket\Translation\Model\Language;
 
 class FieldValidationTest extends \Rocket\Utilities\TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->packagesToTest(['translations', 'entities']);
-
-        Language::insert(['name' => 'Français', 'iso' => 'fr']);
-        Language::insert(['name' => 'English', 'iso' => 'en']);
-    }
-
-    protected function getPackageProviders($app)
-    {
-        return ['\Rocket\Entities\Support\Laravel5\ServiceProvider'];
-    }
-
     public function providerFieldValid()
     {
         return [

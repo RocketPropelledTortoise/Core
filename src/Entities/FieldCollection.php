@@ -1,10 +1,20 @@
-<?php namespace Rocket\Entities;
+<?php
+/**
+ * A FieldCollection is a Collection that wraps all values in their Field models.
+ *
+ * It will also return the actual value but not the Field model.
+ */
+
+namespace Rocket\Entities;
 
 use Illuminate\Support\Collection;
 use Rocket\Entities\Exceptions\InvalidFieldTypeException;
 use Rocket\Entities\Exceptions\ItemCountException;
 use Rocket\Entities\Exceptions\NullValueException;
 
+/**
+ * Smart Collection for entities
+ */
 class FieldCollection extends \Illuminate\Support\Collection
 {
     /**
@@ -90,7 +100,11 @@ class FieldCollection extends \Illuminate\Support\Collection
     }
 
     /**
-     * {@inheritdoc}
+     * Set the item at a given offset.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $value
+     * @return void
      */
     public function offsetSet($key, $value)
     {
@@ -116,7 +130,10 @@ class FieldCollection extends \Illuminate\Support\Collection
     }
 
     /**
-     * {@inheritdoc}
+     * Get an item at a given offset.
+     *
+     * @param  mixed  $key
+     * @return mixed
      */
     public function offsetGet($key)
     {
@@ -124,7 +141,10 @@ class FieldCollection extends \Illuminate\Support\Collection
     }
 
     /**
-     * {@inheritdoc}
+     * Unset the item at a given offset.
+     *
+     * @param  string  $key
+     * @return void
      */
     public function offsetUnset($key)
     {
@@ -195,7 +215,9 @@ class FieldCollection extends \Illuminate\Support\Collection
     }
 
     /**
-     * {@inheritdoc}
+     * Convert the collection to its string representation.
+     *
+     * @return string
      */
     public function __toString()
     {

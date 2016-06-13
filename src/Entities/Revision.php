@@ -1,4 +1,11 @@
-<?php namespace Rocket\Entities;
+<?php
+/**
+ * Represents a revision.
+ *
+ * A revision is a instance of a content with a language.
+ */
+
+namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,14 +23,14 @@ use Illuminate\Database\Eloquent\Model;
 class Revision extends Model
 {
     /**
-     * {@inheritdoc}
+     * @var array The attributes that should be cast to native types.
      */
     protected $casts = [
         'published' => 'boolean',
     ];
 
     /**
-     * {@inheritdoc}
+     * @var array The model's attributes.
      */
     protected $attributes = [
         'published' => true,

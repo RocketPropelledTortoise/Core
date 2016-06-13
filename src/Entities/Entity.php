@@ -1,4 +1,12 @@
-<?php namespace Rocket\Entities;
+<?php
+
+/**
+ * The Entity main class is the master of everything related to Entities.
+ *
+ * It handles the creation, storage, modification and deletion of Entities and their Revisions.
+ */
+
+namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
@@ -321,6 +329,12 @@ abstract class Entity
     }
 
     /**
+     * Find the requested Revision.
+     *
+     * If a revision_id it will be requested against the requested ID and Language.
+     *
+     * If none is requested, it will find the revision that is published in that language.
+     *
      * @param int $id The content ID
      * @param int $language_id The language ID
      * @param int $revision_id The revision ID which you want to load, this is optional
@@ -338,6 +352,10 @@ abstract class Entity
 
                 if ($revision->content_id != $id) {
                     throw new RevisionEntityMismatchException("This revision doesn't belong to this entity");
+                }
+
+                if ($revision->language_id != $language_id) {
+                    //TODO :: throw an exception in this case as well
                 }
 
                 return $revision;
@@ -530,6 +548,11 @@ abstract class Entity
         return $content;
     }
 
+    /**
+     * Delete this entity and all the underlying Revisions.
+     *
+     * @param bool $clear Should we clear the fields after deleting the revision ?
+     */
     public function delete($clear = true)
     {
         $revisions = Revision::where('content_id', $this->content->id)->get();
@@ -554,6 +577,11 @@ abstract class Entity
         }
     }
 
+    /**
+     * Delete the current revision.
+     *
+     * @param bool $clear Should we clear the fields after deleting the revision ?
+     */
     public function deleteRevision($clear = true)
     {
         $this->getFieldTypes()->each(function ($type) {
@@ -578,6 +606,9 @@ abstract class Entity
         }
     }
 
+    /**
+     * Clear all the fields from their content
+     */
     protected function clearFields()
     {
         // Void all the fields
@@ -590,6 +621,9 @@ abstract class Entity
         }
     }
 
+    /**
+     * Publish the current revision and unpublish the other revisions of the same language.
+     */
     public function publishRevision()
     {
         $this->revision->published = true;

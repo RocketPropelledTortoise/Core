@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy\Model;
+<?php
+
+/**
+ * This class represents the container holding all translations of a Term together.
+ */
+
+namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,21 +18,23 @@ use Illuminate\Database\Eloquent\Model;
 class TermContainer extends Model
 {
     /**
-     * {@inheritdoc}
+     * @var bool Indicates if the model should be timestamped.
      */
     public $timestamps = false;
 
     /**
-     * {@inheritdoc}
+     * @var string The table associated with the model.
      */
     protected $table = 'taxonomy_terms';
 
     /**
-     * {@inheritdoc}
+     * @var array The attributes that are mass assignable.
      */
     protected $fillable = ['vocabulary_id', 'type'];
 
     /**
+     * All translations available for this term.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function translations()
@@ -35,6 +43,8 @@ class TermContainer extends Model
     }
 
     /**
+     * The vocabulary this term is linked to.
+     *
      * @codeCoverageIgnore
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

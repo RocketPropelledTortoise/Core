@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy\Support\Laravel5;
+<?php
+
+/**
+ * The Laravel 5 Facade for the Taxonomies
+ */
+
+namespace Rocket\Taxonomy\Support\Laravel5;
 
 /**
  * Class Taxonomy

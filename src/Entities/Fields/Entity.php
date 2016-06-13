@@ -1,4 +1,10 @@
-<?php namespace Rocket\Entities\Fields;
+<?php
+
+/**
+ * An entity field
+ */
+
+namespace Rocket\Entities\Fields;
 
 use Rocket\Entities\Field;
 
@@ -9,6 +15,9 @@ use Rocket\Entities\Field;
  */
 class Entity extends Field
 {
+    /**
+     * @var string The table associated with the model.
+     */
     public $table = 'field_entity';
 
     //TODO :: implement entity

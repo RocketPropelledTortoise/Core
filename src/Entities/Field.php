@@ -1,7 +1,14 @@
-<?php namespace Rocket\Entities;
+<?php
+
+/**
+ * Base class for a Field Implementation.
+ *
+ * All Fields must inherit form this Model.
+ */
+
+namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Validator;
 use Rocket\Entities\Exceptions\InvalidValueException;
 
 /**
@@ -17,7 +24,9 @@ use Rocket\Entities\Exceptions\InvalidValueException;
 abstract class Field extends Model
 {
     /**
-     * {@inheritdoc}
+     * Convert the model instance to an array.
+     *
+     * @return array
      */
     public function toArray()
     {

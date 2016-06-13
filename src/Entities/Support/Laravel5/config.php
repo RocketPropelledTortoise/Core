@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * This file contains the configuration for the Entity system.
+ *
+ * For the moment, the only thing that is actually used is its list of field types.
+ */
+
 return [
     'entities' => [],
     'field_types' => [

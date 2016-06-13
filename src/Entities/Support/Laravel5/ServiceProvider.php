@@ -1,12 +1,23 @@
-<?php namespace Rocket\Entities\Support\Laravel5;
+<?php
+
+/**
+ * Laravel5 Implementation of the Entities System
+ */
+
+namespace Rocket\Entities\Support\Laravel5;
 
 use Illuminate\Support\Facades\Config;
 use Rocket\Entities\Entity;
 
+/**
+ * This is a Service Provider for Laravel 5
+ */
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     /**
-     * {@inheritdoc}
+     * Register the service provider.
+     *
+     * @return void
      */
     public function register()
     {

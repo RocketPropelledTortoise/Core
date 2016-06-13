@@ -1,4 +1,9 @@
-<?php namespace Rocket\Taxonomy\Repositories;
+<?php
+/**
+ * The Term Repository handles the retrieval of Taxonomy terms.
+ */
+
+namespace Rocket\Taxonomy\Repositories;
 
 use Illuminate\Cache\Repository as CacheRepository;
 use Rocket\Taxonomy\Model\TermContainer;
@@ -7,27 +12,37 @@ use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Taxonomy\Term;
 use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
+/**
+ * Interface TermRepositoryInterface
+ */
 class TermRepository implements TermRepositoryInterface
 {
     /**
-     * @var CacheRepository
+     * @var CacheRepository The cache to store the terms in
      */
     protected $cache;
 
     /**
-     * The term cache key
-     *
-     * @var string
+     * @var string The term cache key prefix
      */
     protected static $cacheKey = 'Rocket::Taxonomy::Term::';
 
+    /**
+     * TermRepository constructor.
+     *
+     * @param CacheRepository $cache The cache in which to keep terms
+     */
     public function __construct(CacheRepository $cache)
     {
         $this->cache = $cache;
     }
 
     /**
-     * {@inheritdoc}
+     * Get a term with all translations
+     *
+     * @param int $term_id
+     * @param bool $from_cache
+     * @return \Rocket\Taxonomy\Term
      */
     public function getTerm($term_id, $from_cache = true)
     {
@@ -43,7 +58,10 @@ class TermRepository implements TermRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Remove a term from the cache
+     *
+     * @param int $term_id
+     * @return bool
      */
     public function uncacheTerm($term_id)
     {

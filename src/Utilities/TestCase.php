@@ -1,4 +1,10 @@
-<?php namespace Rocket\Utilities;
+<?php
+
+/**
+ * Simplifies the creation of tests creating a full application, running migrations and loading multiple Service Providers
+ */
+
+namespace Rocket\Utilities;
 
 /**
  * Class TestCase
@@ -6,8 +12,16 @@
  */
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    /**
+     * @var bool Were the databases migrated in this test ?
+     */
     protected $migratedDatabases = false;
 
+    /**
+     * Setup the test environment.
+     *
+     * @return void
+     */
     public function setUp()
     {
         if (!$this->app) {
@@ -21,6 +35,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $this->refreshApplication();
     }
 
+    /**
+     * Clean up the testing environment before the next test.
+     *
+     * @return void
+     */
     public function tearDown()
     {
         // if we're using mysql or postgresql,
@@ -33,6 +52,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
         parent::tearDown();
     }
 
+    /**
+     * Prepare the environment for these packages in this test Class
+     *
+     * @param array $items
+     */
     public function packagesToTest(array $items)
     {
         $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');

@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy\Utils;
+<?php
+
+/**
+ * The simple implementation of a recursive query.
+ */
+
+namespace Rocket\Taxonomy\Utils;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -16,13 +22,20 @@ class RecursiveQuery implements RecursiveQueryInterface
      */
     protected $hierarchyTable;
 
+    /**
+     * This Class handles recusive queries to retrieve
+     * parent-child relations for terms.
+     */
     public function __construct()
     {
         $this->hierarchyTable = (new Hierarchy)->getTable();
     }
 
     /**
-     * {@inheritdoc}
+     * Get all ancestors of a term
+     *
+     * @param int $id The term ID
+     * @return \Illuminate\Support\Collection
      */
     public function getAncestry($id)
     {
@@ -35,11 +48,22 @@ class RecursiveQuery implements RecursiveQueryInterface
         return $all_results;
     }
 
+    /**
+     * Get the query to initiate the recursive query.
+     *
+     * @return string
+     */
     protected function getAncestryInitialQuery()
     {
         return "select term_id, parent_id from $this->hierarchyTable where term_id = :id";
     }
 
+    /**
+     * Get the ancestry recursively
+     *
+     * @param Collection $all_results
+     * @param int[] $ids
+     */
     protected function getRecursiveAncestry(Collection $all_results, $ids)
     {
         $all_results->merge($results = DB::table($this->hierarchyTable)->whereIn('term_id', $ids)->get());
@@ -50,7 +74,10 @@ class RecursiveQuery implements RecursiveQueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Get all descendants of a term.
+     *
+     * @param int $id The term ID
+     * @return \Illuminate\Support\Collection
      */
     public function getDescent($id)
     {
@@ -63,11 +90,22 @@ class RecursiveQuery implements RecursiveQueryInterface
         return $all_results;
     }
 
+    /**
+     * Get the query to initiate the recursive query.
+     *
+     * @return string
+     */
     protected function getDescentInitialQuery()
     {
         return "select term_id, parent_id from $this->hierarchyTable where parent_id = :id";
     }
 
+    /**
+     * Get the descent recursively.
+     *
+     * @param Collection $all_results
+     * @param int[] $ids
+     */
     protected function getRecursiveDescent(Collection $all_results, $ids)
     {
         $all_results->merge($results = DB::table($this->hierarchyTable)->whereIn('parent_id', $ids)->get());

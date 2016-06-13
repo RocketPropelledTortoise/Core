@@ -1,4 +1,10 @@
-<?php namespace Rocket\Entities\Fields;
+<?php
+
+/**
+ * A Datetime field
+ */
+
+namespace Rocket\Entities\Fields;
 
 use Rocket\Entities\Field;
 
@@ -9,17 +15,23 @@ use Rocket\Entities\Field;
  */
 class Datetime extends Field
 {
+    /**
+     * @var string The table associated with the model.
+     */
     public $table = 'field_datetime';
 
     /**
-     * {@inheritdoc}
+     * @var array The attributes that should be cast to native types.
      */
     protected $casts = [
         'value' => 'datetime',
     ];
 
     /**
-     * {@inheritdoc}
+     * Prepare the value to be stored.
+     *
+     * @param mixed $value The value to prepare
+     * @return string
      */
     protected function prepareValue($value)
     {
@@ -27,7 +39,9 @@ class Datetime extends Field
     }
 
     /**
-     * {@inheritdoc}
+     * Convert the model instance to an array.
+     *
+     * @return array
      */
     public function toArray()
     {
@@ -35,7 +49,10 @@ class Datetime extends Field
     }
 
     /**
-     * {@inheritdoc}
+     * Checks if a field is valid
+     *
+     * @param mixed $value The value to validate
+     * @return bool
      */
     protected function isValid($value)
     {

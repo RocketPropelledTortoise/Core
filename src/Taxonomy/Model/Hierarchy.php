@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy\Model;
+<?php
+
+/**
+ * Represents thelinks between parents and children terms.
+ */
+
+namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,16 +17,18 @@ use Illuminate\Database\Eloquent\Model;
 class Hierarchy extends Model
 {
     /**
-     * {@inheritdoc}
+     * @var bool Indicates if the model should be timestamped.
      */
     public $timestamps = false;
 
     /**
-     * {@inheritdoc}
+     * @var string The table associated with the model.
      */
     protected $table = 'taxonomy_term_hierarchy';
 
     /**
+     * Get the term related to this entry
+     *
      * @codeCoverageIgnore
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -30,6 +38,8 @@ class Hierarchy extends Model
     }
 
     /**
+     * Get the parent term of this entry
+     *
      * @codeCoverageIgnore
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

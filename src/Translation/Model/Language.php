@@ -12,7 +12,7 @@ use Eloquent;
 class Language extends Eloquent
 {
     /**
-     * {@inheritdoc}
+     * @var string The table associated with the model.
      */
     protected $table = 'languages';
 }

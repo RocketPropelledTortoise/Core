@@ -1,4 +1,9 @@
-<?php namespace Rocket\Taxonomy\Repositories;
+<?php
+/**
+ * The repository of all hierarchies of terms
+ */
+
+namespace Rocket\Taxonomy\Repositories;
 
 use CentralDesktop\Graph\Graph\DirectedGraph;
 use CentralDesktop\Graph\Vertex;
@@ -21,11 +26,13 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     protected $vertices;
 
     /**
-     * @var \Illuminate\Cache\Repository
+     * @var \Illuminate\Cache\Repository The cache to store the terms in.
      */
     protected $cache;
 
     /**
+     * Create a Repository
+     *
      * @param \Illuminate\Cache\Repository $cache
      */
     public function __construct(\Illuminate\Cache\Repository $cache)
@@ -34,8 +41,10 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     }
 
     /**
-     * @param int $term_id
-     * @param int $parent_id
+     * Add a parent to this term.
+     *
+     * @param int $term_id The term
+     * @param int $parent_id The parent term
      * @return bool
      */
     public function addParent($term_id, $parent_id)
@@ -44,7 +53,9 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     }
 
     /**
-     * @param int $term_id
+     * Remove this term's parents
+     *
+     * @param int $term_id The term
      * @return bool
      */
     public function unsetParents($term_id)
@@ -52,6 +63,13 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
         return Hierarchy::where('term_id', $term_id)->delete();
     }
 
+    /**
+     * Tests if the driver supports Common Table Expression.
+     *
+     * If it doesn't we'll fall back to a manually recursive query.
+     *
+     * @return bool
+     */
     protected function supportsCommonTableExpressionQuery()
     {
         $driver = DB::connection()->getDriverName();
@@ -68,6 +86,8 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     }
 
     /**
+     * Get the retriever to get the Term's Hierarchy
+     *
      * @return \Rocket\Taxonomy\Utils\RecursiveQueryInterface
      */
     protected function getRecursiveRetriever()
@@ -82,8 +102,8 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     /**
      * Get the hierarchy cache key
      *
-     * @param string $direction
-     * @param int $id
+     * @param string $direction The hierarchy's direction
+     * @param int $id The term's id
      * @return string
      */
     protected function getCacheKey($direction, $id)
@@ -94,7 +114,7 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     /**
      * Get all parents recursively
      *
-     * @param int $id
+     * @param int $id The term's id
      * @return \Illuminate\Support\Collection
      */
     public function getAncestry($id)
@@ -110,9 +130,9 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     }
 
     /**
-     * Get all childs recursively
+     * Get all childs recursively.
      *
-     * @param int $id
+     * @param int $id The term's id
      * @return \Illuminate\Support\Collection
      */
     public function getDescent($id)
@@ -128,7 +148,9 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     }
 
     /**
-     * @param \Illuminate\Support\Collection $data
+     * Prepare the vertices to create the graph.
+     *
+     * @param \Illuminate\Support\Collection $data The list of vertices that were retrieved
      * @return array<Vertex>
      */
     protected function prepareVertices($data)
@@ -155,6 +177,7 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     /**
      * Get all parents recursively
      *
+     * @param int $id The term we want the ancestry from.
      * @return array Vertex, DirectedGraph
      */
     public function getAncestryGraph($id)
@@ -185,6 +208,7 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     /**
      * Get all childs recursively
      *
+     * @param int $id The term we want the descent from.
      * @return array Vertex, DirectedGraph
      */
     public function getDescentGraph($id)
@@ -215,6 +239,7 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     /**
      * Get all the possible paths from this term
      *
+     * @param int $id The term we want the ancestry from.
      * @return array<array<int>>
      */
     public function getAncestryPaths($id)
@@ -233,6 +258,7 @@ class TermHierarchyRepository implements TermHierarchyRepositoryInterface
     /**
      * Get all the possible paths from this term
      *
+     * @param int $id The term we want the descent from.
      * @return array<array<int>>
      */
     public function getDescentPaths($id)

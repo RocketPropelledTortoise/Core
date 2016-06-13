@@ -11,20 +11,17 @@ namespace Rocket\Utilities;
 class ParentChildTree
 {
     /**
-     * The tree itself
-     * @var array
+     * @var array The tree itself
      */
     public $tree;
 
     /**
-     * The flat tree to find elements
-     * @var array
+     * @var array The flat tree to find elements
      */
     public $finder;
 
     /**
-     * Configuration values
-     * @var array
+     * @var array Configuration values
      */
     public $config = [
         'id' => 'id',
@@ -39,8 +36,8 @@ class ParentChildTree
     /**
      * Generate the tree
      *
-     * @param array $tree_data
-     * @param array $config
+     * @param array $tree_data The raw data to create a tree from
+     * @param array $config The configuration on how to create this tree
      *
      * @throws \Exception
      */
@@ -60,6 +57,12 @@ class ParentChildTree
         $this->buildTree($tree_data);
     }
 
+    /**
+     * Build the tree from the received data
+     *
+     * @param array $tree_data The raw data to create a tree from
+     * @throws \Exception
+     */
     protected function buildTree($tree_data)
     {
         $parent_key = $this->config['parent'];
@@ -80,6 +83,13 @@ class ParentChildTree
         }
     }
 
+    /**
+     * Exit the tree creation if the tree can't be built completely
+     *
+     * @param int $beginning_with The number of nodes left to place on the tree
+     * @param array $tree_data The rest of the tree data to place
+     * @throws \Exception
+     */
     protected function ungracefulExit($beginning_with, $tree_data)
     {
         if ($beginning_with == count($tree_data)) {
@@ -88,7 +98,8 @@ class ParentChildTree
     }
 
     /**
-     * Add a leaf
+     * Add a leaf on the tree.
+     *
      * @param  string $parent_id
      * @param  string $node_id
      * @param  array $node
@@ -122,7 +133,8 @@ class ParentChildTree
     }
 
     /**
-     * Get the data
+     * Get the prepared tree.
+     *
      * @return array
      */
     public function getTree()
@@ -131,8 +143,9 @@ class ParentChildTree
     }
 
     /**
-     * Get all node's childs
-     * @param  string $id
+     * Get all node's children.
+     *
+     * @param  string $id The entry's ID
      * @return array
      */
     public function getChilds($id)
@@ -146,7 +159,8 @@ class ParentChildTree
     }
 
     /**
-     * Internal recursive function to get childs
+     * Internal recursive function to get children.
+     *
      * @param  array $childs
      * @param  array $result
      * @return array

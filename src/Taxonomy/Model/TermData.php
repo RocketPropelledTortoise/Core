@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy\Model;
+<?php
+
+/**
+ * This model represents one translation for a term.
+ */
+
+namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use Rocket\Taxonomy\Support\Laravel5\Facade as T;
@@ -15,12 +21,12 @@ use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 class TermData extends Model
 {
     /**
-     * {@inheritdoc}
+     * @var bool Indicates if the model should be timestamped.
      */
     public $timestamps = false;
 
     /**
-     * {@inheritdoc}
+     * @var string The table associated with the model.
      */
     protected $table = 'taxonomy_terms_data';
 
@@ -30,6 +36,8 @@ class TermData extends Model
     public $translated = true;
 
     /**
+     * Get the term this data is linked to.
+     *
      * @codeCoverageIgnore
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -39,12 +47,15 @@ class TermData extends Model
     }
 
     /**
-     * {@inheritdoc}
+     * @var array The attributes that are mass assignable.
      */
     protected $fillable = ['term_id', 'language_id', 'title', 'description'];
 
     /**
-     * {@inheritdoc}
+     * Save the model to the database.
+     *
+     * @param  array  $options
+     * @return bool
      */
     public function save(array $options = [])
     {

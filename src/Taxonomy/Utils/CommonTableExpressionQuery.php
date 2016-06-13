@@ -1,6 +1,4 @@
-<?php namespace Rocket\Taxonomy\Utils;
-
-use Illuminate\Support\Facades\DB;
+<?php
 
 /**
  * This class will use the Common Table Expression
@@ -8,6 +6,14 @@ use Illuminate\Support\Facades\DB;
  * On mysql it will fallback to a stored procedure doing the same.
  *
  * The choice of a Common Table Expression or a standard query is done automatically
+ */
+
+namespace Rocket\Taxonomy\Utils;
+
+use Illuminate\Support\Facades\DB;
+
+/**
+ * Class using the DB's internal Recursive query mechanism to query term hierarchies.
  */
 class CommonTableExpressionQuery extends RecursiveQuery implements RecursiveQueryInterface
 {
@@ -34,6 +40,13 @@ class CommonTableExpressionQuery extends RecursiveQuery implements RecursiveQuer
         return $results;
     }
 
+    /**
+     * Prepare the complete query to run on the DB to get the data recursively.
+     *
+     * @param string $initial The initial query bootstrapping the recursive query
+     * @param string $recursive The query to dig deeper in the hierarchy
+     * @return string
+     */
     protected function assembleQuery($initial, $recursive)
     {
         $tmp_tbl = 'name_tree';
@@ -49,7 +62,10 @@ class CommonTableExpressionQuery extends RecursiveQuery implements RecursiveQuer
     }
 
     /**
-     * {@inheritdoc}
+     * Get all ancestors of a term
+     *
+     * @param int $id The term ID
+     * @return \Illuminate\Support\Collection
      */
     public function getAncestry($id)
     {
@@ -62,7 +78,10 @@ class CommonTableExpressionQuery extends RecursiveQuery implements RecursiveQuer
     }
 
     /**
-     * {@inheritdoc}
+     * Get all descendants of a term.
+     *
+     * @param int $id The term ID
+     * @return \Illuminate\Support\Collection
      */
     public function getDescent($id)
     {

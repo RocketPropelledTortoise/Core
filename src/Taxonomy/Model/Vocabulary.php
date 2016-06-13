@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy\Model;
+<?php
+
+/**
+ * A vocabulary can contain any number of terms
+ */
+
+namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,20 +20,25 @@ use Illuminate\Database\Eloquent\Model;
 class Vocabulary extends Model
 {
     /**
-     * {@inheritdoc}
+     * @var bool Indicates if the model should be timestamped.
      */
     public $timestamps = false;
 
     /**
-     * {@inheritdoc}
+     * @var string The table associated with the model.
      */
     protected $table = 'taxonomy_vocabularies';
 
     /**
-     * {@inheritdoc}
+     * @var array The attributes that are mass assignable.
      */
     protected $fillable = ['name', 'machine_name', 'description', 'hierarchy', 'translatable'];
 
+    /**
+     * Gives the information if a vocabulary is translatable or not
+     *
+     * @return bool
+     */
     public function isTranslatable()
     {
         return (bool) $this->translatable;

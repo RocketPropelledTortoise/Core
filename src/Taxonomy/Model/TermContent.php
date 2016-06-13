@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy\Model;
+<?php
+
+/**
+ * Represents the link from a Term to any Model
+ */
+
+namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,21 +18,23 @@ use Illuminate\Database\Eloquent\Model;
 class TermContent extends Model
 {
     /**
-     * {@inheritdoc}
+     * @var bool Indicates if the model should be timestamped.
      */
     public $timestamps = false;
 
     /**
-     * {@inheritdoc}
+     * @var string The table associated with the model.
      */
     protected $table = 'taxonomy_content';
 
     /**
-     * {@inheritdoc}
+     * @var array The attributes that are mass assignable.
      */
     protected $fillable = ['term_id'];
 
     /**
+     * The term linked to this relation.
+     *
      * @codeCoverageIgnore
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -36,6 +44,8 @@ class TermContent extends Model
     }
 
     /**
+     * The model linked to this relation.
+     *
      * @codeCoverageIgnore
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */

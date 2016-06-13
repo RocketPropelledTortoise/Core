@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy\Support\Laravel5;
+<?php
+
+/**
+ * The Laravel 5 Service Provider for Taxonomies
+ */
+
+namespace Rocket\Taxonomy\Support\Laravel5;
 
 /**
  * Taxonomy Service Provider
@@ -6,12 +12,14 @@
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     /**
-     * {@inheritdoc}
+     * @var bool Indicates if loading of the provider is deferred.
      */
     protected $defer = true;
 
     /**
-     * {@inheritdoc}
+     * Register the service provider.
+     *
+     * @return void
      */
     public function register()
     {
@@ -27,7 +35,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     }
 
     /**
-     * {@inheritdoc}
+     * Get the services provided by the provider.
+     *
+     * @return array
      */
     public function provides()
     {

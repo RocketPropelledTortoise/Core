@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy;
+<?php
+
+/**
+ * The Taxonomy base class handles the cache and the creation/modification of terms
+ */
+
+namespace Rocket\Taxonomy;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Rocket\Taxonomy\Model\Hierarchy;
@@ -10,48 +16,46 @@ use Rocket\Taxonomy\Repositories\TermRepositoryInterface as TermRep;
 use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
 /**
- * Class Taxonomy
+ * The Taxonomy base class handles the cache and the creation/modification of terms
  */
 class Taxonomy
 {
     /**
-     * Terms cache
-     *
-     * @var array
+     * @var array Terms internal cache
      */
     public $terms = [];
 
     /**
-     * List of vocabularies by ID
-     *
-     * @var array
+     * @var array List of vocabularies by ID
      */
     protected $vocabularyById = [];
 
     /**
-     * List of vocabularies by Name
-     *
-     * @var array
+     * @var array List of vocabularies by Name
      */
     protected $vocabularyByName = [];
 
     /**
-     * @var CacheRepository
+     * @var CacheRepository The repository to cache Terms
      */
     protected $cache;
 
     /**
-     * @var TermRep
+     * @var TermRep The repository to load Terms
      */
     protected $termRepository;
 
     /**
-     * @var TermHieraRep
+     * @var TermHieraRep The repository to handle terms hierarchies
      */
     protected $termHierarchyRepository;
 
     /**
-     * Initialize the taxonomy, Loads all existing vocabularies
+     * Initialize the Taxonomy system, Loads all existing vocabularies
+     *
+     * @param CacheRepository $cache The cache repository
+     * @param TermRep $termRepository The term retrieval repository
+     * @param TermHieraRep $termHierarchyRepository The term hierarchy repository
      */
     public function __construct(CacheRepository $cache, TermRep $termRepository, TermHieraRep $termHierarchyRepository)
     {
@@ -141,7 +145,8 @@ class Taxonomy
     /**
      * Get a term with all translations
      *
-     * @param  int $term_id
+     * @param int $term_id The term's ID
+     * @param bool $from_cache Should we take this term from cache or request a fresh one ?
      * @return Term
      */
     public function getTerm($term_id, $from_cache = true)
@@ -268,6 +273,8 @@ class Taxonomy
     }
 
     /**
+     * Remove the parents form this term
+     *
      * @param int $term_id
      * @return bool
      */

@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy;
+<?php
+
+/**
+ * The term is the core element of the taxonomies system.
+ */
+
+namespace Rocket\Taxonomy;
 
 use ArrayAccess;
 use Rocket\Taxonomy\Exception\UndefinedLanguageException;

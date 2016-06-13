@@ -1,5 +1,14 @@
-<?php namespace Rocket\Utilities;
+<?php
 
+/**
+ * Simple utility class to format times and sizes
+ */
+
+namespace Rocket\Utilities;
+
+/**
+ * Simple utility class to format times and sizes
+ */
 class Format
 {
     /**

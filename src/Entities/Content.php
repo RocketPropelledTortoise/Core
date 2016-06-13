@@ -1,4 +1,12 @@
-<?php namespace Rocket\Entities;
+<?php
+
+/**
+ * A content is the base brick of the Entity system.
+ *
+ * The Content holds the Revision which in turn holds the Fields.
+ */
+
+namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,14 +23,14 @@ use Illuminate\Database\Eloquent\Model;
 class Content extends Model
 {
     /**
-     * {@inheritdoc}
+     * @var array The attributes that should be cast to native types.
      */
     protected $casts = [
         'published' => 'boolean',
     ];
 
     /**
-     * {@inheritdoc}
+     * @var array The model's attributes.
      */
     protected $attributes = [
         'published' => true,

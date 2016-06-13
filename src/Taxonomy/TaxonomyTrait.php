@@ -1,4 +1,10 @@
-<?php namespace Rocket\Taxonomy;
+<?php
+
+/**
+ * Trait used to give Taxonomy abilities to another model.
+ */
+
+namespace Rocket\Taxonomy;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -16,6 +22,14 @@ trait TaxonomyTrait
 {
     /**
      * Declared by Eloquent Model
+     *
+     * @param  string  $related
+     * @param  string  $name
+     * @param  string  $table
+     * @param  string  $foreignKey
+     * @param  string  $otherKey
+     * @param  bool  $inverse
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     abstract public function morphToMany(
         $related,

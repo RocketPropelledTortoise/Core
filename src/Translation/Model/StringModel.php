@@ -12,12 +12,12 @@ use Eloquent;
 class StringModel extends Eloquent
 {
     /**
-     * {@inheritdoc}
+     * @var bool Indicates if the model should be timestamped.
      */
     public $timestamps = false;
 
     /**
-     * {@inheritdoc}
+     * @var string The table associated with the model.
      */
     protected $table = 'strings';
 }
