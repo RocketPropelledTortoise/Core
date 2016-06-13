@@ -3,7 +3,6 @@
 /**
  * This class takes a directed graph and creates all possible paths starting form a single element.
  */
-
 namespace Rocket\Taxonomy\Utils;
 
 use CentralDesktop\Graph\Edge\DirectedEdge;

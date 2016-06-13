@@ -3,7 +3,6 @@
 /**
  * A Boolean field
  */
-
 namespace Rocket\Entities\Fields;
 
 use Rocket\Entities\Field;

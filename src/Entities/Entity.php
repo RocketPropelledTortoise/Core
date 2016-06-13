@@ -5,7 +5,6 @@
  *
  * It handles the creation, storage, modification and deletion of Entities and their Revisions.
  */
-
 namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -291,7 +290,7 @@ abstract class Entity
     {
         if (!is_array($value)) {
             if ($field->getMaxItems() != 1) {
-                throw new MultipleFieldAssignmentException("You cannot assign a value to replace a multiple field");
+                throw new MultipleFieldAssignmentException('You cannot assign a value to replace a multiple field');
             }
 
             $field->offsetSet(static::$SINGLE_ITEM_KEY, $value);

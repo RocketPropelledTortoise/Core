@@ -3,7 +3,6 @@
 /**
  * The Laravel 5 Facade for the Taxonomies
  */
-
 namespace Rocket\Taxonomy\Support\Laravel5;
 
 /**

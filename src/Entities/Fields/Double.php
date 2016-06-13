@@ -3,7 +3,6 @@
 /**
  * A Double field
  */
-
 namespace Rocket\Entities\Fields;
 
 use Rocket\Entities\Field;
@@ -11,7 +10,7 @@ use Rocket\Entities\Field;
 /**
  * A Double field
  *
- * @property double $value The value to store
+ * @property float $value The value to store
  */
 class Double extends Field
 {

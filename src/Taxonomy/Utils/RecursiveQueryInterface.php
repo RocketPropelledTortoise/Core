@@ -3,7 +3,6 @@
 /**
  * Interface for classes making recursive queries.
  */
-
 namespace Rocket\Taxonomy\Utils;
 
 /**

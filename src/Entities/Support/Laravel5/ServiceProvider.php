@@ -3,7 +3,6 @@
 /**
  * Laravel5 Implementation of the Entities System
  */
-
 namespace Rocket\Entities\Support\Laravel5;
 
 use Illuminate\Support\Facades\Config;

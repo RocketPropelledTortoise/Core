@@ -3,7 +3,6 @@
 /**
  * Represents the link from a Term to any Model
  */
-
 namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;

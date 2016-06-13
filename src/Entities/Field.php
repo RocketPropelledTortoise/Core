@@ -5,7 +5,6 @@
  *
  * All Fields must inherit form this Model.
  */
-
 namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\Model;

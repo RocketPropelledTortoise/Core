@@ -3,7 +3,6 @@
 /**
  * A Datetime field
  */
-
 namespace Rocket\Entities\Fields;
 
 use Rocket\Entities\Field;

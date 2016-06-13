@@ -3,7 +3,6 @@
 /**
  * Represents thelinks between parents and children terms.
  */
-
 namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;

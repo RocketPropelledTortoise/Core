@@ -3,7 +3,6 @@
 /**
  * A Taxonomy Exception
  */
-
 namespace Rocket\Taxonomy\Exception;
 
 /**

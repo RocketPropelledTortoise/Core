@@ -528,10 +528,10 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $demo->doubles = [2.9, 1.2];
         $demo->integer = 6;
         $demo->integers = [3, -1];
-        $demo->string = "This is a string";
-        $demo->strings = ["This is a big test", "very verbose"];
-        $demo->text = str_repeat("Much text", 30);
-        $demo->texts = [str_repeat("Much test", 30), str_repeat("Such test", 30)];
+        $demo->string = 'This is a string';
+        $demo->strings = ['This is a big test', 'very verbose'];
+        $demo->text = str_repeat('Much text', 30);
+        $demo->texts = [str_repeat('Much test', 30), str_repeat('Such test', 30)];
 
         $demo->save();
 
@@ -545,7 +545,6 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
             } else {
                 $this->assertEquals($demoArray[$key], $demoBis->$key);
             }
-
         }
     }
 
@@ -556,7 +555,7 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         // GIVEN a big entity
         $demo = new AllFields($language_id);
 
-        $demo->date = "1989-12-24";
+        $demo->date = '1989-12-24';
         $demo->dates = [Carbon::createFromDate(1989, 12, 24)];
         $demo->datetime = Carbon::create(1989, 12, 24, 04, 53, 00);
         $demo->datetimes = [Carbon::create(1989, 12, 24, 04, 53, 00), Carbon::create(1991, 07, 22, 16, 20, 00)];
@@ -565,14 +564,14 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
         $demoBis = AllFields::find($demo->id, $language_id);
 
-        $format = "Y-m-d H:i:s";
+        $format = 'Y-m-d H:i:s';
 
         $this->assertEquals($demo->toArray(), $demoBis->toArray());
-        $this->assertEquals("1989-12-24 00:00:00", $demo->date->format($format));
-        $this->assertEquals("1989-12-24 00:00:00", $demo->dates[0]->format($format));
-        $this->assertEquals("1989-12-24 04:53:00", $demo->datetime->format($format));
-        $this->assertEquals("1989-12-24 04:53:00", $demo->datetimes[0]->format($format));
-        $this->assertEquals("1991-07-22 16:20:00", $demo->datetimes[1]->format($format));
+        $this->assertEquals('1989-12-24 00:00:00', $demo->date->format($format));
+        $this->assertEquals('1989-12-24 00:00:00', $demo->dates[0]->format($format));
+        $this->assertEquals('1989-12-24 04:53:00', $demo->datetime->format($format));
+        $this->assertEquals('1989-12-24 04:53:00', $demo->datetimes[0]->format($format));
+        $this->assertEquals('1991-07-22 16:20:00', $demo->datetimes[1]->format($format));
 
         $this->assertInstanceOf(Carbon::class, $demo->dates[0]);
         $this->assertInstanceOf(Carbon::class, $demo->datetimes[0]);

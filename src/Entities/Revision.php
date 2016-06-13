@@ -4,7 +4,6 @@
  *
  * A revision is a instance of a content with a language.
  */
-
 namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\Model;

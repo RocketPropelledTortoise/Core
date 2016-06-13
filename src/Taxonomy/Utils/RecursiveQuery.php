@@ -3,7 +3,6 @@
 /**
  * The simple implementation of a recursive query.
  */
-
 namespace Rocket\Taxonomy\Utils;
 
 use Illuminate\Support\Arr;

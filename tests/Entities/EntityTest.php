@@ -60,7 +60,7 @@ class EntityTest extends \Rocket\Utilities\TestCase
         $first_lang = Language::value('id');
 
         $demo = new Demo($first_lang);
-        $demo->titles = "This is a wrong value";
+        $demo->titles = 'This is a wrong value';
     }
 
     public function testFieldCollectionResilience()

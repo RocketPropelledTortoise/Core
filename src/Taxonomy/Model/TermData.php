@@ -3,7 +3,6 @@
 /**
  * This model represents one translation for a term.
  */
-
 namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;

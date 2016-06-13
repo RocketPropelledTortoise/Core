@@ -3,7 +3,6 @@
 /**
  * Represents an Entity Exception
  */
-
 namespace Rocket\Entities\Exceptions;
 
 /**

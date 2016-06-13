@@ -3,7 +3,6 @@
 /**
  * This class represents the container holding all translations of a Term together.
  */
-
 namespace Rocket\Taxonomy\Model;
 
 use Illuminate\Database\Eloquent\Model;

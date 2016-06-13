@@ -4,7 +4,6 @@
  *
  * It will also return the actual value but not the Field model.
  */
-
 namespace Rocket\Entities;
 
 use Illuminate\Support\Collection;

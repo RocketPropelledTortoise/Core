@@ -3,7 +3,6 @@
 /**
  * Simple utility class to format times and sizes
  */
-
 namespace Rocket\Utilities;
 
 /**
