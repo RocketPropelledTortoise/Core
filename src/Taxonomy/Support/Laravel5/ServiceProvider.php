@@ -26,7 +26,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->bind("$prefix\TermRepositoryInterface", "$prefix\TermRepository");
         $this->app->bind("$prefix\TermHierarchyRepositoryInterface", "$prefix\TermHierarchyRepository");
 
-        $this->app['taxonomy'] = $this->app->share(
+        $this->app->singleton(
+            'taxonomy',
             function ($app) {
                 return $app->make('\Rocket\Taxonomy\Taxonomy');
             }

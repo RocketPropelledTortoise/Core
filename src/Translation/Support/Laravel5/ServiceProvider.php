@@ -7,7 +7,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     protected function registerManager()
     {
-        $this->app['i18n'] = $this->app->share(
+        $this->app->singleton(
+            'i18n',
             function (Application $app) {
                 return $app->make('Rocket\Translation\I18N');
             }
