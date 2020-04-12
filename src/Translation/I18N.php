@@ -10,7 +10,6 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Session\Session;
-use Illuminate\Contracts\Logging\Log;
 use Request;
 use Rocket\Translation\Model\Language;
 use Rocket\Translation\Model\StringModel;
@@ -80,11 +79,6 @@ class I18N implements I18NInterface
     protected $session;
 
     /**
-     * @var Log The log writer
-     */
-    protected $log;
-
-    /**
      * @var ConfigRepository
      */
     protected $config;
@@ -99,12 +93,11 @@ class I18N implements I18NInterface
      *
      * @param Application $app
      */
-    public function __construct(Application $app, CacheRepository $cache, Session $session, Log $log, ConfigRepository $config)
+    public function __construct(Application $app, CacheRepository $cache, Session $session, ConfigRepository $config)
     {
         $this->app = $app;
         $this->cache = $cache;
         $this->session = $session;
-        $this->log = $log;
 
         $lang = $this->cache->remember(
             'Lang::List',
