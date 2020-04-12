@@ -47,20 +47,18 @@ class Media extends Model
     }
 }
 
-class TaxonomyContentTest extends \Rocket\Utilities\TestCase
+class TaxonomyContentTest extends \Rocket\Utilities\DBTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $this->packagesToTest(['translations', 'taxonomy']);
 
         Language::insert(['name' => 'Français', 'iso' => 'fr']);
         Language::insert(['name' => 'English', 'iso' => 'en']);
         Cache::flush();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         Schema::dropIfExists('media');
         Schema::dropIfExists('posts');
@@ -92,8 +90,8 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $post2->setTerms($ids2);
 
         $this->assertEquals(6, TermContent::count());
-        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id')->toArray());
-        $this->assertEquals($ids2, TermContent::where('relationable_type', get_class($post2))->where('relationable_id', $post2->id)->lists('term_id')->toArray());
+        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->pluck('term_id')->toArray());
+        $this->assertEquals($ids2, TermContent::where('relationable_type', get_class($post2))->where('relationable_id', $post2->id)->pluck('term_id')->toArray());
     }
 
     public function testSetTermsOverride()
@@ -114,7 +112,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $post->setTerms($ids2);
 
         $this->assertEquals(3, TermContent::count());
-        $this->assertEquals($ids2, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id')->toArray());
+        $this->assertEquals($ids2, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->pluck('term_id')->toArray());
     }
 
     public function testGetTerms()
@@ -142,7 +140,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $terms = $postRetrieved->getTerms('tag');
         $this->assertCount(3, $terms);
         $this->assertInstanceOf('\Rocket\Taxonomy\Term', $terms[0]);
-        $this->assertEquals($ids, $terms->lists('term_id')->toArray());
+        $this->assertEquals($ids, $terms->pluck('term_id')->toArray());
     }
 
     public function testAddTermNoOverride()
@@ -161,7 +159,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
 
         $post->addTerm($newId);
         $this->assertEquals(4, TermContent::count());
-        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id')->toArray());
+        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->pluck('term_id')->toArray());
     }
 
     public function testSetNoDuplicate()
@@ -180,7 +178,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
 
         $post->addTerm($newId);
         $this->assertEquals(3, TermContent::count());
-        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id')->toArray());
+        $this->assertEquals($ids, TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->pluck('term_id')->toArray());
     }
 
     public function testSetTermsForOneVocabulary()
@@ -202,17 +200,15 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
         $idsNew = T::getTermIds(['artist' => ['Muse', 'Blood Red Shoes', 'Ratatat']]);
         $post->setTerms($idsNew, 'artist');
 
-        $all = TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->lists('term_id');
+        $all = TermContent::where('relationable_type', get_class($post))->where('relationable_id', $post->id)->pluck('term_id');
 
         $this->assertCount(6, $all);
         $this->assertEquals(array_merge($tag_ids, $idsNew), $all->toArray());
     }
 
-    /**
-     * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
     public function testExistenceOfTermsBeforeLinking()
     {
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
         Post::createTable();
 
         $post = new Post(['content' => 'a test post']);
@@ -272,7 +268,7 @@ class TaxonomyContentTest extends \Rocket\Utilities\TestCase
 
         $post2->setTerms($ids);
 
-        $postsWithPHP = Post::getAllByTermId(T::getTermId('PHP', 'tag'))->select('posts.id')->lists('id')->toArray();
+        $postsWithPHP = Post::getAllByTermId(T::getTermId('PHP', 'tag'))->select('posts.id')->pluck('id')->toArray();
         $this->assertEquals([$post->id, $post2->id], $postsWithPHP);
     }
 }

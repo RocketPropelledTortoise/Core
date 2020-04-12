@@ -29,7 +29,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app->singleton(
             'taxonomy',
             function ($app) {
-                return $app->make('\Rocket\Taxonomy\Taxonomy');
+                return $app->make(\Rocket\Taxonomy\Taxonomy::class);
             }
         );
     }
@@ -42,5 +42,13 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function provides()
     {
         return ['taxonomy'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function boot()
+    {
+        $this->loadMigrationsFrom(__DIR__.'/../../migrations');
     }
 }

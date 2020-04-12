@@ -20,13 +20,15 @@ use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 trait TaxonomyTrait
 {
     /**
-     * Declared by Eloquent Model
+     * Define a polymorphic many-to-many relationship.
      *
      * @param  string  $related
      * @param  string  $name
      * @param  string  $table
-     * @param  string  $foreignKey
-     * @param  string  $otherKey
+     * @param  string  $foreignPivotKey
+     * @param  string  $relatedPivotKey
+     * @param  string  $parentKey
+     * @param  string  $relatedKey
      * @param  bool  $inverse
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
@@ -34,8 +36,10 @@ trait TaxonomyTrait
         $related,
         $name,
         $table = null,
-        $foreignKey = null,
-        $otherKey = null,
+        $foreignPivotKey = null,
+        $relatedPivotKey = null,
+        $parentKey = null,
+        $relatedKey = null,
         $inverse = false
     );
 
@@ -56,9 +60,7 @@ trait TaxonomyTrait
      */
     public function taxonomies()
     {
-        $class = 'Rocket\Taxonomy\Model\TermContainer';
-
-        return $this->morphToMany($class, 'relationable', 'taxonomy_content', null, 'term_id');
+        return $this->morphToMany(Model\TermContainer::class, 'relationable', 'taxonomy_content', null, 'term_id');
     }
 
     /**
@@ -112,7 +114,7 @@ trait TaxonomyTrait
         TermContainer::findOrFail($term_id);
 
         // Cancel if the user wants to add the same term again
-        if ($this->getTaxonomyQuery()->where('term_id', $term_id)->count()) {
+        if ($this->taxonomies()->where('term_id', $term_id)->count()) {
             return;
         }
 
@@ -145,16 +147,14 @@ trait TaxonomyTrait
     public function removeTerms($vocabulary_id = null)
     {
         if ($vocabulary_id === null) {
-            return $this->getTaxonomyQuery()->delete();
+            return $this->taxonomies()->detach();
         }
 
         if (!is_numeric($vocabulary_id)) {
             $vocabulary_id = T::vocabulary($vocabulary_id);
         }
 
-        return $this->getTaxonomyQuery()->whereIn('term_id', function ($query) use ($vocabulary_id) {
-            $query->select('id')->where('vocabulary_id', $vocabulary_id)->from((new TermContainer)->getTable());
-        })->delete();
+        return $this->taxonomies()->detach(TermContainer::where('vocabulary_id', $vocabulary_id)->pluck('id'));
     }
 
     /**
@@ -192,19 +192,5 @@ trait TaxonomyTrait
     private function getTaxonomyCacheKey()
     {
         return 'Rocket::Taxonomy::Related::' . $this->getTable() . '::' . $this->getKey();
-    }
-
-    /**
-     * Get a new plain query builder for the pivot table.
-     *
-     * @return Builder
-     */
-    private function getTaxonomyQuery()
-    {
-        $t = $this->taxonomies();
-
-        return $t->newPivotStatement()
-            ->where($t->getForeignKey(), $this->getKey())
-            ->where($t->getMorphType(), $t->getMorphClass());
     }
 }

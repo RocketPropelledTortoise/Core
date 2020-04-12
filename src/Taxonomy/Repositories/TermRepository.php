@@ -107,7 +107,7 @@ class TermRepository implements TermRepositoryInterface
                     $term->translated = false;
                 }
 
-                $final_term['lang_' . $lang] = $term;
+                $final_term['lang_' . $lang] = $term->toArray();
             }
         } else {
             $final_term['has_translations'] = false;

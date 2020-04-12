@@ -6,13 +6,11 @@ use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Translation\Model\Language;
 use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
-class TermRepositoryTest extends \Rocket\Utilities\TestCase
+class TermRepositoryTest extends \Rocket\Utilities\DBTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $this->packagesToTest(['translations', 'taxonomy']);
 
         Language::insert(['name' => 'Français', 'iso' => 'fr']);
         Language::insert(['name' => 'English', 'iso' => 'en']);

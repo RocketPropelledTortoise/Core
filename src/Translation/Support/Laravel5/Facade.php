@@ -1,5 +1,7 @@
 <?php namespace Rocket\Translation\Support\Laravel5;
 
+use Rocket\Translation\I18NInterface;
+
 /**
  * Class I18N
  */
@@ -12,6 +14,6 @@ class Facade extends \Illuminate\Support\Facades\Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'i18n';
+        return I18NInterface::class;
     }
 }

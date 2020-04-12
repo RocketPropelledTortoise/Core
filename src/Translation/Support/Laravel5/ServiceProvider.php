@@ -7,10 +7,11 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     protected function registerManager()
     {
+        $this->app->alias('i18n', \Rocket\Translation\I18NInterface::class);
         $this->app->singleton(
             'i18n',
             function (Application $app) {
-                return $app->make('Rocket\Translation\I18N');
+                return $app->make(\Rocket\Translation\I18N::class);
             }
         );
     }
@@ -29,18 +30,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         );
     }
 
-    protected function registerCommand()
-    {
-        $this->app->singleton(
-            'command.rocket_language_generate',
-            function () {
-                return new GenerateFiles;
-            }
-        );
-
-        $this->commands('command.rocket_language_generate');
-    }
-
     /**
      * Register the service provider.
      *
@@ -51,8 +40,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->registerManager();
 
         $this->registerLanguageChangeRoute();
-
-        $this->registerCommand();
     }
 
     /**
@@ -62,6 +49,16 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function provides()
     {
-        return ['i18n', 'command.rocket_language_generate'];
+        return ['i18n'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function boot()
+    {
+        $this->loadMigrationsFrom(__DIR__.'/../../migrations');
+
+        $this->commands([GenerateFiles::class]);
     }
 }

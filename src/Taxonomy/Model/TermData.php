@@ -35,6 +35,26 @@ class TermData extends Model
     public $translated = true;
 
     /**
+     * @var array The attributes that are mass assignable.
+     */
+    protected $fillable = ['term_id', 'language_id', 'title', 'description'];
+
+    /**
+     * Create a new Eloquent model instance.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        if (array_key_exists('translated', $attributes)) {
+            $this->translated = $attributes['translated'];
+        }
+    }
+
+    /**
      * Get the term this data is linked to.
      *
      * @codeCoverageIgnore
@@ -42,13 +62,8 @@ class TermData extends Model
      */
     public function term()
     {
-        return $this->belongsTo('Rocket\Taxonomy\Model\TermContainer', 'term_id');
+        return $this->belongsTo(TermContainer::class, 'term_id');
     }
-
-    /**
-     * @var array The attributes that are mass assignable.
-     */
-    protected $fillable = ['term_id', 'language_id', 'title', 'description'];
 
     /**
      * Save the model to the database.
@@ -65,5 +80,11 @@ class TermData extends Model
         T::uncacheTerm($this->term_id);
 
         parent::save($options);
+    }
+
+    public function toArray() {
+        $array = parent::toArray();
+        $array['translated'] = $this->translated;
+        return $array;
     }
 }

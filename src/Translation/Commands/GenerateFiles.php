@@ -26,7 +26,7 @@ class GenerateFiles extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         I18N::generate();
 

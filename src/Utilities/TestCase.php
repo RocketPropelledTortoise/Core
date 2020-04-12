@@ -12,16 +12,11 @@ namespace Rocket\Utilities;
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     /**
-     * @var bool Were the databases migrated in this test ?
-     */
-    protected $migratedDatabases = false;
-
-    /**
      * Setup the test environment.
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         if (!$this->app) {
             $this->refreshApplication();
@@ -39,40 +34,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
-        // if we're using mysql or postgresql,
-        // we need to remove the used data
-        if ($this->migratedDatabases) {
-            $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
-            $artisan->call('migrate:reset');
-        }
-
         parent::tearDown();
-    }
-
-    /**
-     * Prepare the environment for these packages in this test Class
-     *
-     * @param array $items
-     */
-    public function packagesToTest(array $items)
-    {
-        $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
-
-        $migrations = [
-            'translations' => 'Translation/migrations',
-            'entities' => 'Entities/migrations', //depends on translations
-            'taxonomy' => 'Taxonomy/migrations', //depends on translations
-        ];
-
-        foreach ($migrations as $key => $path) {
-            if (in_array($key, $items)) {
-                $artisan->call('migrate', ['--path' => $path]);
-            }
-        }
-
-        $this->migratedDatabases = true;
     }
 
     /**

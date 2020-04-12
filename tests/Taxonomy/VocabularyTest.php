@@ -5,13 +5,11 @@ use Rocket\Taxonomy\Model\Vocabulary;
 use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Translation\Model\Language;
 
-class VocabularyTest extends \Rocket\Utilities\TestCase
+class VocabularyTest extends \Rocket\Utilities\DBTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $this->packagesToTest(['translations', 'taxonomy']);
 
         Language::insert(['name' => 'Français', 'iso' => 'fr']);
         Language::insert(['name' => 'English', 'iso' => 'en']);
@@ -20,7 +18,10 @@ class VocabularyTest extends \Rocket\Utilities\TestCase
 
     protected function getPackageProviders($app)
     {
-        return ['\Rocket\Taxonomy\Support\Laravel5\ServiceProvider'];
+        return [
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider',
+            '\Rocket\Taxonomy\Support\Laravel5\ServiceProvider'
+        ];
     }
 
     public function testNoVocabularies()

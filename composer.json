@@ -9,9 +9,9 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "illuminate/support": "~5.2",
-        "illuminate/database": "~5.2",
+        "php": ">=7.2.0",
+        "illuminate/support": "5.5.*",
+        "illuminate/database": "5.5.*",
         "centraldesktop/graph": "~1.0"
     },
     "replace": {
@@ -22,8 +22,8 @@
     },
     "require-dev": {
         "mockery/mockery": ">=0.9.0",
-        "phpunit/phpunit": ">=4.0.0",
-        "orchestra/testbench": "3.*",
+        "phpunit/phpunit": "6.*",
+        "orchestra/testbench": "3.5.*",
         "squizlabs/php_codesniffer": "^2.6"
     },
     "autoload": {
@@ -45,7 +45,9 @@
     },
     "scripts": {
         "lint": "phpcs --standard=PSR2 src",
-        "lint-fix": "phpcbf --standard=PSR2 src"
+        "lint-fix": "phpcbf --standard=PSR2 src",
+        "test": "vendor/bin/phpunit",
+        "test:coverage-html": "vendor/bin/phpunit --coverage-html=build/coverage"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

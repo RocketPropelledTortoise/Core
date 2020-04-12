@@ -6,13 +6,11 @@ use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Translation\Model\Language;
 use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
-class TermTest extends \Rocket\Utilities\TestCase
+class TermTest extends \Rocket\Utilities\DBTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $this->packagesToTest(['translations', 'taxonomy']);
 
         Language::insert(['name' => 'Français', 'iso' => 'fr']);
         Language::insert(['name' => 'English', 'iso' => 'en']);
@@ -43,9 +41,6 @@ class TermTest extends \Rocket\Utilities\TestCase
 
         $term = new Term($this->exampleData());
         $this->assertEquals('Un Test', unserialize(serialize($term))->title());
-
-        eval('$term2 = ' . var_export($term, true) . ';');
-        $this->assertEquals('Un Test', $term2->title());
     }
 
     public function testTitle()
@@ -218,11 +213,9 @@ class TermTest extends \Rocket\Utilities\TestCase
         $this->assertTrue($term_retrieved->translated('fr'));
     }
 
-    /**
-     * @expectedException \Rocket\Taxonomy\Exception\UndefinedLanguageException
-     */
     public function testUndefinedLanguage()
     {
+        $this->expectException(\Rocket\Taxonomy\Exception\UndefinedLanguageException::class);
         I18N::setLanguage('fr');
 
         $term = new Term($this->exampleData());

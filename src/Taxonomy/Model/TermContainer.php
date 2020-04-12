@@ -38,7 +38,7 @@ class TermContainer extends Model
      */
     public function translations()
     {
-        return $this->hasMany('Rocket\Taxonomy\Model\TermData', 'term_id');
+        return $this->hasMany(TermData::class, 'term_id');
     }
 
     /**
@@ -49,6 +49,6 @@ class TermContainer extends Model
      */
     public function vocabulary()
     {
-        return $this->belongsTo('Rocket\Taxonomy\Model\Vocabulary', 'vocabulary_id');
+        return $this->belongsTo(Vocabulary::class, 'vocabulary_id');
     }
 }

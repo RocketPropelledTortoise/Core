@@ -39,7 +39,7 @@ class TermContent extends Model
      */
     public function term()
     {
-        return $this->belongsTo('Rocket\Taxonomy\Model\TermContainer', 'term_id');
+        return $this->belongsTo(TermContainer::class, 'term_id');
     }
 
     /**

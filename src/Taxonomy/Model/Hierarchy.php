@@ -33,7 +33,7 @@ class Hierarchy extends Model
      */
     public function term()
     {
-        return $this->belongsTo('Rocket\Taxonomy\Model\TermContainer', 'term_id');
+        return $this->belongsTo(TermContainer::class, 'term_id');
     }
 
     /**
@@ -44,6 +44,6 @@ class Hierarchy extends Model
      */
     public function parent()
     {
-        return $this->belongsTo('Rocket\Taxonomy\Model\TermContainer', 'parent_id');
+        return $this->belongsTo(TermContainer::class, 'parent_id');
     }
 }

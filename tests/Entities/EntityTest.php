@@ -6,13 +6,11 @@ use Rocket\Entities\Fixtures\ReservedFields;
 use Rocket\Entities\Support\Laravel5\Facade as Entities;
 use Rocket\Translation\Model\Language;
 
-class EntityTest extends \Rocket\Utilities\TestCase
+class EntityTest extends \Rocket\Utilities\DBTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $this->packagesToTest(['translations', 'entities']);
 
         Language::insert(['name' => 'Français', 'iso' => 'fr']);
         Language::insert(['name' => 'English', 'iso' => 'en']);
@@ -20,7 +18,10 @@ class EntityTest extends \Rocket\Utilities\TestCase
 
     protected function getPackageProviders($app)
     {
-        return ['\Rocket\Entities\Support\Laravel5\ServiceProvider'];
+        return [
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider',
+            '\Rocket\Entities\Support\Laravel5\ServiceProvider'
+        ];
     }
 
     public function testCreateSimpleEntity()
@@ -52,11 +53,9 @@ class EntityTest extends \Rocket\Utilities\TestCase
         $this->assertEquals($title, $demo->title);
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\MultipleFieldAssignmentException
-     */
     public function testAssignOnMultipleField()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\MultipleFieldAssignmentException::class);
         $first_lang = Language::value('id');
 
         $demo = new Demo($first_lang);
@@ -100,45 +99,35 @@ class EntityTest extends \Rocket\Utilities\TestCase
         $this->assertEquals($title2, $demo->titles[1]);
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\NonExistentFieldException
-     */
     public function testGetNonExistentField()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\NonExistentFieldException::class);
         $demo = new Demo(Language::value('id'));
         $demo->foo = [];
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\NonExistentFieldException
-     */
     public function testSetNonExistentField()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\NonExistentFieldException::class);
         $demo = new Demo(Language::value('id'));
         $foo = $demo->foo;
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\ReservedFieldNameException
-     */
     public function testReservedFieldNames()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\ReservedFieldNameException::class);
         $test = new ReservedFields(Language::value('id'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testValidLanguageNeeded()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $test = new Demo(0);
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\InvalidFieldTypeException
-     */
     public function testNonExistentFieldType()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\InvalidFieldTypeException::class);
         $test = new NonExistentType(Language::value('id'));
     }
 

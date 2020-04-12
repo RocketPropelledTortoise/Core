@@ -16,13 +16,11 @@ class TermParent
     }
 }
 
-class HierarchyTest extends \Rocket\Utilities\TestCase
+class HierarchyTest extends \Rocket\Utilities\DBTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $this->packagesToTest(['translations', 'taxonomy']);
 
         Language::insert(['name' => 'Français', 'iso' => 'fr']);
         Language::insert(['name' => 'English', 'iso' => 'en']);
@@ -93,15 +91,15 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         $me = T::getTerm($family['me']);
         $me->addParent($family['dad']);
 
-        $this->assertEquals([$family['dad']], Hierarchy::where('term_id', $family['me'])->lists('parent_id')->toArray());
+        $this->assertEquals([$family['dad']], Hierarchy::where('term_id', $family['me'])->pluck('parent_id')->toArray());
 
         // should remove "dad" as parent
         $me->setParent($family['mom']);
-        $this->assertEquals([$family['mom']], Hierarchy::where('term_id', $family['me'])->lists('parent_id')->toArray());
+        $this->assertEquals([$family['mom']], Hierarchy::where('term_id', $family['me'])->pluck('parent_id')->toArray());
 
         // both should be present
         $me->addParent($family['dad']);
-        $this->assertEquals([$family['mom'], $family['dad']], Hierarchy::where('term_id', $family['me'])->lists('parent_id')->toArray());
+        $this->assertEquals([$family['mom'], $family['dad']], Hierarchy::where('term_id', $family['me'])->pluck('parent_id')->toArray());
     }
 
     public function testSetParents()
@@ -122,15 +120,15 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
 
         //first, add mom & dad
         $me->setParents([$family['mom'], $family['dad']]);
-        $this->assertEquals([$family['mom'], $family['dad']], Hierarchy::where('term_id', $family['me'])->orderBy('parent_id')->lists('parent_id')->toArray());
+        $this->assertEquals([$family['mom'], $family['dad']], Hierarchy::where('term_id', $family['me'])->orderBy('parent_id')->pluck('parent_id')->toArray());
 
         //replace by aunt & uncle
         $me->setParents([$family['aunt'], $family['uncle']]);
-        $this->assertEquals([$family['aunt'], $family['uncle']], Hierarchy::where('term_id', $family['me'])->orderBy('parent_id')->lists('parent_id')->toArray());
+        $this->assertEquals([$family['aunt'], $family['uncle']], Hierarchy::where('term_id', $family['me'])->orderBy('parent_id')->pluck('parent_id')->toArray());
 
         //add both parents again
         $me->addParents([$family['mom'], $family['dad']]);
-        $this->assertEquals([$family['mom'], $family['dad'], $family['aunt'], $family['uncle']], Hierarchy::where('term_id', $family['me'])->orderBy('parent_id')->lists('parent_id')->toArray());
+        $this->assertEquals([$family['mom'], $family['dad'], $family['aunt'], $family['uncle']], Hierarchy::where('term_id', $family['me'])->orderBy('parent_id')->pluck('parent_id')->toArray());
     }
 
     public function testGetEmptyHierarchy()
@@ -254,11 +252,10 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         $this->assertSamePaths([[$family['me'], $family['dad']]], T::getDescentPaths($family['dad']));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testCannotAddParentBecauseVocabularyType()
     {
+        $this->expectException(\RuntimeException::class);
+
         I18N::setLanguage('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 0, 'translatable' => true]);
         $vid = T::vocabulary('family');
@@ -267,11 +264,10 @@ class HierarchyTest extends \Rocket\Utilities\TestCase
         $me->addParent(T::getTermId('Dad', $vid));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testCannotAddMultipleParentBecauseVocabularyType()
     {
+        $this->expectException(\RuntimeException::class);
+
         I18N::setLanguage('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 1, 'translatable' => true]);
         $vid = T::vocabulary('family');

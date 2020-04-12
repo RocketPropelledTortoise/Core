@@ -8,13 +8,11 @@ use Rocket\Entities\Fixtures\CommentDemo;
 use Rocket\Entities\Fixtures\Demo;
 use Rocket\Translation\Model\Language;
 
-class EntityManagerTest extends \Rocket\Utilities\TestCase
+class EntityManagerTest extends \Rocket\Utilities\DBTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $this->packagesToTest(['translations', 'entities']);
 
         Language::insert(['name' => 'Français', 'iso' => 'fr']);
         Language::insert(['name' => 'English', 'iso' => 'en']);
@@ -22,7 +20,10 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
 
     protected function getPackageProviders($app)
     {
-        return ['\Rocket\Entities\Support\Laravel5\ServiceProvider'];
+        return [
+            '\Rocket\Translation\Support\Laravel5\ServiceProvider',
+            '\Rocket\Entities\Support\Laravel5\ServiceProvider'
+        ];
     }
 
     public function testGetContentType()
@@ -182,11 +183,11 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $this->assertNotEquals($demo2->revision_id, $demo3->revision_id);
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\RevisionEntityMismatchException
-     */
+
     public function testRetrieveRevisionFromOtherEntity()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\RevisionEntityMismatchException::class);
+
         $language_id = Language::value('id');
 
         // GIVEN two entities
@@ -204,11 +205,10 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         Demo::find($demo1->id, $language_id, $demo2->revision_id);
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\RevisionNotFoundException
-     */
     public function testRetrieveNonExistentRevision()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\RevisionNotFoundException::class);
+
         $language_id = Language::value('id');
 
         // GIVEN two entities
@@ -473,19 +473,15 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         $this->assertTrue($threw);
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\EntityNotFoundException
-     */
     public function testContentNotFound()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\EntityNotFoundException::class);
         Demo::find(1, Language::value('id'));
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\NoPublishedRevisionForLanguageException
-     */
     public function testNoPublishedRevisionForThisLanguage()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\NoPublishedRevisionForLanguageException::class);
         $language_id = Language::value('id');
 
         // GIVEN a base entity
@@ -498,11 +494,9 @@ class EntityManagerTest extends \Rocket\Utilities\TestCase
         Demo::find($demo->id, $language_id);
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\NoRevisionForLanguageException
-     */
     public function testNoRevisionForThisLanguage()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\NoRevisionForLanguageException::class);
         $language_ids = Language::pluck('id');
 
         // GIVEN a base entity

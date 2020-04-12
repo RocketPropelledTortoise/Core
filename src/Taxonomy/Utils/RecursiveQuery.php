@@ -41,7 +41,7 @@ class RecursiveQuery implements RecursiveQueryInterface
         $all_results = new Collection(DB::select($this->getAncestryInitialQuery(), [':id' => $id]));
 
         if (count($all_results)) {
-            $this->getRecursiveAncestry($all_results, $all_results->lists('parent_id'));
+            $this->getRecursiveAncestry($all_results, $all_results->pluck('parent_id'));
         }
 
         return $all_results;
@@ -83,7 +83,7 @@ class RecursiveQuery implements RecursiveQueryInterface
         $all_results = new Collection(DB::select($this->getDescentInitialQuery(), [':id' => $id]));
 
         if (count($all_results)) {
-            $this->getRecursiveDescent($all_results, $all_results->lists('term_id'));
+            $this->getRecursiveDescent($all_results, $all_results->pluck('term_id'));
         }
 
         return $all_results;

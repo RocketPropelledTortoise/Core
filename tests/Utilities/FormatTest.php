@@ -1,6 +1,8 @@
 <?php namespace Rocket\Utilities;
 
-class FormatTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class FormatTest extends TestCase
 {
     public function sizeProvider()
     {

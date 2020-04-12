@@ -16,19 +16,15 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
         $this->assertEquals(4, $collection->getMaxItems());
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\InvalidFieldTypeException
-     */
     public function testInvalidFieldType()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\InvalidFieldTypeException::class);
         $collection = FieldCollection::initField();
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\NullValueException
-     */
     public function testAddNullValue()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\NullValueException::class);
         $collection = $this->getFieldCollection();
         $collection[] = null;
     }
@@ -91,11 +87,9 @@ class FieldCollectionTest extends \Rocket\Utilities\TestCase
         $this->assertEquals(['test', 'test2', 'heya', 'even more values', 'test3'], $collection->toArray());
     }
 
-    /**
-     * @expectedException \Rocket\Entities\Exceptions\ItemCountException
-     */
     public function testTooManyItems()
     {
+        $this->expectException(\Rocket\Entities\Exceptions\ItemCountException::class);
         $collection = $this->getFieldCollection(['max_items' => 2]);
 
         $collection[] = 'test';

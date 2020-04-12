@@ -6,7 +6,9 @@
 namespace Rocket\Taxonomy;
 
 use ArrayAccess;
+use Illuminate\Contracts\Support\Arrayable;
 use Rocket\Taxonomy\Exception\UndefinedLanguageException;
+use Rocket\Taxonomy\Model\TermData;
 use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
@@ -43,7 +45,7 @@ use Rocket\Translation\Support\Laravel5\Facade as I18N;
  *     $term->translated('en')
  *     -> true if it was translated in english
  */
-class Term implements ArrayAccess
+class Term implements ArrayAccess, Arrayable
 {
     /**
      * Data for the term
@@ -63,17 +65,17 @@ class Term implements ArrayAccess
     public function __construct($data)
     {
         $this->container = array_merge($this->container, $data);
-    }
+        foreach ($this->container as $key => &$value) {
+            if (strpos($key, 'lang') === false) {
+                continue;
+            }
 
-    /**
-     * Wake from sleep
-     *
-     * @param  array $data
-     * @return Term
-     */
-    public static function __set_state($data)
-    {
-        return new self($data['container']);
+            if ($value instanceof TermData) {
+                continue;
+            }
+
+            $value = new TermData($value);
+        }
     }
 
     /**
@@ -179,7 +181,7 @@ class Term implements ArrayAccess
         }
 
         if (array_key_exists('lang_' . $language, $this->container)) {
-            return $this->container['lang_' . $language]['translated'];
+            return $this->container['lang_' . $language]->translated;
         }
 
         return false;
@@ -297,7 +299,7 @@ class Term implements ArrayAccess
         }
 
         if (array_key_exists('lang_' . I18N::getCurrent(), $this->container)) {
-            return $this->container['lang_' . I18N::getCurrent()][$offset];
+            return $this->container['lang_' . I18N::getCurrent()]->{$offset};
         }
     }
 
@@ -309,5 +311,15 @@ class Term implements ArrayAccess
     public function __toString()
     {
         return $this->title();
+    }
+
+    public function toArray()
+    {
+        return array_map(
+            function($value) {
+                return $value instanceof Arrayable ? $value->toArray() : $value;
+            },
+            $this->container
+        );
     }
 }

@@ -33,5 +33,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
         Entity::$types = Config::get('rocket_entities.field_types');
+        $this->loadMigrationsFrom(__DIR__.'/../../migrations');
     }
 }

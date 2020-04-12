@@ -68,10 +68,10 @@ class FieldValidationTest extends \Rocket\Utilities\TestCase
 
     /**
      * @dataProvider providerFieldInvalid
-     * @expectedException \Rocket\Entities\Exceptions\InvalidValueException
      */
     public function testFieldInvalid($class, $value)
     {
+        $this->expectException(\Rocket\Entities\Exceptions\InvalidValueException::class);
         $field = new $class();
         $field->value = $value;
     }

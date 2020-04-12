@@ -6,7 +6,11 @@
 namespace Rocket\Translation;
 
 use Exception;
-use Illuminate\Foundation\Application as IlluminateApplication;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Session\Session;
+use Illuminate\Contracts\Logging\Log;
 use Request;
 use Rocket\Translation\Model\Language;
 use Rocket\Translation\Model\StringModel;
@@ -15,7 +19,7 @@ use Rocket\Translation\Model\Translation;
 /**
  * Class I18N
  */
-class I18N
+class I18N implements I18NInterface
 {
     /**
      * An array of the loaded languages
@@ -54,12 +58,6 @@ class I18N
     protected $strings = [];
 
     /**
-     * Path to the language files
-     * @var string
-     */
-    protected $filePath;
-
-    /**
      * Context of the current page
      * @var string
      */
@@ -71,21 +69,42 @@ class I18N
      */
     protected $stringsRaw = [];
 
+    /**
+     * @var CacheRepository The cache to store the terms in
+     */
     protected $cache;
+
+    /**
+     * @var Session The session store
+     */
     protected $session;
+
+    /**
+     * @var Log The log writer
+     */
     protected $log;
+
+    /**
+     * @var ConfigRepository
+     */
+    protected $config;
+
+    /**
+     * @var Application
+     */
+    protected $app;
 
     /**
      * Prepare the translation service
      *
-     * @param IlluminateApplication $app
+     * @param Application $app
      */
-    public function __construct(IlluminateApplication $app)
+    public function __construct(Application $app, CacheRepository $cache, Session $session, Log $log, ConfigRepository $config)
     {
-        $this->filePath = $app['path.storage'] . '/languages/';
-        $this->cache = $app['cache'];
-        $this->session = $app['session'];
-        $this->log = $app['log'];
+        $this->app = $app;
+        $this->cache = $cache;
+        $this->session = $session;
+        $this->log = $log;
 
         $lang = $this->cache->remember(
             'Lang::List',
@@ -103,12 +122,16 @@ class I18N
             ];
         }
 
-        $locale = $app['config']['app.locale'];
-        $fallback = $app['config']['app.fallback_locale'];
+        $locale = $config['app.locale'];
+        $fallback = $config['app.fallback_locale'];
 
         //current default language
         $language = $this->getDefaultLanguage($locale, $fallback);
         $this->setLanguage($language);
+    }
+
+    protected function getFilePath() {
+        return $this->app['path.storage'] . '/languages/';
     }
 
     /**
@@ -199,8 +222,9 @@ class I18N
         $this->strings[$language] = [];
 
         // Determine where the language file is and load it
-        if (file_exists($this->filePath . $langfile)) {
-            $this->strings[$language] = include $this->filePath . $langfile;
+        $filePath = $this->getFilePath();
+        if (file_exists($filePath . $langfile)) {
+            $this->strings[$language] = include $filePath . $langfile;
         }
 
         $this->languagesLoaded[] = $language;
@@ -374,7 +398,7 @@ class I18N
         //insertion de la traduction par défaut.
         $translation = new Translation();
         $translation->string_id = $string->id;
-        $translation->language_id = $this->languagesIso[app('config')['app.locale']]['id'];
+        $translation->language_id = $this->languagesIso[$this->config['app.locale']]['id'];
         $translation->date_edition = mysql_datetime();
         $translation->text = $text;
         $translation->save();
@@ -469,7 +493,7 @@ class I18N
 
     public function generate()
     {
-        $filePath = app('path.storage') . '/languages/';
+        $filePath = $this->getFilePath();
 
         if (!is_dir($filePath)) {
             mkdir($filePath, 0755, true);
