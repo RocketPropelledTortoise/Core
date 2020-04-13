@@ -28,7 +28,7 @@ class TaxonomyTest extends \Tests\DBTestCase
 
     public function testGetLanguage()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         $en_id = I18N::languages('en', 'id');
         $fr_id = I18N::languages('fr', 'id');
 
@@ -42,7 +42,7 @@ class TaxonomyTest extends \Tests\DBTestCase
 
     public function testSearchTerm()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => true]);
         $vid = T::vocabulary('tag');
 
@@ -55,7 +55,7 @@ class TaxonomyTest extends \Tests\DBTestCase
 
     public function testExcludedSearchTerm()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => true]);
         $vid = T::vocabulary('tag');
 
@@ -68,7 +68,7 @@ class TaxonomyTest extends \Tests\DBTestCase
 
     public function testGetTermID()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => true]);
         $vid = T::vocabulary('tag');
 
@@ -80,7 +80,7 @@ class TaxonomyTest extends \Tests\DBTestCase
 
     public function testEmptyStringReturnsNothing()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => true]);
         $vid = T::vocabulary('tag');
 
@@ -89,7 +89,7 @@ class TaxonomyTest extends \Tests\DBTestCase
 
     public function testCreateSubcategory()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => true]);
         $vid = T::vocabulary('tag');
 
@@ -102,7 +102,7 @@ class TaxonomyTest extends \Tests\DBTestCase
 
     public function testGetTerm()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => true]);
         $vid = T::vocabulary('tag');
 
@@ -116,7 +116,7 @@ class TaxonomyTest extends \Tests\DBTestCase
 
     public function testGetVocabularyTerms()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
 
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => true]);
 
@@ -137,7 +137,7 @@ class TaxonomyTest extends \Tests\DBTestCase
 
     public function testInsertTerms()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
 
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => true]);
         Vocabulary::insert(['name' => 'Artist', 'machine_name' => 'artist', 'hierarchy' => 0, 'translatable' => false]);

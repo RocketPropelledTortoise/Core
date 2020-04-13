@@ -1,16 +1,11 @@
-<?php
+<?php namespace Rocket\Translation;
 
-/**
- * Translation management
- */
-namespace Rocket\Translation;
-
-use Exception;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\Application;
 use Illuminate\Contracts\Session\Session;
-use Request;
+use Illuminate\Routing\Router;
+use Illuminate\Http\Request;
 use Rocket\Translation\Model\Language;
 use Rocket\Translation\Model\StringModel;
 use Rocket\Translation\Model\Translation;
@@ -39,6 +34,11 @@ class I18N implements I18NInterface
     protected $languagesId = [];
 
     /**
+     * @var integer
+     */
+    protected $defaultLanguage;
+
+    /**
      * Language currently in use
      * @var string
      */
@@ -63,12 +63,6 @@ class I18N implements I18NInterface
     protected $pageContext;
 
     /**
-     * Strings cache
-     * @var array
-     */
-    protected $stringsRaw = [];
-
-    /**
      * @var CacheRepository The cache to store the terms in
      */
     protected $cache;
@@ -79,25 +73,26 @@ class I18N implements I18NInterface
     protected $session;
 
     /**
-     * @var ConfigRepository
+     * @var string
      */
-    protected $config;
+    protected $languageFilesPath;
 
     /**
-     * @var Application
+     * @var Router
      */
-    protected $app;
+    protected $router;
 
     /**
      * Prepare the translation service
      *
      * @param Application $app
      */
-    public function __construct(Application $app, CacheRepository $cache, Session $session, ConfigRepository $config)
+    public function __construct(Application $app, CacheRepository $cache, Session $session, ConfigRepository $config, Router $router, Request $request)
     {
-        $this->app = $app;
+        $this->languageFilesPath = $app->storagePath() . '/languages/';
         $this->cache = $cache;
         $this->session = $session;
+        $this->router = $router;
 
         $lang = $this->cache->remember(
             'Lang::List',
@@ -115,16 +110,12 @@ class I18N implements I18NInterface
             ];
         }
 
-        $locale = $config['app.locale'];
+        $this->defaultLanguage = $config['app.locale'];
         $fallback = $config['app.fallback_locale'];
 
         //current default language
-        $language = $this->getDefaultLanguage($locale, $fallback);
-        $this->setLanguage($language);
-    }
-
-    protected function getFilePath() {
-        return $this->app['path.storage'] . '/languages/';
+        $language = $this->getCurrentLanguage($this->defaultLanguage, $fallback, $session, $request);
+        $this->setLanguageForRequest($language);
     }
 
     /**
@@ -136,14 +127,13 @@ class I18N implements I18NInterface
      *
      * @param $locale string
      * @param $fallback string
-     * @throws Exception if a default language cannot be found
+     * @throws \RuntimeException if a default language cannot be found
      * @return string
      */
-    public function getDefaultLanguage($locale, $fallback)
+    public function getCurrentLanguage($locale, $fallback, Session $session, Request $request)
     {
         //1. detect user session
-        $session_lang = $this->session->get('language');
-
+        $session_lang = $session->get('language');
         if (!empty($session_lang)) {
             return $session_lang;
         }
@@ -155,9 +145,7 @@ class I18N implements I18NInterface
         }
 
         //2. detect browser language
-        $browser_languages = Request::getLanguages();
-
-        //is one of them available ?
+        $browser_languages = $request->getLanguages();
         foreach ($browser_languages as $lang) {
             if ($this->isAvailable($lang)) {
                 $this->session->put('language', $lang);
@@ -176,26 +164,7 @@ class I18N implements I18NInterface
             return $fallback;
         }
 
-        throw new \Exception('Cannot find an adapted language');
-    }
-
-    /**
-     * Set the current language
-     *
-     * @param  string $language
-     * @return bool
-     */
-    public function setCurrentLanguage($language)
-    {
-        if (!$this->isAvailable($language)) {
-            return false;
-        }
-
-        $this->session->put('language', $language);
-
-        $this->setLanguage($language);
-
-        return true;
+        throw new \RuntimeException('Cannot find an adapted language');
     }
 
     /**
@@ -215,7 +184,7 @@ class I18N implements I18NInterface
         $this->strings[$language] = [];
 
         // Determine where the language file is and load it
-        $filePath = $this->getFilePath();
+        $filePath = $this->languageFilesPath;
         if (file_exists($filePath . $langfile)) {
             $this->strings[$language] = include $filePath . $langfile;
         }
@@ -245,12 +214,16 @@ class I18N implements I18NInterface
      * Set the language to use
      *
      * @param  string $language
-     * @return bool
+     * @throws \RuntimeException if the language doesn't exist
      */
-    public function setLanguage($language)
+    public function setLanguageForRequest($language)
     {
         if ($language == $this->currentLanguage) {
             return;
+        }
+
+        if (!$this->isAvailable($language)) {
+            throw new \RuntimeException("Language '$language' is not available.");
         }
 
         if (!$this->isLoaded($language)) {
@@ -271,6 +244,23 @@ class I18N implements I18NInterface
 
         $this->currentLanguage = $language;
         $this->currentLanguageId = $this->languagesIso[$language]['id'];
+    }
+
+    /**
+     * Set the current language
+     *
+     * @param  string $language
+     * @throws \RuntimeException if the language doesn't exist
+     */
+    public function setLanguageForSession($language)
+    {
+        if (!$this->isAvailable($language)) {
+            throw new \RuntimeException("Language '$language' is not available.");
+        }
+
+        $this->session->put('language', $language);
+
+        $this->setLanguageForRequest($language);
     }
 
     /**
@@ -366,93 +356,46 @@ class I18N implements I18NInterface
         return $languages;
     }
 
-    protected function translateGetString($context, $language, $string_id)
-    {
-        $row = Translation::select('text')
-            ->where('string_id', $string_id)
-            ->where('language_id', $this->languagesIso[$language]['id'])
-            ->first();
-
-        if ($row !== null) {
-            return $row->text;
-        }
-
-        return false;
-    }
-
-    protected function translateInsertString($context, $text)
-    {
-        $string = new StringModel();
-        $string->date_creation = mysql_datetime();
-        $string->context = $context;
-        $string->string = $text;
-        $string->save();
-
-        //insertion de la traduction par défaut.
-        $translation = new Translation();
-        $translation->string_id = $string->id;
-        $translation->language_id = $this->languagesIso[$this->config['app.locale']]['id'];
-        $translation->date_edition = mysql_datetime();
-        $translation->text = $text;
-        $translation->save();
-
-        return $translation;
-    }
-
     /**
      * Retreive a string to translate
      *
      * if it doesn't find it, put it in the database
      *
-     * @param  string $string
+     * @param  string $keyString
      * @param  string $context
      * @param  string $language
      * @return string
      */
-    public function translate($string, $context = 'default', $language = 'default')
+    public function translate($keyString, $context = 'default', $language = 'default')
     {
+        
         if ($this->isDefault($language)) {
-            $language = $this->currentLanguage;
+            $language = $this->getCurrent();
+            $languageId = $this->getCurrentId();
         } else {
-            $this->setLanguage($language);
+            if (!$this->isAvailable($language)) {
+                throw new \RuntimeException("Language '$language' is not available");
+            }
+            $this->loadLanguage($language);
+            $languageId = $this->languagesIso[$language]['id'];
         }
 
-        //get string from cache
+        // Read string from cache
         if (array_key_exists($context, $this->strings[$language]) &&
-            array_key_exists($string, $this->strings[$language][$context])) {
-            return $this->strings[$language][$context][$string];
+            array_key_exists($keyString, $this->strings[$language][$context])) {
+            return $this->strings[$language][$context][$keyString];
         }
 
-        //check in db
-        $db_string = StringModel::select('id', 'date_creation')
-            ->where('string', $string)
-            ->where('context', $context)
-            ->first();
-
-        if (!$db_string) {
-            $this->translateInsertString($context, $string);
-
-            return $string;
-        }
-
-        $text = $this->translateGetString($context, $language, $db_string->id);
+        // Read string from database
+        $text = StringModel::getOrCreateTranslation($context, $keyString, $languageId, $this->languages($this->defaultLanguage, 'id'));
         if ($text) {
-            $this->strings[$language][$context][$string] = $text;
+            // Store in cache for this request
+            $this->strings[$language][$context][$keyString] = $text;
 
             return $text;
         }
 
-        return $string;
-    }
-
-    /**
-     * Get the cached strings
-     *
-     * @return array
-     */
-    public function getRawStrings()
-    {
-        return $this->stringsRaw;
+        return $keyString;
     }
 
     /**
@@ -466,7 +409,7 @@ class I18N implements I18NInterface
             return $this->pageContext;
         }
 
-        $current = \Route::getCurrentRoute();
+        $current = $this->router->current();
 
         if (!$current) {
             return 'default';
@@ -476,17 +419,16 @@ class I18N implements I18NInterface
             return $this->pageContext = $current->getName();
         }
 
-        $action = $current->getAction();
-        if (array_key_exists('controller', $action)) {
-            return $this->pageContext = $action['controller'];
+        if ($current->getActionName() != "Closure") {
+            return $this->pageContext = $current->getActionName();
         }
 
-        return $this->pageContext = implode('/', array_map(['Str', 'slug'], explode('/', $current->getUri())));
+        return $this->pageContext = trim($current->uri(), "/");
     }
 
-    public function generate()
+    public function dumpCache()
     {
-        $filePath = $this->getFilePath();
+        $filePath = $this->languageFilesPath;
 
         if (!is_dir($filePath)) {
             mkdir($filePath, 0755, true);

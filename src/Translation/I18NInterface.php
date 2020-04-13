@@ -14,12 +14,20 @@ interface I18NInterface {
     public function getCurrentId();
 
     /**
-     * Set the language to use
+     * Set the language to use for this request
      *
      * @param  string $language
      * @return bool
      */
-    public function setLanguage($language);
+    public function setLanguageForRequest($language);
+
+    /**
+     * Set the language to use for this session (also sets for current request)
+     *
+     * @param  string $language
+     * @return bool
+     */
+    public function setLanguageForSession($language);
 
     /**
      * Retrieve languages.

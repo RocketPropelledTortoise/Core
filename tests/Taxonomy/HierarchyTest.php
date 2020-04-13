@@ -60,7 +60,7 @@ class HierarchyTest extends \Tests\DBTestCase
 
     public function testAddParent()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 2, 'translatable' => true]);
         $vid = T::vocabulary('family');
 
@@ -78,7 +78,7 @@ class HierarchyTest extends \Tests\DBTestCase
 
     public function testSetParent()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 2, 'translatable' => true]);
         $vid = T::vocabulary('family');
 
@@ -104,7 +104,7 @@ class HierarchyTest extends \Tests\DBTestCase
 
     public function testSetParents()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 2, 'translatable' => true]);
         $vid = T::vocabulary('family');
 
@@ -133,7 +133,7 @@ class HierarchyTest extends \Tests\DBTestCase
 
     public function testGetEmptyHierarchy()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 2, 'translatable' => true]);
         $vid = T::vocabulary('family');
 
@@ -147,7 +147,7 @@ class HierarchyTest extends \Tests\DBTestCase
 
     public function testComplexPaths()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 2, 'translatable' => true]);
         $vid = T::vocabulary('family');
 
@@ -231,7 +231,7 @@ class HierarchyTest extends \Tests\DBTestCase
     {
         $this->markTestSkipped('This goes to infinite loop, try to find a way to fix this (test when adding a parent?)');
 
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 2, 'translatable' => true]);
         $vid = T::vocabulary('family');
 
@@ -256,7 +256,7 @@ class HierarchyTest extends \Tests\DBTestCase
     {
         $this->expectException(\RuntimeException::class);
 
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 0, 'translatable' => true]);
         $vid = T::vocabulary('family');
 
@@ -268,7 +268,7 @@ class HierarchyTest extends \Tests\DBTestCase
     {
         $this->expectException(\RuntimeException::class);
 
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 1, 'translatable' => true]);
         $vid = T::vocabulary('family');
 

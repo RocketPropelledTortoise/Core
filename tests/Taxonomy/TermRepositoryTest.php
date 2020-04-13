@@ -37,7 +37,7 @@ class TermRepositoryTest extends \Tests\DBTestCase
 
     public function testTranslated()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Tag', 'machine_name' => 'tag', 'hierarchy' => 0, 'translatable' => true]);
         $vid = T::vocabulary('tag');
 
@@ -53,13 +53,13 @@ class TermRepositoryTest extends \Tests\DBTestCase
 
     public function testUntranslated()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Artist', 'machine_name' => 'artist', 'hierarchy' => 0, 'translatable' => false]);
         $vid = T::vocabulary('artist');
 
         $idTDD = T::getTermId('TDD', $vid);
 
-        I18N::setLanguage('fr');
+        I18N::setLanguageForRequest('fr');
         $term = T::getTerm($idTDD);
 
         $this->assertEquals('TDD', $term->title());

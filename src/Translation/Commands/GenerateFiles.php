@@ -1,6 +1,4 @@
-<?php
-
-namespace Rocket\Translation\Commands;
+<?php namespace Rocket\Translation\Commands;
 
 use Illuminate\Console\Command;
 use Rocket\Translation\Support\Laravel5\Facade as I18N;
@@ -28,7 +26,7 @@ class GenerateFiles extends Command
      */
     public function handle()
     {
-        I18N::generate();
+        I18N::dumpCache();
 
         $this->info('Generated files');
     }

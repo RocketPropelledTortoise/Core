@@ -21,7 +21,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->app['router']->get(
             'lang/{lang}',
             function ($lang) {
-                if (!$this->app['i18n']->setCurrentLanguage($lang)) {
+                try {
+                    $this->app['i18n']->setLanguageForSession($lang);
+                } catch (\RuntimeException $e) {
                     $this->app['session']->flash('error', t('Cette langue n\'est pas disponible'));
                 }
 

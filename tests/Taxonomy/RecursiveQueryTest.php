@@ -30,7 +30,7 @@ class RecursiveQueryTest extends \Tests\DBTestCase
 
     protected function generateTestTree()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Family', 'machine_name' => 'family', 'hierarchy' => 2, 'translatable' => true]);
         $vid = T::vocabulary('family');
 

@@ -37,7 +37,7 @@ class TermTest extends \Tests\DBTestCase
 
     public function testSerializeAndExport()
     {
-        I18N::setLanguage('fr');
+        I18N::setLanguageForRequest('fr');
 
         $term = new Term($this->exampleData());
         $this->assertEquals('Un Test', unserialize(serialize($term))->title());
@@ -45,7 +45,7 @@ class TermTest extends \Tests\DBTestCase
 
     public function testTitle()
     {
-        I18N::setLanguage('fr');
+        I18N::setLanguageForRequest('fr');
 
         $term = new Term($this->exampleData());
 
@@ -57,7 +57,7 @@ class TermTest extends \Tests\DBTestCase
 
     public function testDescription()
     {
-        I18N::setLanguage('fr');
+        I18N::setLanguageForRequest('fr');
 
         $term = new Term($this->exampleData());
 
@@ -80,7 +80,7 @@ class TermTest extends \Tests\DBTestCase
 
     public function testID()
     {
-        I18N::setLanguage('fr');
+        I18N::setLanguageForRequest('fr');
 
         $data = $this->exampleData();
         $term = new Term($data);
@@ -133,7 +133,7 @@ class TermTest extends \Tests\DBTestCase
 
     public function testTranslated()
     {
-        I18N::setLanguage('fr');
+        I18N::setLanguageForRequest('fr');
 
         $term = new Term($this->exampleData());
 
@@ -145,7 +145,7 @@ class TermTest extends \Tests\DBTestCase
 
     public function testTranslatedOnRealTerm()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Test', 'machine_name' => 'test', 'hierarchy' => 0, 'translatable' => true]);
 
         $original_title = 'Test term original content';
@@ -164,7 +164,7 @@ class TermTest extends \Tests\DBTestCase
 
     public function testEdit()
     {
-        I18N::setLanguage('en');
+        I18N::setLanguageForRequest('en');
         Vocabulary::insert(['name' => 'Test', 'machine_name' => 'test', 'hierarchy' => 0, 'translatable' => true]);
 
         $original_title = 'Test term original content';
@@ -216,7 +216,7 @@ class TermTest extends \Tests\DBTestCase
     public function testUndefinedLanguage()
     {
         $this->expectException(\Rocket\Taxonomy\Exception\UndefinedLanguageException::class);
-        I18N::setLanguage('fr');
+        I18N::setLanguageForRequest('fr');
 
         $term = new Term($this->exampleData());
 

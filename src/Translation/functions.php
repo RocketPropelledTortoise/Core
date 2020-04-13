@@ -1,5 +1,7 @@
 <?php
 
+use Rocket\Translation\Support\Laravel5\Facade as I18N;
+
 /**
  * Language related functions
  *
