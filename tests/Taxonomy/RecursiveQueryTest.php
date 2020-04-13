@@ -9,7 +9,7 @@ use Rocket\Translation\Model\Language;
 use Rocket\Translation\Support\Laravel5\Facade as I18N;
 use stdClass;
 
-class RecursiveQueryTest extends \Rocket\Utilities\DBTestCase
+class RecursiveQueryTest extends \Tests\DBTestCase
 {
     public function setUp(): void
     {

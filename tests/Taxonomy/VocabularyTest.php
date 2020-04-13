@@ -5,7 +5,7 @@ use Rocket\Taxonomy\Model\Vocabulary;
 use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Translation\Model\Language;
 
-class VocabularyTest extends \Rocket\Utilities\DBTestCase
+class VocabularyTest extends \Tests\DBTestCase
 {
     public function setUp(): void
     {

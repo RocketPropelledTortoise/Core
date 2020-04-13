@@ -2,7 +2,7 @@
 
 use Rocket\Entities\Fields\StringField;
 
-class FieldCollectionTest extends \Rocket\Utilities\TestCase
+class FieldCollectionTest extends \Tests\TestCase
 {
     protected function getFieldCollection(array $options = [])
     {

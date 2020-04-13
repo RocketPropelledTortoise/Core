@@ -6,7 +6,7 @@ use Rocket\Entities\Fixtures\ReservedFields;
 use Rocket\Entities\Support\Laravel5\Facade as Entities;
 use Rocket\Translation\Model\Language;
 
-class EntityTest extends \Rocket\Utilities\DBTestCase
+class EntityTest extends \Tests\DBTestCase
 {
     public function setUp(): void
     {

@@ -47,7 +47,7 @@ class Media extends Model
     }
 }
 
-class TaxonomyContentTest extends \Rocket\Utilities\DBTestCase
+class TaxonomyContentTest extends \Tests\DBTestCase
 {
     public function setUp(): void
     {

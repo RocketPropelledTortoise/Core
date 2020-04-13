@@ -6,7 +6,7 @@ use Rocket\Taxonomy\Support\Laravel5\Facade as T;
 use Rocket\Translation\Model\Language;
 use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
-class TermRepositoryTest extends \Rocket\Utilities\DBTestCase
+class TermRepositoryTest extends \Tests\DBTestCase
 {
     public function setUp(): void
     {

@@ -9,7 +9,7 @@ use Rocket\Entities\Fields\Integer;
 use Rocket\Entities\Fields\StringField;
 use Rocket\Entities\Fields\Text;
 
-class FieldValidationTest extends \Rocket\Utilities\TestCase
+class FieldValidationTest extends \Tests\TestCase
 {
     public function providerFieldValid()
     {

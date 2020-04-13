@@ -16,7 +16,7 @@ class TermParent
     }
 }
 
-class HierarchyTest extends \Rocket\Utilities\DBTestCase
+class HierarchyTest extends \Tests\DBTestCase
 {
     public function setUp(): void
     {

@@ -8,7 +8,7 @@ use Rocket\Entities\Fixtures\CommentDemo;
 use Rocket\Entities\Fixtures\Demo;
 use Rocket\Translation\Model\Language;
 
-class EntityManagerTest extends \Rocket\Utilities\DBTestCase
+class EntityManagerTest extends \Tests\DBTestCase
 {
     public function setUp(): void
     {

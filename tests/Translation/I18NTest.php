@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Cache;
 use Rocket\Translation\Model\Language;
 use Rocket\Translation\Support\Laravel5\Facade as I18N;
 
-class I18NTest extends \Rocket\Utilities\DBTestCase
+class I18NTest extends \Tests\DBTestCase
 {
     public function setUp(): void
     {
