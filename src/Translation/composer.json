@@ -9,12 +9,11 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "illuminate/support": "~5.2"
+        "php": ">=7.2.0",
+        "illuminate/support": "5.6"
     },
     "autoload": {
         "files": [ "functions.php" ],
-        "classmap": [ "migrations" ],
         "psr-4": { "Rocket\\Translation\\": "" }
     },
     "extra": {

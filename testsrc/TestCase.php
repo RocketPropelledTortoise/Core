@@ -21,8 +21,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
             $this->refreshApplication();
         }
 
-        $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
-        $artisan->call('vendor:publish');
+        $this->artisan('vendor:publish', [ '--all' => true ]);
 
         //refresh configuration values
         $this->refreshApplication();

@@ -19,8 +19,7 @@ class DBTestCase extends TestCase
     {
         parent::setUp();
 
-        $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
-        $artisan->call('migrate');
+        $this->artisan('migrate');
         //echo $artisan->output();
     }
 
@@ -43,8 +42,7 @@ class DBTestCase extends TestCase
      */
     public function tearDown(): void
     {
-        $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
-        $artisan->call('migrate:reset');
+        $this->artisan('migrate:reset');
 
         parent::tearDown();
     }

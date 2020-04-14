@@ -9,13 +9,12 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=7.2.0",
         "rocket/translation": "~1.0.0",
-        "illuminate/database": "~5.2",
-        "illuminate/support": "~5.2"
+        "illuminate/database": "5.6",
+        "illuminate/support": "5.6"
     },
     "autoload": {
-        "classmap": [ "migrations" ],
         "psr-4": { "Rocket\\Entities\\": "" }
     },
     "extra": {

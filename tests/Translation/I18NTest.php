@@ -36,8 +36,7 @@ class I18NTest extends \Tests\DBTestCase
     {
         I18N::shouldReceive('dumpCache');
 
-        $artisan = $this->app->make('Illuminate\Contracts\Console\Kernel');
-        $artisan->call('rocket:generate_languages');
+        $this->artisan('rocket:generate_languages');
     }
 
     public function testGetDefaultContextWhenNoRoute()
