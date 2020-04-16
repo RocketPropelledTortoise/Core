@@ -59,8 +59,8 @@ class EntityManagerTest extends \Tests\DBTestCase
         $array = $demo->toArray();
         $revision_id = $array['_revision']['id'];
 
-        $this->assertInternalType('int', $array['_content']['id']);
-        $this->assertInternalType('int', $revision_id);
+        $this->assertIsInt($array['_content']['id']);
+        $this->assertIsInt($revision_id);
 
         $titles = $demo->getField('titles')->all();
 
@@ -379,7 +379,7 @@ class EntityManagerTest extends \Tests\DBTestCase
 
         $demo->deleteRevision();
 
-        $this->assertInternalType('integer', $demo->id);
+        $this->assertIsInt($demo->id);
         $this->assertCount(0, $demo->titles);
 
         // WHEN we get this entity
@@ -405,7 +405,7 @@ class EntityManagerTest extends \Tests\DBTestCase
 
         $demo->deleteRevision(false);
 
-        $this->assertInternalType('integer', $demo->id);
+        $this->assertIsInt($demo->id);
         $this->assertCount(2, $demo->titles);
 
         // WHEN we get this entity
@@ -459,7 +459,7 @@ class EntityManagerTest extends \Tests\DBTestCase
         $id = $demo->id;
         $demo->delete(false);
 
-        $this->assertInternalType('integer', $demo->id);
+        $this->assertIsInt($demo->id);
         $this->assertCount(2, $demo->titles);
 
         // WHEN we get this entity
