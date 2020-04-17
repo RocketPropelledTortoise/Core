@@ -46,7 +46,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-            MYSQL_ALLOW_EMPTY_PASSWORD: yes
+            MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: test_db
         ports:
           - 3306
@@ -69,7 +69,10 @@ jobs:
     - name: Run test suite
       run: composer run-script test
       env:
-        DB: mysql
+        DB_CONNECTION: mysql
+        DB_DATABASE: test_db
+        DB_USERNAME: root
+        DB_PASSWORD: root
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
 
   scrutinizer-ci:
