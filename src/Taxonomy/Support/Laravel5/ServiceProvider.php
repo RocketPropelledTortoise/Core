@@ -1,19 +1,18 @@
-<?php
+<?php namespace Rocket\Taxonomy\Support\Laravel5;
 
-/**
- * The Laravel 5 Service Provider for Taxonomies
- */
-namespace Rocket\Taxonomy\Support\Laravel5;
+use Illuminate\Contracts\Support\DeferrableProvider;
+use Rocket\Taxonomy\Repositories\TermRepositoryInterface;
+use Rocket\Taxonomy\Repositories\TermRepository;
+use Rocket\Taxonomy\Repositories\TermHierarchyRepositoryInterface;
+use Rocket\Taxonomy\Repositories\TermHierarchyRepository;
+use Rocket\Taxonomy\Taxonomy;
+use Rocket\Taxonomy\TaxonomyInterface;
 
 /**
  * Taxonomy Service Provider
  */
-class ServiceProvider extends \Illuminate\Support\ServiceProvider
+class ServiceProvider extends \Illuminate\Support\ServiceProvider implements DeferrableProvider
 {
-    /**
-     * @var bool Indicates if loading of the provider is deferred.
-     */
-    protected $defer = true;
 
     /**
      * Register the service provider.
@@ -22,14 +21,14 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register()
     {
-        $prefix = 'Rocket\Taxonomy\Repositories';
-        $this->app->bind("$prefix\TermRepositoryInterface", "$prefix\TermRepository");
-        $this->app->bind("$prefix\TermHierarchyRepositoryInterface", "$prefix\TermHierarchyRepository");
-
+        $this->app->bind(TermRepositoryInterface::class, TermRepository::class);
+        $this->app->bind(TermHierarchyRepositoryInterface::class, TermHierarchyRepository::class);
+        $this->app->bind(TaxonomyInterface::class, Taxonomy::class);
+        $this->app->alias('i18n', \Rocket\Translation\Taxonomy::class);
         $this->app->singleton(
             'taxonomy',
             function ($app) {
-                return $app->make(\Rocket\Taxonomy\Taxonomy::class);
+                return $app->make(Taxonomy::class);
             }
         );
     }
@@ -41,7 +40,15 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function provides()
     {
-        return ['taxonomy'];
+        return [
+            'taxonomy',
+            TaxonomyInterface::class,
+            Taxonomy::class,
+            TermRepositoryInterface::class,
+            TermRepository::class,
+            TermHierarchyRepositoryInterface::class,
+            TermHierarchyRepository::class
+        ];
     }
 
     /**

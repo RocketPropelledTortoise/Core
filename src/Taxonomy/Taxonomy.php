@@ -1,9 +1,4 @@
-<?php
-
-/**
- * The Taxonomy base class handles the cache and the creation/modification of terms
- */
-namespace Rocket\Taxonomy;
+<?php namespace Rocket\Taxonomy;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Rocket\Taxonomy\Model\Hierarchy;
@@ -17,7 +12,7 @@ use Rocket\Translation\Support\Laravel5\Facade as I18N;
 /**
  * The Taxonomy base class handles the cache and the creation/modification of terms
  */
-class Taxonomy
+class Taxonomy implements TaxonomyInterface
 {
     /**
      * @var array Terms internal cache
