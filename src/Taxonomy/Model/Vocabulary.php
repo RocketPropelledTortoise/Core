@@ -18,6 +18,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Vocabulary extends Model
 {
+    // 0 = disabled, 1 = single, 2 = multiple
+    public static $HIERARCHY_FLAT = 0;
+    public static $HIERARCHY_SINGLE_PARENT = 1;
+    public static $HIERARCHY_MULTIPLE_PARENT = 2;
+
     /**
      * @var bool Indicates if the model should be timestamped.
      */

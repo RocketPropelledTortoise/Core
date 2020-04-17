@@ -75,11 +75,11 @@ jobs:
         DB_PASSWORD: root
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
 
-  scrutinizer-ci:
+  sonarcloud:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
 
-    name: "SonarCloud / Scrutinizer"
+    name: "SonarCloud"
     steps:
     - uses: actions/checkout@v1
     - name: Setup PHP
@@ -93,10 +93,6 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test -- --coverage-clover=coverage.clover --log-junit=test-report.xml
-
-    - run: wget https://scrutinizer-ci.com/ocular.phar
-    - name: Upload code coverage
-      run: php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
       # https://community.sonarsource.com/t/code-coverage-doesnt-work-with-github-action/16747/5
     - name: fix code coverage paths
