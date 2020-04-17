@@ -3,14 +3,9 @@
 [![Latest Version](https://img.shields.io/github/release/RocketPropelledTortoise/Core.svg?style=flat-square)](https://github.com/RocketPropelledTortoise/Core/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/RocketPropelledTortoise/Core/blob/master/LICENSE.md)
 [![Total Downloads](https://img.shields.io/packagist/dt/rocket/core.svg?style=flat-square)](https://packagist.org/packages/rocket/core)
-
-__Scrutinizer__ : [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/RocketPropelledTortoise/Core.svg?style=flat-square)](https://scrutinizer-ci.com/g/RocketPropelledTortoise/Core/code-structure)
-[![Quality Score](https://img.shields.io/scrutinizer/g/RocketPropelledTortoise/Core.svg?style=flat-square)](https://scrutinizer-ci.com/g/RocketPropelledTortoise/Core)
-
-__SonarCloud__ : [![Sonar Quality Gate](https://img.shields.io/sonar/alert_status/RocketPropelledTortoise_Core?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=RocketPropelledTortoise_Core)
+[![Sonar Quality Gate](https://img.shields.io/sonar/alert_status/RocketPropelledTortoise_Core?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=RocketPropelledTortoise_Core)
 [![Sonar Coverage](https://img.shields.io/sonar/coverage/RocketPropelledTortoise_Core?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=RocketPropelledTortoise_Core)
-
-__GitHub Actions__ : [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/RocketPropelledTortoise/Core/PHP%20Composer?style=flat-square)](https://github.com/RocketPropelledTortoise/Core/actions)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/RocketPropelledTortoise/Core/PHP?style=flat-square)](https://github.com/RocketPropelledTortoise/Core/actions)
 
 Core Components for Rocket Propelled Tortoise CMS
 
