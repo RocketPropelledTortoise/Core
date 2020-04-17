@@ -56,23 +56,20 @@ class TestCase extends \Orchestra\Testbench\TestCase
                     'database' => ':memory:',
                     'prefix' => '',
                 ],
-                // create database travis_test;
-                // grant usage on *.* to travis@localhost;
-                // grant all privileges on travis_test.* to travis@localhost;
-                'travis-mysql' => [
+                'mysql' => [
                     'driver'    => 'mysql',
                     'host'      => 'localhost',
-                    'database'  => 'travis_test',
-                    'username'  => 'travis',
-                    'password'  => '',
+                    'database'  => 'test_db',
+                    'username'  => 'test',
+                    'password'  => 'test',
                     'charset'   => 'utf8',
                     'collation' => 'utf8_unicode_ci',
                     'prefix'    => '',
                 ],
-                'travis-pgsql' => [
+                'pgsql' => [
                     'driver'   => 'pgsql',
                     'host'     => 'localhost',
-                    'database' => 'travis_test',
+                    'database' => 'test_db',
                     'username' => 'postgres',
                     'password' => '',
                     'charset'  => 'utf8',
@@ -82,15 +79,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
             ]
         );
 
-        $app['config']->set('database.default', 'default');
-        if ($db = getenv('DB')) {
-            if ($db == 'pgsql') {
-                $app['config']->set('database.default', 'travis-pgsql');
-            }
-
-            if ($db == 'mysql') {
-                $app['config']->set('database.default', 'travis-mysql');
-            }
-        }
+        $app['config']->set('database.default', getenv('DB') ?: 'default');
     }
 }
