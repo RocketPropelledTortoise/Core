@@ -7,9 +7,10 @@
 __Scrutinizer__ : [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/RocketPropelledTortoise/Core.svg?style=flat-square)](https://scrutinizer-ci.com/g/RocketPropelledTortoise/Core/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/RocketPropelledTortoise/Core.svg?style=flat-square)](https://scrutinizer-ci.com/g/RocketPropelledTortoise/Core)
 
-__SonarCloud__ : [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=RocketPropelledTortoise_Core&metric=alert_status)](https://sonarcloud.io/dashboard?id=RocketPropelledTortoise_Core)
+__SonarCloud__ : [![Sonar Quality Gate](https://img.shields.io/sonar/alert_status/RocketPropelledTortoise_Core?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=RocketPropelledTortoise_Core)
+[![Sonar Coverage](https://img.shields.io/sonar/coverage/RocketPropelledTortoise_Core?server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/dashboard?id=RocketPropelledTortoise_Core)
 
-__GitHub Actions__ : [![Build Status](https://github.com/RocketPropelledTortoise/Core/workflows/PHP Composer/badge.svg)](https://github.com/RocketPropelledTortoise/Core/actions)
+__GitHub Actions__ : [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/RocketPropelledTortoise/Core/PHP%20Composer?style=flat-square)](https://github.com/RocketPropelledTortoise/Core/actions)
 
 Core Components for Rocket Propelled Tortoise CMS
 
@@ -41,7 +42,17 @@ By default, Rocket doesn't come with facilities to connect users, interact with 
 ## Testing
 
 ``` bash
-$ phpunit
+composer test
+```
+
+### Testing MySQL locally
+
+```bash
+docker run --rm -it --name mysql-test -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test_db -p 3307:3306 mysql:5.7
+
+DB_CONNECTION=mysql DB_DATABASE=test_db DB_USERNAME=root DB_PASSWORD=root DB_PORT=3307 composer test
+
+docker stop mysql-test
 ```
 
 ## Contributing
