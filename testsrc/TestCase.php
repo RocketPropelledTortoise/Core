@@ -60,11 +60,12 @@ class TestCase extends \Orchestra\Testbench\TestCase
                     'driver'    => 'mysql',
                     'host'      => 'localhost',
                     'database'  => 'test_db',
-                    'username'  => 'test',
-                    'password'  => 'test',
+                    'username'  => 'root',
+                    'password'  => '',
                     'charset'   => 'utf8',
                     'collation' => 'utf8_unicode_ci',
                     'prefix'    => '',
+                    'port'      => getenv('DB_PORT') ?: '3306'
                 ],
                 'pgsql' => [
                     'driver'   => 'pgsql',
