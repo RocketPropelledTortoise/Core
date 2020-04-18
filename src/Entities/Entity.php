@@ -1,15 +1,15 @@
-<?php
+<?php namespace Rocket\Entities;
 
 /**
  * The Entity main class is the master of everything related to Entities.
  *
  * It handles the creation, storage, modification and deletion of Entities and their Revisions.
  */
-namespace Rocket\Entities;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Rocket\Entities\Exceptions\EntityNotFoundException;
 use Rocket\Entities\Exceptions\InvalidFieldTypeException;
@@ -139,7 +139,7 @@ abstract class Entity
      */
     public static function getContentType()
     {
-        return str_replace('\\', '', snake_case((new \ReflectionClass(get_called_class()))->getShortName()));
+        return str_replace('\\', '', Str::snake((new \ReflectionClass(get_called_class()))->getShortName()));
     }
 
     /**
