@@ -17,7 +17,7 @@ class CreateStrings extends Migration
             function (Blueprint $table) {
                 $table->increments('id');
                 $table->datetime('date_creation');
-                $table->string('context'); 
+                $table->string('context');
                 $table->longText('string');
             }
         );

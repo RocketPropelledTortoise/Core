@@ -1,6 +1,7 @@
 <?php namespace Rocket\Translation;
 
-interface I18NInterface {
+interface I18NInterface
+{
     /**
      * Get the current language
      * @return string

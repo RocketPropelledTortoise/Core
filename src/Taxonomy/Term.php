@@ -316,7 +316,7 @@ class Term implements ArrayAccess, Arrayable
     public function toArray()
     {
         return array_map(
-            function($value) {
+            function ($value) {
                 return $value instanceof Arrayable ? $value->toArray() : $value;
             },
             $this->container

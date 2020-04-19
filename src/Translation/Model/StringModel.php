@@ -28,11 +28,13 @@ class StringModel extends Eloquent
      */
     protected $dates = ['date_creation'];
 
-    public static function getStringId($context, $keyString) {
+    public static function getStringId($context, $keyString)
+    {
         return StringModel::where('string', $keyString)->where('context', $context)->value('id');
     }
 
-    public static function getOrCreateTranslation($context, $keyString, $languageId, $defaultLanguageId) {
+    public static function getOrCreateTranslation($context, $keyString, $languageId, $defaultLanguageId)
+    {
         $stringId = static::getStringId($context, $keyString);
         if ($stringId) {
             return Translation::getTranslation($stringId, $languageId);

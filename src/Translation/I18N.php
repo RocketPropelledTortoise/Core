@@ -87,7 +87,14 @@ class I18N implements I18NInterface
      *
      * @param Application $app
      */
-    public function __construct(Application $app, CacheRepository $cache, Session $session, ConfigRepository $config, Router $router, Request $request)
+    public function __construct(
+        Application $app,
+        CacheRepository $cache,
+        Session $session,
+        ConfigRepository $config,
+        Router $router,
+        Request $request
+    )
     {
         $this->languageFilesPath = $app->storagePath() . '/languages/';
         $this->cache = $cache;
@@ -387,7 +394,12 @@ class I18N implements I18NInterface
         }
 
         // Read string from database
-        $text = StringModel::getOrCreateTranslation($context, $keyString, $languageId, $this->languages($this->defaultLanguage, 'id'));
+        $text = StringModel::getOrCreateTranslation(
+            $context,
+            $keyString,
+            $languageId,
+            $this->languages($this->defaultLanguage, 'id')
+        );
         if ($text) {
             // Store in cache for this request
             $this->strings[$language][$context][$keyString] = $text;

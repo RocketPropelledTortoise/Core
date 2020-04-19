@@ -29,7 +29,8 @@ class Translation extends Eloquent
      */
     protected $dates = ['date_edition'];
 
-    public static function setTranslation($stringId, $languageId, $text) {
+    public static function setTranslation($stringId, $languageId, $text)
+    {
         $translation = Translation::where('string_id', $stringId)->where('language_id', $languageId)->first();
 
         if (!$translation) {

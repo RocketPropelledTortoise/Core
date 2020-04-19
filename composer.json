@@ -21,10 +21,9 @@
         "rocket/utilities": "self.version"
     },
     "require-dev": {
-        "mockery/mockery": ">=0.9.0",
-        "phpunit/phpunit": "^8.0 || ^9.0",
-        "orchestra/testbench": "^4.0",
-        "squizlabs/php_codesniffer": "^2.6"
+        "laravel/framework": "^6.18",
+        "mockery/mockery": "^1.0",
+        "orchestra/testbench-core": "^4.7"
     },
     "autoload": {
         "classmap": [
@@ -60,10 +59,10 @@
         }
     },
     "scripts": {
-        "lint": "phpcs --standard=PSR2 src",
-        "lint-fix": "phpcbf --standard=PSR2 src",
-        "test": "vendor/bin/phpunit",
-        "test:coverage-html": "vendor/bin/phpunit --coverage-html=build/coverage"
+        "lint": "build/phpcs --standard=PSR2 src",
+        "lint:fix": "build/phpcbf --standard=PSR2 src",
+        "test": "build/phpunit",
+        "test:coverage-html": "build/phpunit --coverage-html=build/coverage"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

@@ -82,7 +82,8 @@ class TermData extends Model
         parent::save($options);
     }
 
-    public function toArray() {
+    public function toArray()
+    {
         $array = parent::toArray();
         $array['translated'] = $this->translated;
         return $array;
