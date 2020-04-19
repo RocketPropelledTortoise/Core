@@ -92,7 +92,10 @@ jobs:
       uses: shivammathur/setup-php@master
       with:
         php-version: 7.4
-        coverage: pcov 
+        coverage: pcov
+
+    - name: Install tools
+      run: ./scripts/install_tools.sh
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
