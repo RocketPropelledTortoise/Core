@@ -10,8 +10,8 @@
     ],
     "require": {
         "php": ">=7.2.0",
-        "illuminate/support": "^5.8 || ^6.0",
-        "illuminate/database": "^5.8 || ^6.0",
+        "illuminate/support": "^5.8 || ^6.0 || ^7.0",
+        "illuminate/database": "^5.8 || ^6.0 || ^7.0",
         "centraldesktop/graph": "~1.0"
     },
     "replace": {
@@ -21,9 +21,9 @@
         "rocket/utilities": "self.version"
     },
     "require-dev": {
-        "laravel/framework": "^6.18",
+        "laravel/framework": "^7.0",
         "mockery/mockery": "^1.0",
-        "orchestra/testbench-core": "^4.7"
+        "orchestra/testbench-core": "^5.0"
     },
     "autoload": {
         "classmap": [

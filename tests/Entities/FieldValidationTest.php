@@ -28,6 +28,10 @@ class FieldValidationTest extends \Tests\TestCase
             [Boolean::class, false],
             [Boolean::class, '1'],
             [Boolean::class, 0],
+            // TODO :: these date values are valid, but they should be tested separately
+            //[Date::class, null],
+            //[Date::class, 'today'],
+            //[Datetime::class, null],
         ];
     }
 
@@ -60,9 +64,8 @@ class FieldValidationTest extends \Tests\TestCase
             [Boolean::class, 'off'],
             [Boolean::class, 'no'],
             [Boolean::class, 'yes'],
-            [Date::class, null],
-            [Date::class, 'today'],
-            [Datetime::class, null],
+            [Date::class, 'invalid date'],
+            [Datetime::class, 'invalid date'],
         ];
     }
 

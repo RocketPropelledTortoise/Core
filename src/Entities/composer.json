@@ -11,8 +11,8 @@
     "require": {
         "php": ">=7.2.0",
         "rocket/translation": "~1.0.0",
-        "illuminate/database": "^5.8 || ^6.0",
-        "illuminate/support": "^5.8 || ^6.0"
+        "illuminate/database": "^5.8 || ^6.0 || ^7.0",
+        "illuminate/support": "^5.8 || ^6.0 || ^7.0"
     },
     "autoload": {
         "psr-4": { "Rocket\\Entities\\": "" }

@@ -59,7 +59,7 @@ class Datetime extends Field
             $this->asDateTime($value);
 
             return true;
-        } catch (\InvalidArgumentException $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }

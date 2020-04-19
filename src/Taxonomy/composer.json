@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=7.2.0",
-        "illuminate/support": "^5.8 || ^6.0",
+        "illuminate/support": "^5.8 || ^6.0 || ^7.0",
         "centraldesktop/graph": "~1.0"
     },
     "autoload": {
